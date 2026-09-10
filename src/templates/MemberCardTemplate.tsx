@@ -1,6 +1,8 @@
+/* eslint-disable react-refresh/only-export-components */
 import type { CSSProperties, MouseEvent } from 'react'
 
 export interface MemberProfile {
+  potatoId: string
   name: string
   age: string
   school: string
@@ -8,6 +10,18 @@ export interface MemberProfile {
   mbti: string
   hobby: string
   message: string
+}
+
+// 이 파일을 src/members/본인이름.tsx로 복사한 뒤 아래 정보만 수정합니다.
+export const memberProfile: MemberProfile = {
+  potatoId: 'potato-00',
+  name: '000',
+  age: '00년생',
+  school: '00대학교',
+  major: '00전공',
+  mbti: '0000',
+  hobby: '취미를 입력해주세요',
+  message: '한마디를 남겨주세요',
 }
 
 interface MemberCardTemplateProps {

@@ -19,23 +19,24 @@ import potato13 from './assets/potato-13.png'
 import potato14 from './assets/potato-14.png'
 
 const potatoes = [
-  { image: potato01, left: 45, top: 48, size: 13 },
-  { image: potato02, left: 19, top: 76, size: 11 },
-  { image: potato03, left: 32, top: 68, size: 12 },
-  { image: potato04, left: 43, top: 84, size: 10 },
-  { image: potato05, left: 50, top: 66, size: 13 },
-  { image: potato06, left: 58, top: 81, size: 11 },
-  { image: potato07, left: 68, top: 68, size: 12 },
-  { image: potato08, left: 80, top: 82, size: 11 },
-  { image: potato09, left: 91, top: 74, size: 13 },
-  { image: potato10, left: 27, top: 91, size: 9 },
-  { image: potato11, left: 63, top: 42, size: 10 },
-  { image: potato12, left: 9, top: 88, size: 9 },
-  { image: potato13, left: 80, top: 45, size: 10 },
-  { image: potato14, left: 90, top: 38, size: 9 },
+  { id: 'potato-01', image: potato01, left: 45, top: 48, size: 13 },
+  { id: 'potato-02', image: potato02, left: 93, top: 32, size: 11 },
+  { id: 'potato-03', image: potato03, left: 32, top: 68, size: 12 },
+  { id: 'potato-04', image: potato04, left: 45, top: 84, size: 10 },
+  { id: 'potato-05', image: potato05, left: 50, top: 66, size: 13 },
+  { id: 'potato-06', image: potato06, left: 60, top: 84, size: 11 },
+  { id: 'potato-07', image: potato07, left: 70, top: 65, size: 12 },
+  { id: 'potato-08', image: potato08, left: 79, top: 82, size: 11 },
+  { id: 'potato-09', image: potato09, left: 91, top: 74, size: 13 },
+  { id: 'potato-10', image: potato10, left: 27, top: 88, size: 9 },
+  { id: 'potato-11', image: potato11, left: 63, top: 42, size: 10 },
+  { id: 'potato-12', image: potato12, left: 10, top: 88, size: 9 },
+  { id: 'potato-13', image: potato13, left: 80, top: 45, size: 10 },
+  { id: 'potato-14', image: potato14, left: 12, top: 58, size: 9 },
 ]
 
 const defaultProfile: MemberProfile = {
+  potatoId: 'potato-00',
   name: '000',
   age: '00년생',
   school: '00대학교',
@@ -45,18 +46,34 @@ const defaultProfile: MemberProfile = {
   message: '한마디를 남겨주세요',
 }
 
+type MemberModule = { memberProfile?: MemberProfile }
+
+const memberModules = import.meta.glob('./members/*.tsx', {
+  eager: true,
+}) as Record<string, MemberModule>
+
+const profilesByPotatoId = new Map(
+  Object.values(memberModules)
+    .map((module) => module.memberProfile)
+    .filter((profile): profile is MemberProfile => Boolean(profile))
+    .map((profile) => [profile.potatoId, profile]),
+)
+
 function App() {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
   const selectedPotato = selectedIndex === null ? null : potatoes[selectedIndex]
+  const selectedProfile = selectedPotato
+    ? profilesByPotatoId.get(selectedPotato.id) ?? defaultProfile
+    : null
   const cardPosition = selectedPotato
     ? selectedPotato.left > 64
       ? {
           right: `${Math.max(100 - selectedPotato.left + 6, 3)}%`,
-          top: `${Math.max(selectedPotato.top - 16, 12)}%`,
+          top: `${Math.max(selectedPotato.top - 16, 32)}%`,
         }
       : {
           left: `${selectedPotato.left + 7}%`,
-          top: `${Math.max(selectedPotato.top - 16, 12)}%`,
+          top: `${Math.max(selectedPotato.top - 16, 32)}%`,
         }
     : undefined
 
@@ -94,9 +111,9 @@ function App() {
           </button>
         ))}
       </div>
-      {selectedPotato && selectedIndex !== null && (
+      {selectedPotato && selectedIndex !== null && selectedProfile && (
         <MemberCardTemplate
-          profile={defaultProfile}
+          profile={selectedProfile}
           style={cardPosition}
           onClose={() => setSelectedIndex(null)}
           onClick={(event) => event.stopPropagation()}
