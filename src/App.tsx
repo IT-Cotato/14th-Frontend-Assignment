@@ -1,3 +1,7 @@
+import { useState } from 'react'
+import MemberCardTemplate, {
+  type MemberProfile,
+} from './templates/MemberCardTemplate'
 import './App.css'
 import potato01 from './assets/potato-01.png'
 import potato02 from './assets/potato-02.png'
@@ -28,12 +32,40 @@ const potatoes = [
   { image: potato11, left: 63, top: 42, size: 10 },
   { image: potato12, left: 9, top: 88, size: 9 },
   { image: potato13, left: 80, top: 45, size: 10 },
-  { image: potato14, left: 90, top: 33, size: 9 },
+  { image: potato14, left: 90, top: 38, size: 9 },
 ]
 
+const defaultProfile: MemberProfile = {
+  name: '000',
+  age: '00년생',
+  school: '00대학교',
+  major: '00전공',
+  mbti: '0000',
+  hobby: '취미를 입력해주세요',
+  message: '한마디를 남겨주세요',
+}
+
 function App() {
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
+  const selectedPotato = selectedIndex === null ? null : potatoes[selectedIndex]
+  const cardPosition = selectedPotato
+    ? selectedPotato.left > 64
+      ? {
+          right: `${Math.max(100 - selectedPotato.left + 6, 3)}%`,
+          top: `${Math.max(selectedPotato.top - 16, 12)}%`,
+        }
+      : {
+          left: `${selectedPotato.left + 7}%`,
+          top: `${Math.max(selectedPotato.top - 16, 12)}%`,
+        }
+    : undefined
+
   return (
-    <main className="world" aria-label="Network01 멤버 소개 월드">
+    <main
+      className="world"
+      aria-label="Network01 멤버 소개 월드"
+      onClick={() => setSelectedIndex(null)}
+    >
       <div className="world__overlay" />
       <section className="world__intro">
         <p className="world__eyebrow">COTATO 14기 · FRONTEND NETWORKING</p>
@@ -47,6 +79,11 @@ function App() {
             key={potato.image}
             type="button"
             aria-label={`멤버 ${index + 1} 소개 열기`}
+            aria-pressed={selectedIndex === index}
+            onClick={(event) => {
+              event.stopPropagation()
+              setSelectedIndex(index)
+            }}
             style={{
               left: `${potato.left}%`,
               top: `${potato.top}%`,
@@ -57,6 +94,14 @@ function App() {
           </button>
         ))}
       </div>
+      {selectedPotato && selectedIndex !== null && (
+        <MemberCardTemplate
+          profile={defaultProfile}
+          style={cardPosition}
+          onClose={() => setSelectedIndex(null)}
+          onClick={(event) => event.stopPropagation()}
+        />
+      )}
     </main>
   )
 }
