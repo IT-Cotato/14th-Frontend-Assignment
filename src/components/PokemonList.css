@@ -1,0 +1,24 @@
+.pokemon-list__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pokemon-list__title {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.pokemon-list__more {
+  color: var(--color-link);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.pokemon-list__grid {
+  margin-top: 19px;
+  display: grid;
+  grid-template-columns: repeat(4, 260px);
+  gap: 20px;
+}

@@ -1,0 +1,16 @@
+.type-chip {
+  display: inline-flex;
+  align-items: center;
+  height: 29px;
+  padding: 0 10px;
+  border-radius: var(--radius-pill);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.type-chip--electric { background-color: #eed535; }
+.type-chip--fire     { background-color: #fd7d24; }
+.type-chip--grass    { background-color: #62b957; }
+.type-chip--water    { background-color: #4a90da; }
