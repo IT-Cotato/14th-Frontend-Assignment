@@ -1,0 +1,100 @@
+.pokemon-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 260px;
+    height: 336px;
+    gap: 14px;
+    padding: 18px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border-default);
+    background: var(--color-bg-surface);
+    box-shadow: 0px 8px 24px 0px rgba(20, 33, 61, 0.08);
+}
+
+.pokemon-card__image-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 140px;
+    height: 140px;
+    border-radius: 16px;
+    background: var(--color-bg-subtle);
+}
+
+.pokemon-card__image {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+}
+
+.pokemon-card__number {
+    margin: 0;
+    font-family: "Inter", sans-serif;
+    font-weight: 600;
+    font-size: 11px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    color: var(--color-text-secondary);
+}
+
+.pokemon-card__name {
+    margin: 0;
+    font-family: "Noto Sans KR", sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    text-align: center;
+    color: var(--color-text-primary);
+}
+
+.pokemon-card__type {
+    display: inline-flex;
+    align-items: center;
+    height: 29px;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-full);
+    font-family: "Inter", sans-serif;
+    font-weight: 600;
+    font-size: 11px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    color: var(--color-text-inverse);
+}
+
+.pokemon-card__type--electric {
+    background-color: var(--type-electric);
+}
+.pokemon-card__type--fire {
+    background-color: var(--type-fire);
+}
+.pokemon-card__type--grass {
+    background-color: var(--type-grass);
+}
+.pokemon-card__type--water {
+    background-color: var(--type-water);
+}
+
+.pokemon-card__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 83px;
+    height: 40px;
+    padding: var(--space-3) var(--space-4);
+    gap: 8px;
+    white-space: nowrap;
+    border: none;
+    border-radius: var(--radius-md);
+    font-family: "Noto Sans KR", sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    color: var(--color-text-inverse);
+    background: var(--color-bg-danger);
+    box-shadow: 0px 8px 0px 0px rgba(185, 47, 81, 1);
+    cursor: pointer;
+}
