@@ -1,0 +1,83 @@
+.site-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 1280px;
+    height: 72px;
+    padding: 14px 24px;
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-lg);
+}
+
+.site-header__brand {
+    display: flex;
+    align-items: center;
+    width: 147px;
+    height: 100px;
+    gap: 10px;
+}
+
+.site-header__logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #ffffff;
+    background-color: var(--color-bg-danger);
+}
+
+.site-header__name {
+    width: 99px;
+    height: 24px;
+    font-family: "Inter", sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    color: var(--color-text-primary);
+}
+
+.site-header__nav {
+    display: flex;
+    align-items: center;
+    height: 34px;
+    gap: 8px;
+}
+
+.site-header__nav-item {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 34px;
+    padding: 9px 14px;
+    border-radius: 999px;
+    font-family: "Noto Sans KR", sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    color: var(--color-text-secondary);
+    background-color: var(--color-bg-subtle);
+    white-space: nowrap;
+}
+
+.site-header__nav-item--active {
+    color: var(--color-text-inverse);
+    background-color: var(--color-bg-danger);
+}
+
+.site-header__team-count {
+    margin-left: 4px;
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    color: var(--color-text-primary);
+    white-space: nowrap;
+}
