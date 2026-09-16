@@ -1,5 +1,13 @@
+import PokemonHeader from './components/PokemonHeader.tsx'
+import PokemonList from './components/PokemonList.tsx'
+
 function App() {
-  return <></>
+  return (
+    <div className="page">
+      <PokemonHeader />
+      <PokemonList />
+    </div>
+  )
 }
 
 export default App

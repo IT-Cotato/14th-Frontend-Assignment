@@ -1,0 +1,487 @@
+:root {
+  --color-bg: #f7fbff;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f2f7ff;
+  --color-border: #d8e4f2;
+  --color-border-strong: #c6d8ee;
+  --color-text: #14213d;
+  --color-text-muted: #667085;
+  --color-placeholder: #8aa0b8;
+  --color-link: #1a5f9f;
+  --color-primary: #ef476f;
+  --color-primary-shadow: #b92f51;
+  --color-highlight: #ffd166;
+  --color-white: #ffffff;
+
+  --color-type-electric: #eed535;
+  --color-type-fire: #fd7d24;
+  --color-type-grass: #62b957;
+  --color-type-water: #4a90da;
+
+  --shadow-surface: 0 8px 24px rgba(20, 33, 61, 0.08);
+  --shadow-primary: 0 8px 0 var(--color-primary-shadow);
+  --shadow-secondary: 0 8px 12px rgba(20, 33, 61, 0.08);
+
+  --font-en: 'Inter', sans-serif;
+  --font-ko: 'Noto Sans KR', sans-serif;
+  /* Inter에 한글 글리프가 없으므로 영문·숫자는 Inter, 한글은 Noto Sans KR로 렌더링된다 */
+  --font-base: 'Inter', 'Noto Sans KR', sans-serif;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-pill: 999px;
+
+  --gap-section: 24px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-base);
+  word-break: keep-all;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+p,
+ul {
+  margin: 0;
+}
+
+ul {
+  padding: 0;
+  list-style: none;
+}
+
+img {
+  display: block;
+}
+
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:focus-visible {
+  outline: 2px solid var(--color-link);
+  outline-offset: 2px;
+}
+
+/* 전체 레이아웃 */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-section);
+  width: 100%;
+  max-width: 1440px;
+  min-height: 1024px;
+  margin: 0 auto;
+  padding: 36px 80px;
+  background-color: var(--color-bg);
+}
+
+.pokemon-header,
+.pokemon-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-section);
+}
+
+/* 공통 버튼 */
+.button {
+  padding: 12px 20px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-ko);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 20px;
+  white-space: nowrap;
+}
+
+.button--primary {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  box-shadow: var(--shadow-primary);
+}
+
+/* Figma의 inside stroke처럼 크기에 영향을 주지 않도록 inset shadow로 테두리를 그린다 */
+.button--secondary {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  box-shadow:
+    inset 0 0 0 1px var(--color-border-strong),
+    var(--shadow-secondary);
+}
+
+.button--card {
+  padding: 12px 16px;
+  font-size: 13px;
+  line-height: 16px;
+}
+
+.text-button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-link);
+  font-family: var(--font-ko);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 18px;
+}
+
+/* 상단 헤더 */
+.top-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  min-height: 72px;
+  padding: 14px 24px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand__mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  font-family: var(--font-en);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: normal;
+}
+
+.brand__name {
+  color: var(--color-text);
+  font-family: var(--font-en);
+  font-size: 20px;
+  font-weight: 800;
+  line-height: normal;
+}
+
+.top-bar__actions,
+.top-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-pill {
+  padding: 9px 14px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-surface-muted);
+  color: var(--color-text-muted);
+  font-family: var(--font-ko);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: normal;
+}
+
+.nav-pill--active {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+}
+
+.team-count {
+  color: var(--color-text);
+  font-family: var(--font-en);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: normal;
+}
+
+/* Hero */
+.hero {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 36px;
+  width: 100%;
+  padding: 34px 36px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-surface);
+}
+
+.hero__content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.hero__badge {
+  padding: 8px 12px;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-highlight);
+  color: var(--color-text);
+  font-family: var(--font-ko);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 16px;
+}
+
+.hero__title {
+  color: var(--color-text);
+  font-family: var(--font-ko);
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 46px;
+}
+
+.hero__description {
+  color: var(--color-text-muted);
+  font-family: var(--font-ko);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 26px;
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.hero__image-box {
+  display: flex;
+  flex: 0 0 238px;
+  align-items: center;
+  justify-content: center;
+  width: 238px;
+  height: 238px;
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface-muted);
+}
+
+.hero__image {
+  width: 204px;
+  height: 204px;
+  object-fit: contain;
+}
+
+/* 검색 */
+.search {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  max-width: 760px;
+}
+
+.search__field {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 11px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+}
+
+.search__field:focus-within {
+  border-color: var(--color-link);
+}
+
+.search__icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+.search__input {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--color-text);
+  font-family: var(--font-ko);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: normal;
+}
+
+.search__input::placeholder {
+  color: var(--color-placeholder);
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 1;
+}
+
+/* 추천 포켓몬 */
+.recommend {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-section);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.section-header__title {
+  color: var(--color-text);
+  font-family: var(--font-ko);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 32px;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(0, 260px));
+  gap: 20px;
+}
+
+/* 포켓몬 카드 */
+.pokemon-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  box-sizing: border-box;
+  width: 260px;
+  height: 336px;
+  padding: 18px;
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+  /* Figma의 inside stroke처럼 레이아웃 크기에 영향을 주지 않도록 inset shadow로 테두리를 그린다 */
+  box-shadow:
+    inset 0 0 0 1px var(--color-border),
+    var(--shadow-surface);
+}
+
+.pokemon-card__image-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 140px;
+  height: 140px;
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface-muted);
+}
+
+.pokemon-card__image {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+}
+
+.pokemon-card__number {
+  color: var(--color-text-muted);
+  font-family: var(--font-en);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 13px;
+}
+
+.pokemon-card__name {
+  color: var(--color-text);
+  font-family: var(--font-ko);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 22px;
+  text-align: center;
+}
+
+.type-chip {
+  padding: 8px 12px;
+  border-radius: var(--radius-pill);
+  color: var(--color-white);
+  font-family: var(--font-en);
+  font-size: 11px;
+  font-weight: 600;
+  /* Chrome은 Inter 11px의 normal을 14px로 반올림해 칩이 30px가 되므로 Figma 크기(약 29px)에 맞춘다 */
+  line-height: 13px;
+}
+
+.type-chip--electric {
+  background-color: var(--color-type-electric);
+}
+
+.type-chip--fire {
+  background-color: var(--color-type-fire);
+}
+
+.type-chip--grass {
+  background-color: var(--color-type-grass);
+}
+
+.type-chip--water {
+  background-color: var(--color-type-water);
+}
+
+/* 작은 화면 */
+@media (max-width: 768px) {
+  .page {
+    padding: 24px 16px;
+  }
+
+  .hero {
+    flex-direction: column;
+    padding: 24px;
+  }
+
+  .hero__content {
+    flex: none;
+    width: 100%;
+  }
+
+  /* 세로 배치에서는 artwork가 화면 폭에 맞춰 줄어들 수 있도록 유동 너비를 사용한다 */
+  .hero__image-box {
+    flex: none;
+    width: 100%;
+    max-width: 238px;
+    height: auto;
+    aspect-ratio: 1 / 1;
+  }
+
+  .hero__image {
+    width: 86%;
+    max-width: 204px;
+    height: auto;
+  }
+}
