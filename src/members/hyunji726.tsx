@@ -14,7 +14,7 @@ export interface MemberProfile {
 
 // 이 파일을 src/members/본인이름.tsx로 복사한 뒤 아래 정보만 수정합니다.
 export const memberProfile: MemberProfile = {
-  potatoId: 'potato-05',
+  potatoId: 'potato-12',
   name: '장현지',
   age: '04년생',
   school: '동덕여자대학교',
