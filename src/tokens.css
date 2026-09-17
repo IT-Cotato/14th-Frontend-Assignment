@@ -136,8 +136,8 @@
         0 1px 2px rgba(15, 23, 41, 0.06), 0 2px 8px rgba(15, 23, 41, 0.06);
     --elevation-panel:
         0 1px 3px rgba(15, 23, 41, 0.08), 0 4px 12px rgba(15, 23, 41, 0.06);
-    --elevation-hard-yellow: 8px 8px 0 var(--color-brand-yellow-dark);
-    --elevation-hard-red: 8px 8px 0 var(--color-brand-red-dark);
+    --elevation-hard-yellow: 0 8px 0 0 var(--color-brand-yellow-dark);
+    --elevation-hard-red: 0 8px 0 0 var(--color-brand-red-dark);
 }
 
 /* --------------------------------------------------------------------------
