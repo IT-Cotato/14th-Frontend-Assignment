@@ -36,28 +36,28 @@
      Core primitives
      ------------------------------------------------------------------------ */
     --color-neutral-white: #ffffff;
-    --color-neutral-canvas: #f5f7fa;
-    --color-neutral-surface-strong: #e7ecf3;
-    --color-neutral-line: #e2e8f0;
-    --color-neutral-line-strong: #cbd5e1;
-    --color-neutral-ink: #0f1729;
-    --color-neutral-muted: #64748b;
-    --color-neutral-slate: #1e293b;
+    --color-neutral-canvas: #f7fbff;
+    --color-neutral-surface-strong: #f2f7ff;
+    --color-neutral-line: #d8e4f2;
+    --color-neutral-line-strong: #c6d8ee;
+    --color-neutral-ink: #14213d;
+    --color-neutral-muted: #667085;
+    --color-neutral-slate: #344054;
 
-    --color-brand-blue: #2563eb;
-    --color-brand-blue-dark: #1d4ed8;
-    --color-brand-blue-soft: #dbeafe;
+    --color-brand-blue: #2a75bb;
+    --color-brand-blue-dark: #1a5f9f;
+    --color-brand-blue-soft: #eaf3ff;
 
-    --color-brand-red: #ec4869;
-    --color-brand-red-dark: #b0224a;
-    --color-brand-red-soft: #fce7ef;
+    --color-brand-red: #ef476f;
+    --color-brand-red-dark: #b92f51;
+    --color-brand-red-soft: #fff0f3;
 
-    --color-brand-yellow: #f5c518;
-    --color-brand-yellow-dark: #b8860b;
+    --color-brand-yellow: #ffd166;
+    --color-brand-yellow-dark: #c69827;
 
-    --color-brand-mint: #10e8a0;
-    --color-brand-mint-dark: #059669;
-    --color-brand-mint-soft: #e6fff7;
+    --color-brand-mint: #06d6a0;
+    --color-brand-mint-dark: #049f78;
+    --color-brand-mint-soft: #e9fff8;
 
     /* ------------------------------------------------------------------------
      Semantic roles
@@ -66,6 +66,7 @@
     --color-bg-surface: var(--color-neutral-white);
     --color-bg-subtle: var(--color-neutral-surface-strong);
     --color-bg-brand: var(--color-brand-blue);
+
     --color-bg-danger: var(--color-brand-red);
     --color-bg-warning: var(--color-brand-yellow);
     --color-bg-success: var(--color-brand-mint);
@@ -73,7 +74,7 @@
     --color-text-primary: var(--color-neutral-ink);
     --color-text-secondary: var(--color-neutral-muted);
     --color-text-inverse: var(--color-neutral-white);
-    --color-text-brand: var(--color-brand-blue);
+    --color-text-brand: var(--color-brand-blue-dark);
     --color-text-danger: var(--color-brand-red-dark);
     --color-text-success: var(--color-brand-mint-dark);
 
