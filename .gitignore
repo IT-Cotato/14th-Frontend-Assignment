@@ -1,0 +1,18 @@
+# dependencies
+node_modules/
+
+# build
+dist/
+dist-ssr/
+
+# environment variables
+.env
+.env.*
+*.local
+
+# editor
+.vscode/
+.idea/
+
+# OS
+.DS_Store
