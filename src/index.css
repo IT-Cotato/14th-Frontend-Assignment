@@ -427,6 +427,15 @@ box-shadow: 0 8px 24px 0 rgba(20, 33, 61, 0.08);
   background: var(--panel-strong);
 }
 
+.chu-name, .dragon-name, .turtle-name, .turtleKing-name {
+  color: var(--ink);
+  text-align: center;
+  font-family: "Noto Sans KR";
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
 .chu-num, .dragon-num, .turtle-num, .turtleKing-num{
   color: var(--muted);
   font-family: Inter;
