@@ -16,7 +16,8 @@ function App() {
                     <input
                         type="text"
                         placeholder="이름 또는 번호"
-                        className="flex w-full h-[42px] pl-[38px] pr-[14px] py-[11px] items-center gap-[10px] rounded-[var(--radius-2)] border border-[var(--color-neutral-line)] bg-[var(--color-neutral-white)] placeholder:text-[var(--color-neutral-muted)] placeholder:text-[13px]"
+                        className="flex w-full h-[42px] pl-[38px] pr-[14px] py-[11px] items-center gap-[10px] rounded-[var(--radius-2)] border border-[var(--color-neutral-line)] bg-[var(--color-neutral-white)]
+                        placeholder:text-[var(--color-neutral-muted)] placeholder:text-[13px] placeholder:h-max"
                     />
                 </div>
                 <button
