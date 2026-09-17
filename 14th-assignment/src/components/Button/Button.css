@@ -1,0 +1,37 @@
+.button {
+  display: flex;
+  width: fit-content;
+  padding: var(--space-3) var(--space-5);
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-2);
+  border: 0;
+  border-radius: var(--radius-md);
+  background: var(--red);
+  box-shadow: 0 8px 0 0 #b92f51;
+  color: var(--color-text-inverse);
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.button:active {
+  transform: translateY(2px);
+  box-shadow: 0 6px 0 0 #b92f51;
+}
+
+.button--secondary {
+  border: var(--stroke-1) solid var(--color-border-strong);
+  background: var(--panel);
+  box-shadow: 0 8px 24px 0 rgba(20, 33, 61, 0.08);
+  color: var(--ink);
+}
+
+.button--secondary:active {
+  transform: none;
+  box-shadow: 0 8px 24px 0 rgba(20, 33, 61, 0.08);
+}
