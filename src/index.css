@@ -1,0 +1,112 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@800&family=Noto+Sans+KR:wght@400;500;600;700&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-width: 320px;
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  min-height: 100vh;
+}
+
+:root {
+  font-family: 'Noto Sans KR', sans-serif;
+
+  /*Core Primitives*/
+  --neutral-white: #ffffff;
+  --neutral-canvas: #f7fbff;
+  --neutral-surface-strong: #f2f7ff;
+  --neutral-line: #d8e4f2;
+  --neutral-line-strong: #c6d8ee;
+  --neutral-ink: #14213d;
+  --neutral-muted: #667085;
+  --neutral-state: #344054;
+
+  --brand-blue: #2a75bb;
+  --brand-blue-dark: #1a5f9f;
+  --brand-blue-soft: #eaf3ff;
+  --brand-red: #ef476f;
+  --brand-red-dark: #b92f51;
+  --brand-red-soft: #fff0f3;
+  --brand-yellow: #ffd166;
+  --brand-yellow-dark: #c69827;
+  --brand-mint: #06d6a0;
+  --brand-mint-dark: #049f78;
+  --brand-mint-soft: #E9FFF8;
+
+  /*Semantic roles*/
+  --color-bg-canvas:var(--neutral-canvas);
+  --color-bg-surface:var(--neutral-white);
+  --color-bg-subtle:var(--neutral-surface-strong);
+  --color-bg-brand:var(--brand-blue);
+  --color-bg-danger:var(--brand-red);
+  --color-bg-warning:var(--brand-yellow);
+  --color-bg-success:var(--brand-mint);
+  --red: var(--brand-red);
+  --yellow: var(--brand-yellow);
+  --ink: var(--neutral-ink);
+  --muted: var(--neutral-muted);
+  --bg: var(--color-bg-canvas);
+
+  --color-text-primary:var(--neutral-ink);
+  --color-text-secondary:var(--neutral-muted);
+  --color-text-placeholder:var(--neutral-muted);
+  --color-text-inverse:var(--neutral-white);
+  --color-text-brand:var(--brand-blue-dark);
+  --color-text-danger:var(--brand-red-dark);
+  --color-text-success:var(--brand-mint-dark);
+
+  --color-border-default:var(--neutral-line);
+  --color-border-strong:var(--neutral-line-strong);
+  --color-border-brand:var(--brand-blue);
+  --color-border-danger:var(--brand-red);
+
+  --radius-lg: 12px;
+  --radius-md: 8px;
+  --radius-full: 999px;
+  --stroke-1: 1px;
+  --line: var(--color-border-default);
+  --panel: var(--color-bg-surface);
+  --panel-strong: var(--color-bg-subtle);
+
+  /*Spacing scale*/
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /*Pokemon types*/
+  --color-type-bug:#8CB230;
+  --color-type-dark:#58575F;
+  --color-type-dragon:#0F6AC0;
+  --color-type-electric:#EED535;
+  --color-type-fairy:#ED6EC7;
+  --color-type-fighting:#D04164;
+  --color-type-fire:#FD7D24;
+  --color-type-flying:#748FC9;
+  --color-type-ghost:#556AAE;
+  --color-type-grass:#62B957;
+  --color-type-ground:#DD7748;
+  --color-type-ice:#61CEC0;
+  --color-type-normal:#9DA0AA;
+  --color-type-poison:#A552CC;
+  --color-type-psychic:#EA5D60;
+  --color-type-rock:#BAAB82;
+  --color-type-steel:#417D9A;
+  --color-type-water:#4A90DA;
+
+}
