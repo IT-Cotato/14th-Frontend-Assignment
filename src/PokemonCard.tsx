@@ -1,7 +1,23 @@
-export default function PokemonCard() {
+type PokemonCardProps = {
+    imageSrc: string;
+    number: string;
+    name: string;
+    type: string;
+};
+
+export default function PokemonCard({
+    imageSrc,
+    number,
+    name,
+    type,
+}: PokemonCardProps) {
     return (
         <>
-            <h1>PokemonCard Component</h1>
+            <img src={imageSrc} />
+            <caption>{number}</caption>
+            <title>{name}</title>
+            <span>{type}</span>
+            <button>팀에 추가</button>
         </>
     );
 }
