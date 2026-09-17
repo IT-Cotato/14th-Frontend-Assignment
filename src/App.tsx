@@ -1,8 +1,12 @@
+import PokemonHeader from "./PokemonHeader";
+import PokemonList from "./PokemonList";
+
 function App() {
     return (
-        <>
-            <h1>App Component</h1>
-        </>
+        <div className="px-[80px] py-[36px] gap-[24px]">
+            <PokemonHeader />
+            <PokemonList />
+        </div>
     );
 }
 
