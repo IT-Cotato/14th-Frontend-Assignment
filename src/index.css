@@ -1,0 +1,71 @@
+:root {
+  --color-bg: #f7fbff;
+  --color-surface: #ffffff;
+  --color-border: #d8e4f2;
+  --color-border-strong: #c6d8ee;
+  --color-artwork-bg: #f2f7ff;
+
+  --color-text: #14213d;
+  --color-text-sub: #667085;
+  --color-placeholder: #8aa0b8;
+  --color-link: #1a5f9f;
+
+  --color-primary: #ef476f;
+  --color-primary-dark: #b92f51;
+  --color-badge: #ffd166;
+
+  /* ── 모서리 ────────────────────────────────── */
+  --radius-card: 16px;
+  --radius-hero: 24px;
+  --radius-input: 12px;
+  --radius-button: 8px;
+  --radius-pill: 999px;
+
+  /* ── 그림자 ────────────────────────────────── */
+  --shadow-card: 0 4px 20px rgba(20, 33, 61, 0.08);
+  --shadow-button: 0 8px 0 var(--color-primary-dark);
+
+  /* ── 레이아웃 ──────────────────────────────── */
+  --layout-width: 1280px;
+
+  font-family: Inter, 'Noto Sans KR', sans-serif;
+  color: var(--color-text);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-bg);
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.app {
+  width: var(--layout-width);
+  margin: 0 auto;
+  padding: 36px 0 80px;
+  display: flex;
+  flex-direction: column;
+}
+
+.app > * + * {
+  margin-top: 24px;
+}
