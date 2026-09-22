@@ -5,7 +5,7 @@ import './PokemonCard.css';
 
 type PokemonCardProps = Pokemon;
 
-function PokemonCard({ id, name, type, imageUrl }: PokemonCardProps) {
+function PokemonCard({ id, name, types, imageUrl }: PokemonCardProps) {
   const displayNumber = `#${String(id).padStart(4, '0')}`;
 
   return (
@@ -15,8 +15,14 @@ function PokemonCard({ id, name, type, imageUrl }: PokemonCardProps) {
       </div>
 
       <p className="pokemon-card__number">{displayNumber}</p>
-      <h3 className="pokemon-card__name">{name}</h3>
-      <TypeChip type={type} />
+      <h3 className="pokemon-card__name" title={name}>
+        {name}
+      </h3>
+      <div className="pokemon-card__types">
+        {types.map((type) => (
+          <TypeChip key={type} type={type} />
+        ))}
+      </div>
 
       <div className="pokemon-card__action">
         <Button variant="primary" size="sm">

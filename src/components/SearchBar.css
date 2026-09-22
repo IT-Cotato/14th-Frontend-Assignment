@@ -35,3 +35,28 @@
   color: var(--color-placeholder);
   font-weight: 500;
 }
+
+@media (max-width: 767px) {
+  .search-bar__field {
+    flex: 1;
+    width: auto;
+    max-width: 258px;
+  }
+
+  .search-bar .button {
+    height: 40px;
+    padding: 0 15px;
+  }
+}
+
+@media (max-width: 767px) {
+  .search-bar__field {
+    flex: 1;
+    width: auto;
+  }
+
+  .search-bar .button {
+    height: 40px;
+    padding: 0 16px;
+  }
+}

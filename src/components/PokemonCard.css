@@ -35,15 +35,50 @@
 }
 
 .pokemon-card__name {
+  width: 100%;
   margin-top: 10px;
+  padding: 0 16px;
   font-size: 18px;
   font-weight: 700;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
-.pokemon-card .type-chip {
+.pokemon-card__types {
   margin-top: 14px;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
 }
 
 .pokemon-card__action {
   margin-top: 14px;
+}
+
+@media (max-width: 767px) {
+  .pokemon-card {
+    width: 100%;
+    height: 304px;
+    padding: 12px 0 4px;
+  }
+
+  .pokemon-card__number {
+    margin-top: 10px;
+  }
+
+  .pokemon-card__name {
+    margin-top: 6px;
+    padding: 0 10px;
+    font-size: 15px;
+  }
+
+  .pokemon-card__types {
+    margin-top: 10px;
+  }
+
+  .pokemon-card__action {
+    margin-top: 10px;
+  }
 }
