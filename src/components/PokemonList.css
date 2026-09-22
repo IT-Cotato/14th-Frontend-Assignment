@@ -17,8 +17,19 @@
 }
 
 .pokemon-list__grid {
-  margin-top: 19px;
   display: grid;
   grid-template-columns: repeat(4, 260px);
   gap: 20px;
+}
+
+.pokemon-list__head + .pokemon-list__grid,
+.pokemon-list__head + .pokemon-list__empty {
+  margin-top: 19px;
+}
+
+@media (max-width: 767px) {
+  .pokemon-list__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
 }

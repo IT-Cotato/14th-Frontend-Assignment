@@ -1,0 +1,12 @@
+.team-slot-list__title {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.team-slot-list__grid {
+  margin-top: 19px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}

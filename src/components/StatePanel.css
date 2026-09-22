@@ -1,0 +1,34 @@
+.state-panel {
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  text-align: center;
+}
+
+.state-panel__icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-badge);
+  border-radius: var(--radius-pill);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.state-panel__title {
+  margin-top: 14px;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.state-panel__description {
+  margin-top: 8px;
+  color: var(--color-text-sub);
+  font-size: 12px;
+}
