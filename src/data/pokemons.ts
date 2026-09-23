@@ -40,13 +40,13 @@ export const pokemons: Pokemon[] = [
     {
         id: 6,
         name: "리자몽",
-        types: ["fire", "flying"],
+        types: ["fire"],
         imageUrl: charizard,
     },
     {
         id: 1,
         name: "이상해씨",
-        types: ["grass", "poison"],
+        types: ["grass"],
         imageUrl: bulbasaur,
     },
     {

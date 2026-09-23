@@ -1,12 +1,6 @@
 import PokemonCard from "./PokemonCard";
+import { pokemons } from "../data/pokemons";
 import "./PokemonList.css";
-
-const pokemons = [
-    { id: 25, name: "피카츄", type: "electric", image: "pikachu.png" },
-    { id: 6, name: "리자몽", type: "fire", image: "charizard.png" },
-    { id: 1, name: "이상해씨", type: "grass", image: "bulbasaur.png" },
-    { id: 9, name: "거북왕", type: "water", image: "blastoise.png" },
-];
 
 function PokemonList() {
     return (
@@ -23,8 +17,8 @@ function PokemonList() {
                         <PokemonCard
                             id={pokemon.id}
                             name={pokemon.name}
-                            type={pokemon.type}
-                            image={pokemon.image}
+                            types={pokemon.types}
+                            imageUrl={pokemon.imageUrl}
                         />
                     </li>
                 ))}
