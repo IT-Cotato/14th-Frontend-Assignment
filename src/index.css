@@ -366,12 +366,11 @@ box-shadow: 0 8px 24px 0 rgba(20, 33, 61, 0.08);
 /*PokemonList*/ 
 
 .sectionHeader {
-  display: flex;
-  flex-direction: row;           /* 제목과 링크를 가로로 */
+  display: flex;        
   justify-content: space-between; /* 양쪽 끝으로 벌리기 */
   align-items: center;
-  width: 100%;
-  /* width: 1440px, height: 1024px, padding: 36px 80px 다 삭제 */
+  width: 1280px;
+  height: 26px;
 }
 
 .reco-pok {
@@ -401,7 +400,7 @@ box-shadow: 0 8px 24px 0 rgba(20, 33, 61, 0.08);
   flex-wrap: wrap;
 }
 
-.card-box1, .card-box2, .card-box3, .card-box4 {
+.card-box {
   display: flex;
   width: 260px;
   padding: 18px;
@@ -416,7 +415,7 @@ box-shadow: 0 8px 24px 0 rgba(20, 33, 61, 0.08);
   box-shadow: 0 8px 24px 0 rgba(20, 33, 61, 0.08);
 }
 
-.img-box1,.img-box2, .img-box3, .img-box4 {
+.img-box {
   display: flex;
   width: 140px;
   height: 140px;

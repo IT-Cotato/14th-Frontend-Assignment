@@ -1,86 +1,64 @@
-import chuImg from './assets/chu.png' 
-import dragonImg from './assets/dragon.png' 
-import turtleImg from './assets/turtle.png' 
-import turtleKingImg from './assets/turtleKing.png' 
+type PokemonCardProps = {
+  id: number;
+  name: string;
+  image: string;
+  type: string;
+  imgClassName: string;
+  numClassName: string;
+  nameClassName: string;
+  attrBoxClassName: string;
+  attrClassName: string;
+  buttonBoxClassName: string;
+  buttonClassName: string;
+};
 
-function PokemonCard() {
-    return (
-        <>
-            <div className="pokeCard-box">
-                <div className="card-box1"> {/*피카츄*/}
-                    <div className="img-box1">
-                        <img className="chu2" src={chuImg} alt="피카츄"/> 
-                    </div>
+function PokemonCard({
+  id,
+  name,
+  image,
+  type,
+  imgClassName,
+  numClassName,
+  nameClassName,
+  attrBoxClassName,
+  attrClassName,
+  buttonBoxClassName,
+  buttonClassName,
+}: PokemonCardProps) {
+  return (
+    <div className="card-box">
 
-                    <div className='chu-num'>#0025</div>
+      <div className="img-box">
+        <img
+          className={`pokemon-image ${imgClassName}`}
+          src={image}
+          alt={name}
+        />
+      </div>
 
-                    <div className='chu-name'>피카츄</div>
+      <div className={numClassName}>
+        #{String(id).padStart(4, '0')}
+        {/* 문자열의 길이가 4가 될 때까지 앞에 0을 붙여달라는 뜻 */}
+      </div>
 
-                    <div className='attr-box-1'>
-                        <div className='attr1'>ELECTRIC</div>
-                    </div>
+      <div className={nameClassName}>
+        {name}
+      </div>
 
-                    <button className='button-1-box'>
-                        <div className='button-1'>팀에 추가</div>
-                    </button>
-                </div>
-                
-                <div className="card-box1"> {/*리자몽*/}
-                    <div className="img-box2">
-                        <img className='dragon' src={dragonImg} alt="리자몽"/>
-                    </div>
+      <div className={attrBoxClassName}>
+        <div className={attrClassName}>
+          {type}
+        </div>
+      </div>
 
-                    <div className='dragon-num'>#0006</div>
+      <button className={buttonBoxClassName}>
+        <div className={buttonClassName}>
+          팀에 추가
+        </div>
+      </button>
 
-                    <div className='dragon-name'>리자몽</div>
-
-                    <div className='attr-box-2'>
-                        <div className='attr2'>FIRE</div>
-                    </div>
-
-                    <button className='button-2-box'>
-                        <div className='button-2'>팀에 추가</div>
-                    </button>
-                </div>
-                
-                <div className="card-box1"> {/*이상해씨*/}
-                    <div className="img-box3">
-                        <img className='turtle' src={turtleImg} alt="꼬북이"/>
-                    </div>
-
-                    <div className='turtle-num'>#0001</div>
-
-                    <div className='turtle-name'>이상해씨</div>
-
-                    <div className='attr-box-3'>
-                        <div className='attr3'>GRASS</div>
-                    </div>
-
-                    <button className='button-3-box'>
-                        <div className='button-3'>팀에 추가</div>
-                    </button>
-                </div>
-                
-                <div className="card-box1"> {/*거북왕*/}
-                    <div className="img-box4">
-                        <img className='turtleKing' src={turtleKingImg} alt="거북왕"/>
-                    </div>
-
-                    <div className='turtleKing-num'>#0009</div>
-
-                    <div className='turtleKing-name'>거북왕</div>
-
-                    <div className='attr-box-4'>
-                        <div className='attr4'>WATER</div>
-                    </div>
-
-                    <button className='button-4-box'>
-                        <div className='button-4'>팀에 추가</div>
-                    </button>
-                </div>
-            </div>
-        </>
-    );
+    </div>
+  );
 }
 
-export default PokemonCard
+export default PokemonCard;

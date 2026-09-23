@@ -8,7 +8,6 @@ function App() {
     <div className="page-container">
       <PokemonHeader />
       <PokemonList />
-      <PokemonCard />
     </div>
   )
 }
