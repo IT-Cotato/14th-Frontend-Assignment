@@ -81,3 +81,37 @@
     color: var(--color-text-primary);
     white-space: nowrap;
 }
+
+@media (max-width: 768px) {
+    .site-header {
+        width: 100%;
+        padding: 14px 16px;
+    }
+
+    .site-header__brand {
+        width: auto;
+        height: auto;
+    }
+
+    .site-header__name {
+        width: auto;
+        font-size: 17px;
+        line-height: 21px;
+    }
+
+    .site-header__nav {
+        height: 31px;
+        gap: 4px;
+    }
+
+    .site-header__nav-item {
+        height: 31px;
+        padding: 9px 10px;
+        font-size: 11px;
+        line-height: 13px;
+    }
+
+    .site-header__nav-item--home {
+        display: none;
+    }
+}

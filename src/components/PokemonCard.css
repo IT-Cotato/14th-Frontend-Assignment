@@ -41,6 +41,10 @@
 
 .pokemon-card__name {
     margin: 0;
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     font-family: "Noto Sans KR", sans-serif;
     font-weight: 700;
     font-size: 18px;
@@ -48,6 +52,12 @@
     letter-spacing: 0%;
     text-align: center;
     color: var(--color-text-primary);
+}
+
+.pokemon-card__types {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
 }
 
 .pokemon-card__type {
@@ -64,14 +74,56 @@
     color: var(--color-text-inverse);
 }
 
+.pokemon-card__type--bug {
+    background-color: var(--type-bug);
+}
+.pokemon-card__type--dark {
+    background-color: var(--type-dark);
+}
+.pokemon-card__type--dragon {
+    background-color: var(--type-dragon);
+}
 .pokemon-card__type--electric {
     background-color: var(--type-electric);
+}
+.pokemon-card__type--fairy {
+    background-color: var(--type-fairy);
+}
+.pokemon-card__type--fighting {
+    background-color: var(--type-fighting);
 }
 .pokemon-card__type--fire {
     background-color: var(--type-fire);
 }
+.pokemon-card__type--flying {
+    background-color: var(--type-flying);
+}
+.pokemon-card__type--ghost {
+    background-color: var(--type-ghost);
+}
 .pokemon-card__type--grass {
     background-color: var(--type-grass);
+}
+.pokemon-card__type--ground {
+    background-color: var(--type-ground);
+}
+.pokemon-card__type--ice {
+    background-color: var(--type-ice);
+}
+.pokemon-card__type--normal {
+    background-color: var(--type-normal);
+}
+.pokemon-card__type--poison {
+    background-color: var(--type-poison);
+}
+.pokemon-card__type--psychic {
+    background-color: var(--type-psychic);
+}
+.pokemon-card__type--rock {
+    background-color: var(--type-rock);
+}
+.pokemon-card__type--steel {
+    background-color: var(--type-steel);
 }
 .pokemon-card__type--water {
     background-color: var(--type-water);
@@ -97,4 +149,18 @@
     background: var(--color-bg-danger);
     box-shadow: 0px 8px 0px 0px rgba(185, 47, 81, 1);
     cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .pokemon-card {
+        width: 164px;
+        height: 304px;
+        padding: 12px 10px;
+        gap: 10px;
+    }
+
+    .pokemon-card__name {
+        font-size: 15px;
+        line-height: 18px;
+    }
 }
