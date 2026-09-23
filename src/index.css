@@ -1,0 +1,518 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  /* width/height에 padding과 border를 포함시켜서 계산하도록 변경.
+     이렇게 하면 Figma에서 지정한 width 값 그대로가 최종 렌더링 크기가 됨. */
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box; /* 아까 추가하신 것도 여기 합쳐서 한 번에 관리 */
+}
+
+button {
+  border: none;
+  background: none;
+  outline: none;
+  font: inherit;      /* 버튼도 기본적으로 부모 폰트를 상속받게 함 */
+  cursor: pointer;
+}
+
+:root {
+  --ink: #14213D;               /* 진한 텍스트 (로고, 활성 상태) */
+  --muted: #667085;             /* 흐린 텍스트 (비활성 메뉴) */
+  --red: #EF476F;               /* PM 배지, 홈 버튼 배경 */
+  --panel-strong: #F2F7FF;      /* 도감/내 팀 필 배경 */
+  --panel: #FFFFFF;
+  --line: #D8E4F2;
+  --yellow: #FFD166;
+  --blue: #2A75BB;
+   --bg: #F7FBFF;
+  --color-text-inverse: #FFFFFF; /* 어두운 배경 위 흰 텍스트 */
+  --color-text-placeholder: #8AA0B8;
+  --color-text-brand: #1A5A9F;
+  --color-border-strong: #C6D8EE;
+  --color-type-fire: #FD7D24;
+  --color-type-electric: #EED535;
+  --color-type-grass: #62B957;
+  --color-type-water: #4A90DA;
+  --page-padding-x: 80px;
+  --page-padding-top: 36px;
+  --section-gap: 24px;
+  --stroke-1: 1px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 999px;
+}
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  max-width: 1440px;
+  width: 100%;
+  padding: 36px 80px;
+  background: var(--bg);
+}
+.header-box {
+  display: flex;
+  width: 1280px;
+  height: 72px;
+  padding: 14px 24px;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0; /* flex 상황에서 header가 설정한 크기보다 줄어드는 걸 방지 */
+  border-radius: var(--radius-lg);
+  border: var(--stroke-1) solid var(--line);
+  background: var(--panel);
+}
+.pokemon-header {
+  display: flex;
+
+  /* className="pokemon-header"인 요소를 찾아서 안에 있는 자식들을 
+  기본적으로 가로 방향으로 배치 */
+
+  width: 100%; /*header의 너비*/
+  justify-content: space-between;
+  /* 왼쪽 div와 오른쪽 div를 양끝으로 */
+  align-items: center; /*세로 방향 가운데 정렬*/
+}
+.logo {
+  display: flex;
+  height: 100px;
+  align-items: center;
+  gap: 10px;
+}
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pm {
+  color: var(--color-text-inverse);
+  font-family: Inter;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: normal;
+}
+.pm-box {
+  display: flex;
+  width: 38px;
+  height: 38px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: var(--red);    /* PM 배지 분홍 배경 */
+  border-radius: 8px;
+}
+.pokeMate {
+  color: var(--ink);
+  font-family: Inter;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: normal;
+}
+.home {
+  color: var(--color-text-inverse);
+  font-family: "Noto Sans KR";
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+.home-box {
+  display: flex;
+  padding: 9px 14px;
+  align-items: flex-start;
+  border-radius: 999px;
+  background: var(--red);
+}
+.dict {
+  color: var(--muted);
+  font-family: "Noto Sans KR";
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+.dict-box {
+  display: flex;
+  padding: 9px 14px;
+  align-items: flex-start;
+  border-radius: 999px;
+  background: var(--panel-strong);
+}
+.myTeam {
+  color: var(--muted);
+  font-family: "Noto Sans KR";
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+.myTeam-box {
+  display: flex;
+  padding: var(--space-3) var(--space-5);
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-2);
+  border-radius: var(--radius-md);
+  border: var(--stroke-1) solid var(--color-border-strong);
+  background: var(--panel);
+
+  /* Elevation/Card */
+  box-shadow: 0 8px 24px 0 rgba(20, 33, 61, 0.08);
+}
+.num {
+  color: var(--ink);
+  font-family: Inter;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+.hero-box {
+  display: flex;
+  width: 1280px;
+  height: 306px;
+  padding: 34px 36px;
+  align-items: flex-start;
+  gap: 36px;
+  align-self: stretch;
+  border-radius: 20px;
+  border: var(--stroke-1) solid var(--line);
+  background: var(--panel);
+
+  /* Elevation/Card */
+  box-shadow: 0 8px 24px 0 rgba(20, 33, 61, 0.08);
+}
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  flex: 1 0 0;
+}
+.button-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.reco-box {
+  display: flex;
+  padding: 8px 12px;
+  align-items: flex-start;
+  border-radius: 999px;
+  background: var(--yellow);
+}
+.reco {
+  color: var(--ink);
+  font-family: "Noto Sans KR";
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+.sub {
+  color: var(--ink);
+  font-family: "Noto Sans KR";
+  font-size: 34px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 46px; /* 135.294% */
+}
+.dis {
+  color: var(--muted);
+  font-family: "Noto Sans KR";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 26px; /* 162.5% */
+}
+.butt-1-box {
+  display: flex;
+  padding: var(--space-3) var(--space-5);
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-2);
+  border-radius: var(--radius-md);
+  background: var(--red);
+
+/* Elevation/Hard Red */
+  box-shadow: 0 8px 0 0 #B92F51;
+}
+.butt-1 {
+  color: var(--color-text-inverse);
+  font-family: "Noto Sans KR";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+.butt-2-box {
+  display: flex;
+  padding: var(--space-3) var(--space-5);
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-2);
+  border-radius: var(--radius-md);
+  border: var(--stroke-1) solid var(--color-border-strong);
+  background: var(--panel);
+
+/* Elevation/Card */
+box-shadow: 0 8px 24px 0 rgba(20, 33, 61, 0.08);
+}
+
+.butt-2 {
+  color: var(--ink);
+  font-family: "Noto Sans KR";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+
+.chu-box {
+  display: flex;
+  width: 238px;
+  height: 238px;
+  padding: 17px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 27.2px;
+  background: var(--panel-strong);
+}
+
+.chu {
+  width: 204px;
+  height: 204px;
+  flex-shrink: 0;
+}
+
+.search-container {
+  display: flex;
+  width: 760px;
+  height: 44px;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.searchBar-box {
+  display: flex;
+  padding: 11px 14px;
+  align-items: center;
+  gap: 10px;
+  flex: 1 0 0;
+  border-radius: var(--radius-md);
+  border: var(--stroke-1) solid var(--line);
+  background: var(--panel);
+}
+
+.searchBar {
+  flex: 1 0 0;
+  color: var(--color-text-placeholder);
+  font-family: "Noto Sans KR";
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 500;
+  border: none;
+  outline: none;
+  background: transparent;
+  line-height: normal;
+}
+
+.searchBar::placeholder {
+  color: var(--color-text-placeholder); /* placeholder 텍스트 색상 지정 */
+}
+
+.diagram-box {
+  display: flex;           /* 아이콘을 박스 중앙에 배치 */
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.search-box {
+  display: flex;
+  padding: var(--space-3) var(--space-5);
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-2);
+  border-radius: var(--radius-md);
+  background: var(--red);
+
+  /* Elevation/Hard Red */
+  box-shadow: 0 8px 0 0 #B92F51;
+}
+
+.search {
+  color: var(--color-text-inverse);
+  font-family: "Noto Sans KR";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+
+/*PokemonList*/ 
+
+.sectionHeader {
+  display: flex;        
+  justify-content: space-between; /* 양쪽 끝으로 벌리기 */
+  align-items: center;
+  width: 1280px;
+  height: 26px;
+}
+
+.reco-pok {
+  color: var(--ink);
+  font-family: "Noto Sans KR";
+  font-size: 22px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+
+.show {
+  color: var(--color-text-brand);
+  font-family: "Noto Sans KR";
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+
+.pokeCard-box {
+  display: flex;
+  align-items: flex-start;
+  align-content: flex-start;
+  gap: 20px;
+  align-self: stretch;
+  flex-wrap: wrap;
+}
+
+.card-box {
+  display: flex;
+  width: 260px;
+  padding: 18px;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  border-radius: var(--radius-lg);
+  border: var(--stroke-1) solid var(--line);
+  background: var(--panel);
+
+  /* Elevation/Card */
+  box-shadow: 0 8px 24px 0 rgba(20, 33, 61, 0.08);
+}
+
+.img-box {
+  display: flex;
+  width: 140px;
+  height: 140px;
+  padding: 10px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 16px;
+  background: var(--panel-strong);
+}
+
+.chu-name, .dragon-name, .turtle-name, .turtleKing-name {
+  color: var(--ink);
+  text-align: center;
+  font-family: "Noto Sans KR";
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+.chu-num, .dragon-num, .turtle-num, .turtleKing-num{
+  color: var(--muted);
+  font-family: Inter;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+}
+
+.attr-box-1 {
+  display: flex;
+  padding: var(--space-2) var(--space-3);
+  justify-content: center;
+  align-items: center;
+  border-radius: var(--radius-full);
+  background: var(--color-type-electric);
+}
+
+.attr-box-2 {
+  display: flex;
+  padding: var(--space-2) var(--space-3);
+  justify-content: center;
+  align-items: center;
+  border-radius: var(--radius-full);
+  background: var(--color-type-fire);
+}
+
+.attr-box-3 {
+  display: flex;
+  padding: var(--space-2) var(--space-3);
+  justify-content: center;
+  align-items: center;
+  border-radius: var(--radius-full);
+  background: var(--color-type-grass);
+}
+
+.attr-box-4 {
+  display: flex;
+  padding: var(--space-2) var(--space-3);
+  justify-content: center;
+  align-items: center;
+  border-radius: var(--radius-full);
+  background: var(--color-type-water);
+}
+
+.attr1, .attr2, .attr3, .attr4 {
+  color: var(--color-text-inverse);
+  font-family: Inter;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+}
+
+.button-1-box, .button-2-box, .button-3-box, .button-4-box {
+  display: flex;
+  padding: var(--space-3) var(--space-4);
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-2);
+  border-radius: var(--radius-md);
+  background: var(--red);
+
+  /* Elevation/Hard Red */
+  box-shadow: 0 8px 0 0 #B92F51;
+}
+
+.button-1, .button-2, .button-3, .button-4 {
+  color: var(--color-text-inverse);
+  font-family: "Noto Sans KR";
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+
+.chu2, .dragon, .turtle, .turtleKing {
+  width: 120px;
+  height: 120px;
+  flex-shrink: 0;
+}
