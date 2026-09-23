@@ -40,3 +40,7 @@
     padding: 0;
     margin: 20px 0 0;
 }
+
+.pokemon-list .state-panel {
+    margin-top: 20px;
+}

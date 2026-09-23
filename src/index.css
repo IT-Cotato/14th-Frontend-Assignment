@@ -19,9 +19,23 @@
     --color-text-placeholder: #8aa0b8;
     --color-text-primary-rgb: 20, 33, 61;
 
+    --type-bug: #8cb230;
+    --type-dark: #58575f;
+    --type-dragon: #0f6ac0;
     --type-electric: #eed535;
+    --type-fairy: #ed6ec7;
+    --type-fighting: #d04164;
     --type-fire: #fd7d24;
+    --type-flying: #748fc9;
+    --type-ghost: #556aae;
     --type-grass: #62b957;
+    --type-ground: #dd7748;
+    --type-ice: #61cec0;
+    --type-normal: #9da0aa;
+    --type-poison: #a552cc;
+    --type-psychic: #ea5d60;
+    --type-rock: #baab82;
+    --type-steel: #417d9a;
     --type-water: #4a90da;
 
     --radius-md: 8px;
