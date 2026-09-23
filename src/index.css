@@ -59,11 +59,21 @@ body {
 }
 
 .page {
-    width: 1440px;
-    height: 1024px;
+    width: 100%;
+    max-width: 1440px;
+    min-height: 1024px;
     margin: 0 auto;
     padding: 36px 80px;
     display: flex;
     flex-direction: column;
     gap: 24px;
+}
+
+@media (max-width: 768px) {
+    .page {
+        width: 100%;
+        min-height: 844px;
+        padding: 20px 24px 24px;
+        gap: 18px;
+    }
 }

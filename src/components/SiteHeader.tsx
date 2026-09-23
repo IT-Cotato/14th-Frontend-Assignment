@@ -6,9 +6,13 @@ type SiteHeaderProps = {
     maxTeamSize: number;
 };
 
-function SiteHeader({ activeMenu, teamCount, maxTeamSize }: SiteHeaderProps) {
-    const menus = ["홈", "도감", "내 팀"];
+const menus = [
+    { key: "home", label: "홈" },
+    { key: "pokedex", label: "도감" },
+    { key: "team", label: "내 팀" },
+];
 
+function SiteHeader({ activeMenu, teamCount, maxTeamSize }: SiteHeaderProps) {
     return (
         <header className="site-header">
             <div className="site-header__brand">
@@ -19,14 +23,16 @@ function SiteHeader({ activeMenu, teamCount, maxTeamSize }: SiteHeaderProps) {
             <nav className="site-header__nav">
                 {menus.map((menu) => (
                     <span
-                        key={menu}
-                        className={
-                            menu === activeMenu
-                                ? "site-header__nav-item site-header__nav-item--active"
-                                : "site-header__nav-item"
-                        }
+                        key={menu.key}
+                        className={[
+                            "site-header__nav-item",
+                            `site-header__nav-item--${menu.key}`,
+                            menu.label === activeMenu
+                                ? "site-header__nav-item--active"
+                                : "",
+                        ].join(" ")}
                     >
-                        {menu}
+                        {menu.label}
                     </span>
                 ))}
                 <span className="site-header__team-count">

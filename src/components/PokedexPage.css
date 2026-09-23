@@ -44,3 +44,20 @@
     color: var(--color-text-primary);
     white-space: nowrap;
 }
+
+@media (max-width: 768px) {
+    .pokedex__title-row {
+        width: 100%;
+        height: 55px;
+    }
+
+    .pokedex__title {
+        font-size: 23px;
+        line-height: 28px;
+    }
+
+    .pokedex__description {
+        font-size: 13px;
+        line-height: 21px;
+    }
+}
