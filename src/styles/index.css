@@ -1,0 +1,102 @@
+@import "./tailwind.css";
+
+@theme {
+  /* font-size */
+  --text-display: 48px;
+  --text-heading-01: 32px;
+  --text-heading-02: 24px;
+  --text-title: 20px;
+  --text-body: 16px;
+  --text-label: 14px;
+  --text-caption: 12px;
+
+  /* font-weight */
+  --font-weight-extrabold: 800;
+  --font-weight-bold: 700;
+  --font-weight-semibold: 600;
+  --font-weight-medium: 500;
+  --font-weight-regular: 400;
+
+  /* color */
+  --color-white: #ffffff;
+
+  /* core primitives */
+  --color-neutral-canvas: #f7fbff;
+  --color-neutral-surface-strong: #f2f7ff;
+  --color-neutral-line: #d8e4f2;
+  --color-neutral-line-strong: #c6d8ee;
+  --color-neutral-ink: #14213d;
+  --color-neutral-muted: #667085;
+  --color-neutral-slate: #344054;
+
+  --color-brand-blue: #2a75bb;
+  --color-brand-blue-dark: #1a5f9f;
+  --color-brand-blue-soft: #eaf3ff;
+  --color-brand-red: #ef476f;
+  --color-brand-red-dark: #b92f51;
+  --color-brand-red-soft: #fff0f3;
+  --color-brand-yellow: #ffd166;
+  --color-brand-yellow-dark: #c69827;
+  --color-brand-mint: #06d6a0;
+  --color-brand-mint-dark: #049f78;
+  --color-brand-mint-soft: #e9fff8;
+
+  /* semantice roles */
+  --color-canvas: var(--color-neutral-canvas);
+  --color-surface: var(--color-white);
+  --color-subtitle: var(--color-neutral-surface-strong);
+  --color-bg-brand: var(--color-brand-blue);
+  --color-bg-danger: var(--color-brand-red);
+  --color-bg-warning: var(--color-brand-yellow);
+  --color-bg-success: var(--color-brand-mint);
+
+  --color-text-primary: var(--color-neutral-ink);
+  --color-text-secondary: var(--color-neutral-muted);
+  --color-text-inverse: var(--color-white);
+  --color-text-brand: var(--color-brand-blue-dark);
+  --color-text-danger: var(--color-brand-red-dark);
+  --color-text-success: var(--color-brand-mint-dark);
+
+  --color-border-default: var(--color-neutral-line);
+  --color-border-strong: var(--color-neutral-line-strong);
+  --color-border-brand: var(--color-brand-blue);
+  --color-border-danger: var(--color-brand-red);
+
+  /* pokemon types */
+  --color-type-bug: #8cb230;
+  --color-type-dark: #58575f;
+  --color-type-dragon: #0f6ac0;
+  --color-type-electric: #eed535;
+  --color-type-fairy: #ed6ec7;
+  --color-type-fighting: #d04164;
+  --color-type-fire: #fd7d24;
+  --color-type-flying: #748fc9;
+  --color-type-ghost: #556aae;
+  --color-type-grass: #62b957;
+  --color-type-ground: #dd7748;
+  --color-type-ice: #61cec0;
+  --color-type-normal: #9da0aa;
+  --color-type-poison: #a552cc;
+  --color-type-psychic: #ea5d60;
+  --color-type-rock: #baab82;
+  --color-type-steel: #417d9a;
+  --color-type-water: #4a90da;
+
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --spacing-10: 40px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --radius-full: 9999px;
+}
