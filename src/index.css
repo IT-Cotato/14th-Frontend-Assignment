@@ -1,0 +1,613 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Noto Sans KR", sans-serif;
+  color: #14213D;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  width: 1280px;
+  margin: 0 auto;
+  background-color: white;
+  border: 1px solid #D8E4F2;
+  border-radius: 12px;
+}
+
+.header {
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 14px 24px;
+
+  width: 1280px;
+  height: 72px;
+
+  margin-top: 36px;
+  padding: 14px 24px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  width: 147px;
+  height: 100px;
+}
+
+.logo span {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 38px;
+  height: 38px;
+
+  background-color: #EF476F;
+  border-radius: 8px;
+
+  color: white;
+  font-family: "Inter", sans-serif;
+  font-weight: 800;
+  font-size: 11px;
+  line-height: 13px;
+
+  flex: none;
+}
+
+.logo strong {
+  width: 99px;
+  height: 24px;
+
+  font-family: "Inter", sans-serif;
+  font-weight: 800;
+  font-size: 20px;
+  line-height: 24px;
+
+  color: #17213a;
+
+  flex: none;
+}
+
+.header nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  height: 34px;
+}
+
+.header nav button {
+  display: flex;
+  align-items:center;
+
+  padding: 9px 14px;
+
+  height: 34px;
+
+  border: none;
+  border-radius: 999px;
+
+  font-family: "Noto Sans KR", sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 16px;
+
+  cursor: pointer;
+}
+
+.red-button {
+  background-color: #EF476F;
+  color: white;
+  width: 40px;
+}
+
+.basic-button {
+  background-color: #F2F7FF;
+  color: #667085;
+}
+
+.header nav span {
+  width: 27px;
+  height: 15px;
+
+  margin-left: 0;
+
+  font-family: "Inter", sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 15px;
+  white-space: nowrap;
+  color: #17213a;
+}
+
+/* Popup */
+
+.popup {
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+
+  padding: 34px 36px;
+  gap: 36px;
+
+  height: 306px;
+
+  margin-top: 24px;
+
+  box-shadow: 0px 8px 24px rgba(20, 33, 61, 0.08);
+}
+
+.popup_content {
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  padding: 0;
+
+  width: 934px;
+  height: 185px;
+
+  gap: 14px;
+
+  flex: 1;
+}
+
+.yellow-box {
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+
+  padding: 8px 12px;
+
+  width: auto;
+  height: 30px;
+
+  background-color: #FFD166;
+  border-radius: 999px;
+
+  font-family: "Noto Sans KR", sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 14px;
+/* 
+  color: #14213D; */
+
+  white-space: nowrap;
+  flex: none;
+}
+
+.popup_content h1 {
+  box-sizing: border-box;
+
+  margin: 0;
+
+  width: 329px;
+  height: 46px;
+
+  font-family: "Noto Sans KR", sans-serif;
+  font-weight: 800;
+  font-size: 34px;
+  line-height: 46px;
+
+  letter-spacing: -1.5px;
+  white-space: nowrap;
+
+  flex: none;
+}
+
+.popup_content p {
+  box-sizing: border-box;
+
+  margin: 0;
+
+  width: 336px;
+  height: 26px;
+
+  color: #667085;
+
+  font-family: "Noto Sans KR", sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 26px;
+
+  white-space: nowrap;
+
+  flex: none;
+}
+
+.popup_content > div:last-child {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+
+  padding: 0;
+
+  gap: 10px;
+
+  width: 174px;
+  height: 41px;
+
+  flex: none;
+}
+
+.red-shadow-button {
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
+  padding: 12px 20px;
+  gap: 8px;
+
+  width: 95px;
+  height: 41px;
+
+  background-color: #d65370;
+  border: none;
+
+  box-shadow: 0px 8px 0px #a93653;
+  border-radius: 8px;
+
+  font-family: "Noto Sans KR", sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 17px;
+
+  color: white;
+
+  white-space: nowrap;
+  cursor: pointer;
+
+  flex: none;
+}
+
+.white-button {
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
+  padding: 12px 20px;
+  gap: 8px;
+
+  width: auto;
+  height: 41px;
+
+  background-color: white;
+  color: #14213D;
+  border: 1px solid #d5deeb;
+
+  border-radius: 8px;
+
+  font-family: "Noto Sans KR", sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 17px;
+  
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 0px 8px 24px 0px #14213D14;
+}
+
+.popup_pokemon {
+  box-sizing: border-box;
+
+  position: relative;
+
+  width: 240px;
+  height: 240px;
+
+  margin: 0;
+
+  background-color: #f3f6fc;
+  border-radius: 27.2px;
+
+  flex: none;
+}
+
+.popup_pokemon img {
+  position: absolute;
+
+  width: 204px;
+  height: 204px;
+
+  left: 18px;
+  top: 18px;
+
+  object-fit: contain;
+}
+
+/* Search */
+
+.search_field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 0;
+  gap: 12px;
+  width: 1280px;
+  height: 44px;
+  margin-top: 24px;
+  margin: 24px auto 0;
+  flex: none;
+}
+
+.search_field .search_input {
+  display: flex;
+  align-items: center;
+  padding: 11px 14px 11px 38px;
+  width: 760px;
+  height: 44px;
+  background-color: white;
+  border: 1px solid #dce4ef;
+  border-radius: 8px;
+  outline: none;
+  font-family: "Noto Sans KR", sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 16px;
+  color: #17213a;
+}
+
+.search_field img {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  width: 20px;
+  height: 20px;
+  z-index: 1;
+}
+
+.search_input::placeholder {
+  color: #8c98ac;
+}
+
+.search_input:focus {
+  border-color: #8aaeea;
+}
+
+.search_button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 20px;
+  gap: 8px;
+  width: 66px;
+  height: 41px;
+  flex-shrink: 0;
+  font-family: "Noto Sans KR", sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 17px;
+  cursor: pointer;
+}
+
+/* Card Section */
+
+.card_field {
+  width: 1280px;
+  height: auto;
+
+  margin-top: 24px;
+  margin: 24px auto 0;
+}
+
+.card_field h3 {
+  width: auto;
+  height: 26px;
+
+  font-family: "Noto Sans KR", sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 26px;
+
+  color: #17213a;
+
+  white-space: nowrap;
+}
+
+/* Pokémon Grid */
+
+.pokemon-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+
+  align-items: flex-start;
+  align-content: flex-start;
+
+  padding: 0;
+  gap: 20px;
+
+  width: 1280px;
+  margin: 24px auto 0;
+}
+
+/* Pokémon Card */
+
+.pokemon-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding: 18px;
+  gap: 14px;
+
+  width: 260px;
+  height: 336px;
+
+  background-color: white;
+  border: 1px solid #dce4ef;
+
+  box-shadow: 0px 8px 24px rgba(20, 33, 61, 0.08);
+  border-radius: 12px;
+
+  flex: none;
+}
+
+/* Pokémon Image */
+
+.pokemon-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  position: relative;
+
+  width: 140px;
+  height: 140px;
+
+  margin: 0;
+
+  background-color: #f3f6fc;
+  border-radius: 16px;
+
+  flex: none;
+}
+
+.pokemon-image img {
+  width: 120px;
+  height: 120px;
+
+  object-fit: contain;
+}
+
+/* Number */
+
+.pokemon-number {
+  width: auto;
+  height: 13px;
+
+  margin: 0;
+
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 13px;
+
+  color: #7d879a;
+
+  flex: none;
+}
+
+/* Name */
+
+.pokemon-card h2 {
+  width: auto;
+  height: 22px;
+
+  margin: 0;
+
+  font-family: "Noto Sans KR", sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 22px;
+
+  text-align: center;
+
+  color: #17213a;
+
+  flex: none;
+}
+
+/* Type */
+
+.type {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
+  height: 29px;
+  padding: 8px 12px;
+
+  border-radius: 999px;
+
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 13px;
+
+  color: white;
+
+  flex: none;
+}
+
+.type.electric {
+  width: 78px;
+  background-color: #EED535;
+}
+
+.type.fire {
+  width: 48px;
+  background-color: #FD7D24;
+}
+
+.type.grass {
+  width: 62px;
+  background-color: #62B957;
+}
+
+.type.water {
+  width: 63px;
+  background-color: #4A90DA;
+}
+
+/* Team Button */
+
+.team-button {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
+  padding: 12px 16px;
+  gap: 8px;
+
+  width: auto;
+  height: 40px;
+
+  margin: 0;
+
+  white-space: nowrap;
+
+  background-color: #d65370;
+  border: none;
+
+  box-shadow: 0px 8px 0px #a93653;
+  border-radius: 8px;
+
+  font-family: "Noto Sans KR", sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 16px;
+
+  color: white;
+
+  cursor: pointer;
+
+  flex: none;
+
+  
+}
