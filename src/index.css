@@ -1,0 +1,505 @@
+body {
+  margin: 0;
+  background-color: #F7FBFF;
+}
+.app {
+  width: 100%;
+  min-height: 100vh;
+}
+.header {
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 14px 24px;
+
+  width: 1280px;
+  height: 72px;
+
+  background: #FFFFFF;
+  border: 1px solid #D8E4F2;
+  border-radius: 12px;
+  margin: 30px auto 0;
+}
+.logo{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0px;
+  gap: 10px;
+
+  width: 147px;
+  height: 100px;
+}
+.logo-mark {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+
+  width: 38px;
+  height: 38px;
+
+  background: #EF476F;
+  border-radius: 8px;
+
+  font-family: 'Noto Sans KR';
+  font-style: normal;
+  font-weight: 800;
+  font-size: 11px;
+  line-height: 13px;
+  color: #FFFFFF;
+}
+.logo-name {
+  font-family: 'Noto Sans KR';
+  font-style: normal;
+  font-weight: 800;
+  font-size: 20px;
+  line-height: 24px;
+  color: #14213D;
+}
+
+.nav{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0px;
+  gap: 8px;
+
+  width: 198px;
+  height: 34px;
+}
+.nav button {
+  border: none;
+  font-family: 'Noto Sans KR';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 16px;
+}
+.nav-active{
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 9px 14px;
+
+  width: 40px;
+  height: 34px;
+
+  background: #EF476F;
+  border-radius: 999px;
+  color: #FFFFFF;
+}
+.nav-button {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 9px 14px;
+
+  background: #F2F7FF;
+  border-radius: 999px;
+
+  color: #667085;
+}
+.nav span {
+  width: 27px;
+  height: 15px;
+
+  font-family:'Noto Sans KR';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 15px;
+
+  color: #14213D;
+}
+
+
+/*  */
+.hero {
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+
+  padding: 34px 36px;
+  gap: 36px;
+
+  width: 1280px;
+  height: 306px;
+
+  background: #FFFFFF;
+  border: 1px solid #D8E4F2;
+  box-shadow: 0px 8px 24px rgba(20, 33, 61, 0.08);
+  border-radius: 20px;
+  margin: 20px auto 0;
+}
+.hero-content{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0px;
+  gap: 14px;
+
+  width: 934px;
+  height: 185px;
+}
+.recommend{
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 8px 12px;
+
+
+  width: 58px;
+  height: 14px; 
+
+  background: #FFD166;
+  border-radius: 999px;
+  
+  font-family: 'Noto Sans KR';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 14px;
+
+  color: #14213D;
+}
+.hero-content h1 {
+  width: 329px;
+  height: 46px;
+
+  margin: 0;
+
+  font-family: 'Noto Sans KR';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 34px;
+  line-height: 46px;
+
+  color: #14213D;
+}
+.hero-content p {
+  width: 336px;
+  height: 26px;
+
+  margin: 0;
+
+  font-family: 'Noto Sans KR';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 26px;
+
+  color: #667085;
+}
+.hero-buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 0;
+  gap: 10px;
+
+  width: 174px;
+  height: 41px;
+}
+.primary-button {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 20px;
+  gap: 8px;
+
+  width: 95px;
+  height: 41px;
+
+  background: #EF476F;
+  box-shadow: 0px 8px 0px #B92F51;
+  border-radius: 8px;
+  border: none;
+
+  font-family: 'Noto Sans KR';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 17px;
+
+  color: #FFFFFF;
+}
+.secondary-button {
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 20px;
+  gap: 8px;
+
+  width: 69px;
+  height: 41px;
+  white-space: nowrap;
+  background: #FFFFFF;
+  border: 1px solid #C6D8EE;
+  box-shadow: 0px 8px 24px rgba(20, 33, 61, 0.08);
+  border-radius: 8px;
+
+  font-family: 'Noto Sans KR';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 17px;
+
+  color: #14213D;
+}
+.hero-image {
+  position: relative;
+
+  width: 238px;
+  height: 238px;
+
+  background: #F2F7FF;
+  border-radius: 27.2px;
+}
+.hero-image img {
+  position: absolute;
+
+  width: 204px;
+  height: 204px;
+  left: 17px;
+  top: 17px;
+
+  object-fit: contain;
+}
+
+
+/*  */
+.search {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+
+  width: 760px;
+  height: 44px;
+
+  margin: 20px 110px 0;
+}
+.search input {
+  box-sizing: border-box;
+
+  width: 682px;
+  height: 42px;
+  padding: 11px 14px;
+
+  background: #FFFFFF;
+  border: 1px solid #D8E4F2;
+  border-radius: 8px;
+
+  font-family: 'Noto Sans KR';
+  font-weight: 500;
+  font-size: 13px;
+}
+.search input::placeholder {
+  color: #8AA0B8;
+}
+.search button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 66px;
+  height: 41px;
+  padding: 12px 20px;
+
+  background: #EF476F;
+  box-shadow: 0px 8px 0px #B92F51;
+  border: none;
+  border-radius: 8px;
+
+  font-family: 'Noto Sans KR';
+  font-weight: 700;
+  font-size: 14px;
+  color: #FFFFFF;
+}
+
+.section-title{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0px;
+
+  width: 1280px;
+  height: 26px;
+  margin: 20px 110px 0;
+}
+.section-title h2 {
+  width: 107px;
+  height: 26px;
+
+  margin: 0;
+
+  font-family: 'Noto Sans KR';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 26px;
+
+  color: #14213D;
+}
+.section-title button{
+  width: 47px;
+  height: 14px;
+
+  padding: 0;
+  border: none;
+  background: none;
+
+  font-family: 'Noto Sans KR';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 14px;
+
+  color: #1A5F9F;
+}
+
+
+/*  */
+.pokemon-card {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 18px;
+  gap: 14px;
+
+  width: 260px;
+  height: 336px;
+
+  background: #FFFFFF;
+  border: 1px solid #D8E4F2;
+  box-shadow: 0px 8px 24px rgba(20, 33, 61, 0.08);
+  border-radius: 12px;
+}
+.pokemon-name {
+  font-size: 20px;
+  font-weight: 700;
+}
+.pokemon-grid {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 20px;
+
+  width: 1280px;
+  margin: 20px auto 0;
+}
+.pokemon-image {
+  width: 140px;
+  height: 140px;
+
+  background: #F2F7FF;
+  border-radius: 16px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.pokemon-image img {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+}
+.pokemon-number {
+  margin: 0;
+
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 13px;
+
+  color: #667085;
+}
+.pokemon-name {
+  margin: 0;
+
+  font-family: 'Noto Sans KR';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 22px;
+  text-align: center;
+
+  color: #14213D;
+}
+.pokemon-type {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 12px;
+
+  height: 29px;
+
+  border-radius: 999px;
+
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 13px;
+
+  color: #FFFFFF;
+}
+.pokemon-type.electric {
+  width: 78px;
+  background: #EED535;
+}
+
+.pokemon-type.fire {
+  width: 48px;
+  background: #FD7D24;
+}
+
+.pokemon-type.grass {
+  width: 62px;
+  background: #62B957;
+}
+
+.pokemon-type.water {
+  width: 63px;
+  background: #4A90DA;
+}
+.team-button {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 16px;
+  gap: 8px;
+
+  width: 83px;
+  height: 40px;
+
+  background: #EF476F;
+  box-shadow: 0px 8px 0px #B92F51;
+  border-radius: 8px;
+  border: none;
+
+  font-family: 'Noto Sans KR';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 16px;
+
+  color: #FFFFFF;
+}
