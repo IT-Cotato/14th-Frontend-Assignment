@@ -1,11 +1,10 @@
-import PokemonHeader from "./components/PokemonHeader";
-import PokemonList from "./components/PokemonList";
+import PokedexPage from "./components/PokedexPage";
+// import HomePage from "./components/HomePage"; // 
 
 function App() {
   return (
     <div className="pokedex-shell">
-      <PokemonHeader />
-      <PokemonList />
+      <PokedexPage />
     </div>
   );
 }
