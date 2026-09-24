@@ -1,8 +1,8 @@
-import type { Pokemon } from "../types/pokemon";
-import pikachu from "../assets/pokemon/Pikachu.png";
-import charizard from "../assets/pokemon/Charizard.png";
-import bulbasaur from "../assets/pokemon/Bulbasaur.png";
-import blastoise from "../assets/pokemon/Blastoise.png";
+import type { Pokemon } from "@/types/pokemon";
+import pikachu from "@/assets/pokemon/Pikachu.png";
+import charizard from "@/assets/pokemon/Charizard.png";
+import bulbasaur from "@/assets/pokemon/Bulbasaur.png";
+import blastoise from "@/assets/pokemon/Blastoise.png";
 
 export const pokemons: Pokemon[] = [
   { id: "#0025", name: "피카츄", image: pikachu, type: "electric" },
