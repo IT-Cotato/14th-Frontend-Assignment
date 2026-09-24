@@ -1,29 +1,41 @@
-import pikachuArtwork from '../assets/pikachu.png'
+import dragoniteArtwork from '../assets/dragonite.png'
 
-function PokemonHeader() {
+interface PokemonHeaderProps {
+  onNavigate: (path: string) => void
+}
+
+function PokemonHeader({ onNavigate }: PokemonHeaderProps) {
   return (
     <section className="pokemon-hero" aria-labelledby="pokemon-hero-title">
       <div className="pokemon-hero__copy">
-        <span className="pokemon-hero__eyebrow">오늘의 추천</span>
+        <span className="pokemon-hero__eyebrow">PokéMate</span>
         <h1 className="pokemon-hero__title" id="pokemon-hero-title">
-          포켓몬과 함께하는 하루
+          오늘의 파트너를 만나보세요
         </h1>
         <p className="pokemon-hero__description">
-          좋아하는 포켓몬을 찾고 나만의 팀을 만들어 보세요.
+          포켓몬을 발견하고, 나만의 팀과 함께 새로운 모험을 시작하세요.
         </p>
 
         <div className="pokemon-hero__actions">
-          <a className="pokemon-hero__button pokemon-hero__button--primary" href="#pokedex">
-            도감 보기
-          </a>
-          <a className="pokemon-hero__button pokemon-hero__button--secondary" href="#team">
-            내 팀
-          </a>
+          <button
+            className="pokemon-hero__button pokemon-hero__button--primary"
+            type="button"
+            onClick={() => onNavigate('/pokemon')}
+          >
+            포켓몬 찾기
+          </button>
+          <button
+            className="pokemon-hero__button pokemon-hero__button--yellow"
+            type="button"
+            onClick={() => onNavigate('/my-team')}
+          >
+            내 팀 보기
+          </button>
         </div>
       </div>
 
-      <div className="pokemon-hero__artwork" aria-hidden="true">
-        <img src={pikachuArtwork} alt="" />
+      <div className="pokemon-hero__artwork">
+        <img src={dragoniteArtwork} alt="망나뇽" />
       </div>
     </section>
   )

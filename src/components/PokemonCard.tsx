@@ -1,30 +1,35 @@
-type PokemonCardProps = {
-  artwork: string
-  number: string
-  name: string
-  type: string
-  typeColor: string
+import type { Pokemon } from '../pokemon'
+
+interface PokemonCardProps extends Pokemon {
+  actionLabel?: string
+  onAction?: (id: number) => void
+  onView?: (id: number) => void
 }
 
 function PokemonCard({
-  artwork,
+  id,
   number,
   name,
   type,
-  typeColor,
+  imageUrl,
+  actionLabel = '팀에 추가',
+  onAction,
+  onView,
 }: PokemonCardProps) {
+  const typeClassName = `pokemon-card__type pokemon-card__type--${type.toLowerCase()}`
+
   return (
     <article className="pokemon-card">
-      <div className="pokemon-card__artwork">
-        <img src={artwork} alt={`${name} 일러스트`} />
-      </div>
-      <span className="pokemon-card__number">#{number}</span>
-      <h3 className="pokemon-card__name">{name}</h3>
-      <span className="pokemon-card__type" style={{ backgroundColor: typeColor }}>
-        {type}
-      </span>
-      <button className="pokemon-card__team-button" type="button">
-        팀에 추가
+      <button className="pokemon-card__view" type="button" onClick={() => onView?.(id)}>
+        <span className="pokemon-card__artwork">
+          <img src={imageUrl} alt={name} />
+        </span>
+        <span className="pokemon-card__number">#{number}</span>
+        <strong className="pokemon-card__name">{name}</strong>
+      </button>
+      <span className={typeClassName}>{type}</span>
+      <button className="pokemon-card__team-button" type="button" onClick={() => onAction?.(id)}>
+        {actionLabel}
       </button>
     </article>
   )
