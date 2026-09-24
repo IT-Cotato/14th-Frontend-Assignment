@@ -4,16 +4,18 @@ import charizardImage from '../assets/pokemon/charizard.png'
 import bulbasaurImage from '../assets/pokemon/bulbasaur.png'
 import blastoiseImage from '../assets/pokemon/blastoise.png'
 import PokemonCard from './PokemonCard.tsx'
-import type { PokemonCardProps } from './PokemonCard.tsx'
+import type { Pokemon } from './PokemonCard.tsx'
 
-const sectionTitle = '추천 포켓몬'
 const searchPlaceholder = '이름 또는 번호'
+const emptyTitle = '검색 결과가 없어요'
+const emptyDescription = '다른 이름이나 번호로 검색해 보세요.'
 
-const pokemons: PokemonCardProps[] = [
-  { number: '#0025', name: '피카츄', type: 'ELECTRIC', image: pikachuImage },
-  { number: '#0006', name: '리자몽', type: 'FIRE', image: charizardImage },
-  { number: '#0001', name: '이상해씨', type: 'GRASS', image: bulbasaurImage },
-  { number: '#0009', name: '거북왕', type: 'WATER', image: blastoiseImage },
+/** 화면에 그리는 로컬 예시 데이터. 헤더 배지의 도감 전체 수(151)와는 별개다. */
+const pokemons: Pokemon[] = [
+  { id: 25, name: '피카츄', types: ['ELECTRIC'], imageUrl: pikachuImage },
+  { id: 6, name: '리자몽', types: ['FIRE'], imageUrl: charizardImage },
+  { id: 1, name: '이상해씨', types: ['GRASS'], imageUrl: bulbasaurImage },
+  { id: 9, name: '거북왕', types: ['WATER'], imageUrl: blastoiseImage },
 ]
 
 function PokemonList() {
@@ -41,29 +43,28 @@ function PokemonList() {
         </button>
       </div>
 
-      <section className="recommend" aria-labelledby="recommend-title">
-        <div className="section-header">
-          <h2 id="recommend-title" className="section-header__title">
-            {sectionTitle}
-          </h2>
-          <button type="button" className="text-button">
-            전체 보기
-          </button>
+      {pokemons.length === 0 ? (
+        <div className="empty-state">
+          <span className="empty-state__count" aria-hidden="true">
+            {pokemons.length}
+          </span>
+          <p className="empty-state__title">{emptyTitle}</p>
+          <p className="empty-state__description">{emptyDescription}</p>
         </div>
-
-        <ul className="card-grid">
+      ) : (
+        <ul className="card-grid" aria-label="포켓몬 목록">
           {pokemons.map((pokemon) => (
-            <li key={pokemon.number}>
+            <li key={pokemon.id}>
               <PokemonCard
-                number={pokemon.number}
+                id={pokemon.id}
                 name={pokemon.name}
-                type={pokemon.type}
-                image={pokemon.image}
+                types={pokemon.types}
+                imageUrl={pokemon.imageUrl}
               />
             </li>
           ))}
         </ul>
-      </section>
+      )}
     </main>
   )
 }
