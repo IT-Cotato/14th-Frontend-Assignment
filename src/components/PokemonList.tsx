@@ -34,11 +34,6 @@ function PokemonList() {
 
   return (
     <section className="pokemon-section">
-      <div className="section-title">
-        <h2>추천 포켓몬</h2>
-        <button>전체 보기</button>
-      </div>
-
       <div className="pokemon-grid">
         {pokemonList.map((pokemon) => (
           <PokemonCard

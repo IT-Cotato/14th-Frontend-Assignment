@@ -128,16 +128,10 @@ body {
   flex-direction: row;
   align-items: flex-start;
 
-  padding: 34px 36px;
   gap: 36px;
 
   width: 1280px;
-  height: 306px;
 
-  background: #FFFFFF;
-  border: 1px solid #D8E4F2;
-  box-shadow: 0px 8px 24px rgba(20, 33, 61, 0.08);
-  border-radius: 20px;
   margin: 20px auto 0;
 }
 .hero-content{
@@ -147,95 +141,63 @@ body {
   padding: 0px;
   gap: 14px;
 
-  width: 934px;
-  height: 185px;
+  margin-left: 0;
+  width: 1280px;
+  height: 67px;
   white-space: nowrap;
 }
-.recommend{
+.total {
+  margin: -70px 0 0 auto;
   display: flex;
-  flex-direction: row;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+  width: 93px;
+  height: 30px;
   padding: 8px 12px;
 
-
-  width: 58px;
-  height: 14px; 
+  margin-left: auto;
 
   background: #FFD166;
   border-radius: 999px;
-  
-  font-family: 'Noto Sans KR';
-  font-style: normal;
+
+  font-family: 'Noto Sans KR', sans-serif;
   font-weight: 700;
   font-size: 12px;
   line-height: 14px;
-
   color: #14213D;
+
   white-space: nowrap;
 }
 .hero-content h1 {
-  width: 329px;
-  height: 46px;
+  width: 145px;
+  height: 36px;
 
   margin: 0;
 
   font-family: 'Noto Sans KR';
   font-style: normal;
   font-weight: 700;
-  font-size: 34px;
-  line-height: 46px;
+  font-size: 30px;
+  line-height: 36px;
 
   color: #14213D;
   white-space: nowrap;
 }
 .hero-content p {
-  width: 336px;
-  height: 26px;
+  width: 270px;
+  height: 25px;
 
   margin: 0;
 
   font-family: 'Noto Sans KR';
   font-style: normal;
   font-weight: 400;
-  font-size: 16px;
+  font-size: 15px;
   line-height: 26px;
 
   color: #667085;
-}
-.hero-buttons {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  padding: 0;
-  gap: 10px;
-
-  width: 174px;
-  height: 41px;
-}
-.primary-button {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: 12px 20px;
-  gap: 8px;
-
-  width: 95px;
-  height: 41px;
-  white-space: nowrap;
-
-  background: #EF476F;
-  box-shadow: 0px 8px 0px #B92F51;
-  border-radius: 8px;
-  border: none;
-
-  font-family: 'Noto Sans KR';
-  font-style: normal;
-  font-weight: 700;
-  font-size: 14px;
-  line-height: 17px;
-
-  color: #FFFFFF;
 }
 .secondary-button {
   box-sizing: border-box;
@@ -285,6 +247,20 @@ body {
 
 
 /*  */
+.search-section{
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+
+  gap: 36px;
+
+  width: 1280px;
+
+  margin: 20px auto 0;
+
+}
 .search {
   display: flex;
   flex-direction: row;
@@ -293,27 +269,33 @@ body {
 
   width: 760px;
   height: 44px;
-
-  margin: 20px 110px 0;
 }
+
 .search input {
   box-sizing: border-box;
 
   width: 682px;
   height: 42px;
+
   padding: 11px 14px;
 
-  background: #FFFFFF;
-  border: 1px solid #D8E4F2;
+  background: #ffffff;
+  border: 1px solid #d8e4f2;
   border-radius: 8px;
 
-  font-family: 'Noto Sans KR';
-  font-weight: 500;
+  font-family: 'Noto Sans KR', sans-serif;
   font-size: 13px;
+  font-weight: 500;
+  line-height: 16px;
+  color: #8aa0b8;
+
+  flex: 1;
 }
+
 .search input::placeholder {
-  color: #8AA0B8;
+  color: #8aa0b8;
 }
+
 .search button {
   display: flex;
   justify-content: center;
@@ -321,60 +303,24 @@ body {
 
   width: 66px;
   height: 41px;
+
   padding: 12px 20px;
 
-  background: #EF476F;
-  box-shadow: 0px 8px 0px #B92F51;
+  background: #ef476f;
   border: none;
   border-radius: 8px;
 
-  font-family: 'Noto Sans KR';
-  font-weight: 700;
+  box-shadow: 0 8px 0 #b92f51;
+
+  font-family: 'Noto Sans KR', sans-serif;
   font-size: 14px;
-  color: #FFFFFF;
-}
-
-.section-title{
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0px;
-
-  width: 1280px;
-  height: 26px;
-  margin: 20px 110px 0;
-}
-.section-title h2 {
-  width: 107px;
-  height: 26px;
-
-  margin: 0;
-
-  font-family: 'Noto Sans KR';
-  font-style: normal;
   font-weight: 700;
-  font-size: 22px;
-  line-height: 26px;
+  line-height: 17px;
+  color: #ffffff;
 
-  color: #14213D;
+  cursor: pointer;
 }
-.section-title button{
-  width: 47px;
-  height: 14px;
 
-  padding: 0;
-  border: none;
-  background: none;
-
-  font-family: 'Noto Sans KR';
-  font-style: normal;
-  font-weight: 700;
-  font-size: 12px;
-  line-height: 14px;
-
-  color: #1A5F9F;
-}
 
 
 /*  */
