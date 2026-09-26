@@ -7,8 +7,8 @@ function PokemonHeader() {
       </div>
 
       <nav className="nav">
-        <button className="nav-active">홈</button>
-        <button className="nav-button">도감</button>
+        <button className="nav-button">홈</button>
+        <button className="nav-active">도감</button>
         <button className="nav-button">내 팀</button>
         <span>0 / 6</span>
       </nav>

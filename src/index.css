@@ -87,12 +87,12 @@ body {
   align-items: flex-start;
   padding: 9px 14px;
 
-  width: 40px;
   height: 34px;
 
   background: #EF476F;
   border-radius: 999px;
   color: #FFFFFF;
+  white-space: nowrap;
 }
 .nav-button {
   display: flex;
@@ -104,6 +104,7 @@ body {
   border-radius: 999px;
 
   color: #667085;
+  white-space: nowrap;
 }
 .nav span {
   width: 27px;
@@ -148,6 +149,7 @@ body {
 
   width: 934px;
   height: 185px;
+  white-space: nowrap;
 }
 .recommend{
   display: flex;
@@ -169,6 +171,7 @@ body {
   line-height: 14px;
 
   color: #14213D;
+  white-space: nowrap;
 }
 .hero-content h1 {
   width: 329px;
@@ -183,6 +186,7 @@ body {
   line-height: 46px;
 
   color: #14213D;
+  white-space: nowrap;
 }
 .hero-content p {
   width: 336px;
@@ -218,6 +222,7 @@ body {
 
   width: 95px;
   height: 41px;
+  white-space: nowrap;
 
   background: #EF476F;
   box-shadow: 0px 8px 0px #B92F51;
@@ -494,6 +499,7 @@ body {
   box-shadow: 0px 8px 0px #B92F51;
   border-radius: 8px;
   border: none;
+  white-space: nowrap;
 
   font-family: 'Noto Sans KR';
   font-style: normal;
