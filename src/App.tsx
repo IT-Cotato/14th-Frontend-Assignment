@@ -33,11 +33,12 @@ function App() {
             <img src={Pikachu} alt="피카츄" />
           </div>
         </section>
-
-        <div className="search">
-          <input placeholder="이름 또는 번호" />
-          <button>검색</button>
-        </div>
+        <section className="sectionTitle-section">
+          <div className="search">
+            <input placeholder="이름 또는 번호" />
+            <button>검색</button>
+          </div>
+        </section>
 
         <PokemonList />
       </main>
