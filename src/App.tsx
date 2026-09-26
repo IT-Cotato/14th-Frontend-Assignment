@@ -3,7 +3,7 @@ import PokemonList from "./PokemonList";
 
 function App() {
     return (
-        <div className="flex flex-col gap-6 px-[80px] py-[36px] gap-[24px] bg-[var(--color-bg-canvas)]">
+        <div className="flex flex-col gap-6 px-[80px] py-[36px] gap-[24px] bg-canvas">
             <PokemonHeader />
 
             <search className="flex gap-3 max-w-[760px]">
@@ -16,12 +16,12 @@ function App() {
                     <input
                         type="text"
                         placeholder="이름 또는 번호"
-                        className="flex w-full h-[42px] pl-[38px] pr-[14px] py-[11px] items-center gap-[10px] rounded-[var(--radius-2)] border border-[var(--color-neutral-line)] bg-[var(--color-neutral-white)]
-                        placeholder:text-[var(--color-neutral-muted)] placeholder:text-[13px] placeholder:h-max"
+                        className="flex w-full h-[42px] pl-[38px] pr-[14px] py-[11px] items-center gap-[10px] rounded-2 border border-neutral-line bg-neutral-white
+                        placeholder:text--neutral-muted placeholder:text-[13px] placeholder:h-max"
                     />
                 </div>
                 <button
-                    className="text-label rounded-lg py-[var(--space-3)] px-[var(--space-5)] bg-[var(--color-brand-red)] shadow-[var(--elevation-hard-red)] text-[var(--color-text-inverse)]"
+                    className="text-label rounded-lg py-3 px-5 bg-brand-red shadow-hard-red text-text-inverse"
                     lang="ko"
                 >
                     검색

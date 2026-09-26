@@ -9,7 +9,7 @@ export default function PokemonList() {
                     추천 포켓몬
                 </h2>
                 <button
-                    className="text-[12px] font-bold text-[var(--color-brand-blue)]"
+                    className="text-[12px] font-bold text-brand-blue"
                     lang="ko"
                 >
                     전체 보기
