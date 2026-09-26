@@ -13,6 +13,11 @@ body,
   margin: 0;
 }
 
+html {
+  scrollbar-gutter: stable;
+  background: var(--bg);
+}
+
 body {
   min-height: 100vh;
 }
