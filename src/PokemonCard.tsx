@@ -33,7 +33,7 @@ export default function PokemonCard({
     };
 
     return (
-        <div className="flex flex-col gap-[14px] p-[18px] w-[260px] h-max items-center border border-[var(--color-neutral-line)] rounded-lg shadow-[var(--elevation-card)] bg-white">
+        <div className="flex flex-col gap-[14px] p-[18px] w-full h-max items-center border border-[var(--color-neutral-line)] rounded-lg shadow-[var(--elevation-card)] bg-white">
             <div className="p-[10px] rounded-lg bg--neutral-surface-strong">
                 <img src={imageSrc} alt={name} />
             </div>

@@ -1,33 +1,26 @@
+import EmptyState from "./components/EmptyState";
 import { pokemons } from "./data/pokemons";
 import PokemonCard from "./PokemonCard";
 
 export default function PokemonList() {
     return (
-        <div className="flex flex-col gap-6">
-            <div className="flex justify-between items-center self-stretch">
-                <h2 className="text-[22px] font-bold" lang="ko">
-                    추천 포켓몬
-                </h2>
-                <button
-                    className="text-[12px] font-bold text-brand-blue"
-                    lang="ko"
-                >
-                    전체 보기
-                </button>
-            </div>
-
-            <ul className="flex gap-5">
-                {pokemons.map((value, index) => (
-                    <li key={index}>
-                        <PokemonCard
-                            imageSrc={value.imageSrc}
-                            number={value.number}
-                            name={value.name}
-                            type={value.type}
-                        ></PokemonCard>
-                    </li>
-                ))}
-            </ul>
-        </div>
+        <>
+            {pokemons.length === 0 ? (
+                <EmptyState />
+            ) : (
+                <ul className="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-5">
+                    {pokemons.map((value) => (
+                        <li key={value.id}>
+                            <PokemonCard
+                                imageSrc={value.imageSrc}
+                                number={value.id}
+                                name={value.name}
+                                type={value.type}
+                            ></PokemonCard>
+                        </li>
+                    ))}
+                </ul>
+            )}
+        </>
     );
 }
