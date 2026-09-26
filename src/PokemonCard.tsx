@@ -35,7 +35,7 @@ export default function PokemonCard({
     return (
         <div className="flex flex-col gap-[14px] p-[18px] w-[260px] h-max items-center border border-[var(--color-neutral-line)] rounded-lg shadow-[var(--elevation-card)] bg-white">
             <div className="p-[10px] rounded-lg bg-[var(--color-neutral-surface-strong)]">
-                <img src={imageSrc} />
+                <img src={imageSrc} alt={name} />
             </div>
 
             <caption className="font-semibold text-[11px] text-[var(--color-text-secondary)]">

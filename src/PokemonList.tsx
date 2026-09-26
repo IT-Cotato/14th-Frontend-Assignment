@@ -1,3 +1,4 @@
+import { pokemons } from "./data/pokemons";
 import PokemonCard from "./PokemonCard";
 
 export default function PokemonList() {
@@ -15,32 +16,18 @@ export default function PokemonList() {
                 </button>
             </div>
 
-            <div className="flex gap-5">
-                <PokemonCard
-                    imageSrc="/0025.svg"
-                    number="#0025"
-                    name="피카츄"
-                    type="ELECTRIC"
-                />
-                <PokemonCard
-                    imageSrc="/0006.svg"
-                    number="#0006"
-                    name="리자몽"
-                    type="FIRE"
-                />
-                <PokemonCard
-                    imageSrc="/0001.svg"
-                    number="#0001"
-                    name="이상해씨"
-                    type="GRASS"
-                />
-                <PokemonCard
-                    imageSrc="/0009.svg"
-                    number="#0009"
-                    name="거북왕"
-                    type="WATER"
-                />
-            </div>
+            <ul className="flex gap-5">
+                {pokemons.map((value, index) => (
+                    <li key={index}>
+                        <PokemonCard
+                            imageSrc={value.imageSrc}
+                            number={value.number}
+                            name={value.name}
+                            type={value.type}
+                        ></PokemonCard>
+                    </li>
+                ))}
+            </ul>
         </div>
     );
 }
