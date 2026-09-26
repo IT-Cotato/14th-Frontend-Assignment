@@ -48,6 +48,12 @@ button {
   --radius-full: 999px;
 }
 
+.home-box,
+.dict-box,
+.myTeam-box {
+  cursor: pointer;
+}
+
 .page-container {
   display: flex;
   flex-direction: column;
@@ -55,6 +61,7 @@ button {
   gap: 24px;
   max-width: 1440px;
   width: 100%;
+  min-height: 100vh;
   padding: 36px 80px;
   background: var(--bg);
 }
@@ -118,36 +125,21 @@ button {
   font-weight: 800;
   line-height: normal;
 }
-.home {
-  color: var(--color-text-inverse);
-  font-family: "Noto Sans KR";
-  font-size: 13px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
-}
-.home-box {
-  display: flex;
-  padding: 9px 14px;
-  align-items: flex-start;
-  border-radius: 999px;
-  background: var(--red);
-}
-.dict {
-  color: var(--muted);
-  font-family: "Noto Sans KR";
-  font-size: 13px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
-}
-.dict-box {
+
+/*메뉴 공통*/
+
+.home-box,
+.dict-box,
+.myTeam-box {
   display: flex;
   padding: 9px 14px;
   align-items: flex-start;
   border-radius: 999px;
   background: var(--panel-strong);
 }
+
+.home,
+.dict,
 .myTeam {
   color: var(--muted);
   font-family: "Noto Sans KR";
@@ -156,19 +148,27 @@ button {
   font-weight: 700;
   line-height: normal;
 }
-.myTeam-box {
-  display: flex;
-  padding: var(--space-3) var(--space-5);
-  justify-content: center;
-  align-items: center;
-  gap: var(--space-2);
-  border-radius: var(--radius-md);
-  border: var(--stroke-1) solid var(--color-border-strong);
-  background: var(--panel);
 
-  /* Elevation/Card */
-  box-shadow: 0 8px 24px 0 rgba(20, 33, 61, 0.08);
+/* 현재 선택된 메뉴 */
+
+.home-box.active,
+.dict-box.active,
+.myTeam-box.active {
+  display: flex;
+  padding: 9px 14px;
+  align-items: flex-start;
+  border-radius: 999px;
+  background: var(--red);
 }
+
+/* active 메뉴의 글자는 흰색 */
+
+.home-box.active .home,
+.dict-box.active .dict,
+.myTeam-box.active .myTeam {
+  color: var(--color-text-inverse);
+}
+
 .num {
   color: var(--ink);
   font-family: Inter;
@@ -359,11 +359,58 @@ box-shadow: 0 8px 24px 0 rgba(20, 33, 61, 0.08);
   font-family: "Noto Sans KR";
   font-size: 14px;
   font-style: normal;
-  font-weight: 700;
+  font-weight: 760;
   line-height: normal;
 }
 
-/*PokemonList*/ 
+.header2-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    align-self: stretch;
+}
+
+.title-box {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+}
+
+.titleName {
+    color: var(--ink);
+    font-family: "Noto Sans KR";
+    font-size: 30px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+.disc {
+    color: var(--muted);
+    font-family: "Noto Sans KR";
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 25px; /* 166.667% */
+}
+
+.count-box {
+    display: flex;
+    padding: 8px 12px;
+    align-items: flex-start;
+    border-radius: 999px;
+    background: var(--yellow);
+}
+
+.count {
+    color: var(--ink);
+    font-family: "Noto Sans KR";
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
 
 .sectionHeader {
   display: flex;        
@@ -391,128 +438,53 @@ box-shadow: 0 8px 24px 0 rgba(20, 33, 61, 0.08);
   line-height: normal;
 }
 
-.pokeCard-box {
-  display: flex;
-  align-items: flex-start;
-  align-content: flex-start;
-  gap: 20px;
-  align-self: stretch;
-  flex-wrap: wrap;
-}
+/*모바일 대응*/
 
-.card-box {
-  display: flex;
-  width: 260px;
-  padding: 18px;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
-  border-radius: var(--radius-lg);
-  border: var(--stroke-1) solid var(--line);
-  background: var(--panel);
+@media (max-width: 767px) {
+    
+    .page-container {
+        padding: 20px 24px 24px 24px;
+    }
 
-  /* Elevation/Card */
-  box-shadow: 0 8px 24px 0 rgba(20, 33, 61, 0.08);
-}
+    .header-box {
+        padding: 14px 16px;
+        width: 100%;
+    }
+    .pokemon-header,
+    .hero-box, 
+    .sectionHeader {
+        width: 100%;
+    }
+    .search-container {
+        width: 326px;
+    }
 
-.img-box {
-  display: flex;
-  width: 140px;
-  height: 140px;
-  padding: 10px;
-  justify-content: center;
-  align-items: center;
-  border-radius: 16px;
-  background: var(--panel-strong);
-}
+    .home-box {
+        display: none;
+    }
 
-.chu-name, .dragon-name, .turtle-name, .turtleKing-name {
-  color: var(--ink);
-  text-align: center;
-  font-family: "Noto Sans KR";
-  font-size: 18px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
-}
-.chu-num, .dragon-num, .turtle-num, .turtleKing-num{
-  color: var(--muted);
-  font-family: Inter;
-  font-size: 11px;
-  font-style: normal;
-  font-weight: 600;
-  line-height: normal;
-}
+    .dict-box,
+    .myTeam-box {
+        height: 31px;
+        padding: 9px 10px;
+    }
 
-.attr-box-1 {
-  display: flex;
-  padding: var(--space-2) var(--space-3);
-  justify-content: center;
-  align-items: center;
-  border-radius: var(--radius-full);
-  background: var(--color-type-electric);
-}
+    .dict, 
+    .myTeam,
+    .pm {
+        font-size: 11px;
+    }
 
-.attr-box-2 {
-  display: flex;
-  padding: var(--space-2) var(--space-3);
-  justify-content: center;
-  align-items: center;
-  border-radius: var(--radius-full);
-  background: var(--color-type-fire);
-}
+    .pokeMate {
+        font-size: 17px;
+    }
 
-.attr-box-3 {
-  display: flex;
-  padding: var(--space-2) var(--space-3);
-  justify-content: center;
-  align-items: center;
-  border-radius: var(--radius-full);
-  background: var(--color-type-grass);
-}
+    .titleName {
+        font-size: 23px;
+    }
 
-.attr-box-4 {
-  display: flex;
-  padding: var(--space-2) var(--space-3);
-  justify-content: center;
-  align-items: center;
-  border-radius: var(--radius-full);
-  background: var(--color-type-water);
-}
+    .disc {
+        font-size: 13px;
+    }
 
-.attr1, .attr2, .attr3, .attr4 {
-  color: var(--color-text-inverse);
-  font-family: Inter;
-  font-size: 11px;
-  font-style: normal;
-  font-weight: 600;
-  line-height: normal;
-}
-
-.button-1-box, .button-2-box, .button-3-box, .button-4-box {
-  display: flex;
-  padding: var(--space-3) var(--space-4);
-  justify-content: center;
-  align-items: center;
-  gap: var(--space-2);
-  border-radius: var(--radius-md);
-  background: var(--red);
-
-  /* Elevation/Hard Red */
-  box-shadow: 0 8px 0 0 #B92F51;
-}
-
-.button-1, .button-2, .button-3, .button-4 {
-  color: var(--color-text-inverse);
-  font-family: "Noto Sans KR";
-  font-size: 13px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
-}
-
-.chu2, .dragon, .turtle, .turtleKing {
-  width: 120px;
-  height: 120px;
-  flex-shrink: 0;
 }

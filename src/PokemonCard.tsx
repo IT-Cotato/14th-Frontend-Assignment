@@ -2,57 +2,50 @@ type PokemonCardProps = {
   id: number;
   name: string;
   image: string;
-  type: string;
-  imgClassName: string;
-  numClassName: string;
-  nameClassName: string;
-  attrBoxClassName: string;
-  attrClassName: string;
-  buttonBoxClassName: string;
-  buttonClassName: string;
+  types: string[];
 };
 
 function PokemonCard({
   id,
   name,
   image,
-  type,
-  imgClassName,
-  numClassName,
-  nameClassName,
-  attrBoxClassName,
-  attrClassName,
-  buttonBoxClassName,
-  buttonClassName,
+  types,
 }: PokemonCardProps) {
   return (
     <div className="card-box">
 
       <div className="img-box">
         <img
-          className={`pokemon-image ${imgClassName}`}
+          className="pokemon-image"
           src={image}
           alt={name}
         />
       </div>
 
-      <div className={numClassName}>
+      <div className="pokemonNum">
         #{String(id).padStart(4, '0')}
         {/* 문자열의 길이가 4가 될 때까지 앞에 0을 붙여달라는 뜻 */}
       </div>
 
-      <div className={nameClassName}>
+      <div className="pokemonName">
         {name}
       </div>
 
-      <div className={attrBoxClassName}>
-        <div className={attrClassName}>
-          {type}
+      <div className="attr-box">
+        <div className="type-box">
+            {types.map((type) => (
+                <div
+                    key={type}
+                    className={`type-chip ${type.toLowerCase()}`}
+                >
+                    {type}
+                </div>
+            ))}
         </div>
       </div>
 
-      <button className={buttonBoxClassName}>
-        <div className={buttonClassName}>
+      <button className="button-box">
+        <div className="button-chip">
           팀에 추가
         </div>
       </button>
