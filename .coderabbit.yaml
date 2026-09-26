@@ -3,3 +3,4 @@ reviews:
         base_branches:
             - "develop"
             - "Limlim0208"
+language: "ko-KR"
