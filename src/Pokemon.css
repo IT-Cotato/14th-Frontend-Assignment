@@ -233,6 +233,12 @@ button {
   line-height: normal;
 }
 
+/* 비활성화된 추가 버튼 */
+.button-box:disabled {
+  cursor: not-allowed;   /* 마우스를 올리면 금지 표시 */
+  /* 배경, 글자색, 그림자 등은 Figma Disabled 값으로 */
+}
+
 /*모바일 대응*/
 
 @media (max-width: 767px) {

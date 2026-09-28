@@ -438,6 +438,106 @@ box-shadow: 0 8px 24px 0 rgba(20, 33, 61, 0.08);
   line-height: normal;
 }
 
+.myTeam-team-box {
+  display: flex;
+  justify-content: space-between; /* 가로축 정렬: ①은 왼쪽 끝, ③은 오른쪽 끝, ②는 남는 공간을 균등하게 나눈 위치 */
+  align-items: center; /* 세로축 정렬: ①②③의 세로 가운데를 맞춤 */
+  align-self: stretch;
+}
+
+.myTeam-title-box {
+  display: flex;
+  flex-direction: column; /* 안의 "나의 팀"과 설명을 세로로 쌓음 */
+  align-items: flex-start; /* 둘 다 왼쪽 정렬 */
+  gap: 6px;
+}
+
+.myTeam-title {
+  color: var(--ink);
+  font-family: "Noto Sans KR";
+  font-size: 30px;
+  font-style: normal; /* 기울임 없음 */
+  font-weight: 700;
+  line-height: normal;
+}
+
+.myTeam-dict {
+  color: var(--muted);
+  font-family: "Noto Sans KR";
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 25px; /* 줄 높이 고정 → 줄 간격이 일정하게 보임 */
+}
+
+.myTeam-num-box {
+  display: flex;
+  padding: 8px 12px;
+  align-items: flex-start;
+  border-radius: 999px;
+  background: var(--yellow);
+}
+
+.myTeam-num {
+  color: var(--ink);
+  font-family: "Noto Sans KR";
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+
+.myTeam-button-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.myTeam-store-box {
+  display: flex;
+  padding: var(--space-3) var(--space-5);
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-2);
+  border-radius: var(--radius-md);
+  background: var(--red);
+
+  /* Elevation/Hard Red */
+  box-shadow: 0 4px 0 0 #B92F51;
+}
+
+.myTeam-store {
+  color: var(--color-text-inverse);
+  font-family: "Noto Sans KR";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+
+.myTeam-cancle-box {
+  display: flex;
+  padding: var(--space-3) var(--space-5);
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-2);
+  border-radius: var(--radius-md);
+  border: var(--stroke-1) solid var(--color-border-strong);
+  background: var(--panel);
+
+  /* Elevation/Card */
+  box-shadow: 0 8px 24px 0 rgba(20, 33, 61, 0.08);
+}
+
+.myTeam-cancle {
+  color: var(--ink);
+  font-family: "Noto Sans KR";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+
 /*모바일 대응*/
 
 @media (max-width: 767px) {
@@ -463,10 +563,24 @@ box-shadow: 0 8px 24px 0 rgba(20, 33, 61, 0.08);
         display: none;
     }
 
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
     .dict-box,
     .myTeam-box {
         height: 31px;
-        padding: 9px 10px;
+        padding: 0px 10px;
+        align-items: center;
+    }
+
+    .dict-box.active,
+    .myTeam-box.active {
+      height: 31px;
+      padding: 0px 10px;
+      align-items: center;
     }
 
     .dict, 
@@ -487,4 +601,47 @@ box-shadow: 0 8px 24px 0 rgba(20, 33, 61, 0.08);
         font-size: 13px;
     }
 
+    .myTeam-team-box {
+        flex-direction: row;       /* column → row 로 복구 */
+        flex-wrap: wrap;           /* 한 줄에 안 들어가면 줄바꿈 */
+        justify-content: flex-end; /* 둘째 줄(3/6 + 팀 저장)을 오른쪽으로 */
+        align-items: center;       /* 3/6 배지와 버튼 세로 가운데 맞춤 */
+        row-gap: 12px;             /* 제목 줄과 버튼 줄 사이 간격 */
+        column-gap: 8px;           /* 3/6 배지와 버튼 사이 간격 */
+    }
+
+    .myTeam-title-box {
+        flex-basis: 100%;/* flex-basis = 주축 방향으로의 기본 크기.
+                            주축이 가로이므로 "가로 폭 100%"를 차지하겠다는 뜻
+                            → 첫 줄을 제목 혼자 다 써버리니 ②③은 들어갈 자리가 없어 둘째 줄로 밀려남 */
+    }
+
+    .myTeam-title {
+        font-size: 23px;
+    }
+
+    .myTeam-dict {
+        font-size: 13px;
+        line-height: 21px; /* 161.538% */
+    }
+
+    .myTeam-button-box {
+        width: auto;
+        height: auto;
+        align-items: center; /* 상자 안 버튼을 세로 가운데로 */
+    }
+    .myTeam-store {
+        font-size: 13px;
+    }
+
+    .myTeam-cancle-box, .myTeam-cancle {
+        display: none;
+    }
+
+        .myTeam-store-box {
+        padding: var(--space-3) var(--space-4);
+    }
+    .myTeam-store {
+        font-size: 13px;
+    }
 }

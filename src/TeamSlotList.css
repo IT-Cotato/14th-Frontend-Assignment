@@ -1,0 +1,415 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  /* width/height에 padding과 border를 포함시켜서 계산하도록 변경.
+     이렇게 하면 Figma에서 지정한 width 값 그대로가 최종 렌더링 크기가 됨. */
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box; /* 아까 추가하신 것도 여기 합쳐서 한 번에 관리 */
+}
+
+button {
+  border: none;
+  background: none;
+  outline: none;
+  font: inherit;      /* 버튼도 기본적으로 부모 폰트를 상속받게 함 */
+  cursor: pointer;
+}
+
+:root {
+  --ink: #14213D;               /* 진한 텍스트 (로고, 활성 상태) */
+  --muted: #667085;             /* 흐린 텍스트 (비활성 메뉴) */
+  --red: #EF476F;               /* PM 배지, 홈 버튼 배경 */
+  --panel-strong: #F2F7FF;      /* 도감/내 팀 필 배경 */
+  --panel: #FFFFFF;
+  --line: #D8E4F2;
+  --yellow: #FFD166;
+  --blue: #2A75BB;
+   --bg: #F7FBFF;
+  --color-text-inverse: #FFFFFF; /* 어두운 배경 위 흰 텍스트 */
+  --color-text-placeholder: #8AA0B8;
+  --color-text-brand: #1A5A9F;
+  --color-border-strong: #C6D8EE;
+  --color-type-fire: #FD7D24;
+  --color-type-electric: #EED535;
+  --color-type-grass: #62B957;
+  --color-type-water: #4A90DA;
+  --page-padding-x: 80px;
+  --page-padding-top: 36px;
+  --section-gap: 24px;
+  --stroke-1: 1px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --radius-xl: 16px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 999px;
+}
+
+.teamSlot-main-box {
+    display: flex;
+    align-items: flex-start;
+    align-content: flex-start;
+    gap: 16px 20px;
+    align-self: stretch;
+    flex-wrap: wrap;
+}
+
+.teamSlot-box {
+    display: flex;
+    width: 560px;
+    height: 88px;
+    padding: 12px 14px;
+    align-items: center;
+    gap: 12px;
+    border-radius: var(--radius-lg);
+    border: var(--stroke-1) solid var(--line);
+    background: var(--panel);
+    box-shadow: 0 8px 24px 0 rgba(20, 33, 61, 0.08);
+}
+
+.teamSlot-img-box {
+    display: flex;
+    width: 64px;
+    height: 64px;
+    padding: 4.571px;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    border-radius: 7.314px;
+    background: var(--panel-strong);
+}
+
+.teamSlot-img {
+    width: 54.857px;
+    height: 54.857px;
+    flex-shrink: 0;
+    object-fit: contain;   /* 비율 유지하면서 칸 안에 맞춤 */
+}
+
+.teamSlot-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+    flex: 1 0 0;
+}
+
+.teamSlot-name, .teamSlot-name-empty {
+    color: var(--ink);
+    font-family: "Noto Sans KR";
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+.teamSlot-desc, .teamSlot-desc-empty {
+    color: var(--muted);
+    font-family: "Noto Sans KR";
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.teamSlot-button-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.teamSlot-edit-box {
+    display: flex;
+    padding: 11px var(--space-5);
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-2);    
+    border-radius: var(--radius-md);
+    border: var(--stroke-1) solid var(--color-border-strong);
+    background: var(--panel);
+
+    /* Elevation/Card */
+    box-shadow: 0 8px 24px 0 rgba(20, 33, 61, 0.08);
+}
+
+.teamSlot-edit {
+    color: var(--ink);
+    font-family: "Noto Sans KR";
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+.teamSlot-delete-box {
+    display: flex;
+    padding: 11px var(--space-5);
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-2);
+    border-radius: var(--radius-md);
+    background: var(--red);
+
+    /* Elevation/Hard Red */
+    box-shadow: 0 4px 0 0 #B92F51;
+}
+
+.teamSlot-delete {
+    color: var(--color-text-inverse);
+    font-family: "Noto Sans KR";
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+.teamSlot-box-empty{
+    display: flex;
+    width: 560px;
+    height: 88px;
+    padding: 12px 14px;
+    align-items: center;
+    gap: 12px;
+    border-radius: var(--radius-lg);
+    border: var(--stroke-1) solid var(--line);
+    background: var(--panel);
+
+    /* Elevation/Card */
+    box-shadow: 0 8px 24px 0 rgba(20, 33, 61, 0.08);
+}
+
+.teamSlot-logo-box {
+    display: flex;
+    width: 100px;
+    padding: 8px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    background: var(--panel-strong);
+}
+
+.teamSlot-logo {
+    width: 16px;
+    height: 2px;
+    border-radius: 1px;
+    background: var(--blue);
+}
+
+.editPanel-box {
+    display: flex;
+    width: 640px;
+    padding: 24px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--line);
+    background: var(--panel);
+}
+
+.editPanel-title {
+    width: 560px;
+    color: var(--ink);
+
+    /* Korean/Heading 2 */
+    font-family: "Noto Sans KR";
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 34px; /* 141.667% */
+    letter-spacing: -0.3px;
+}
+
+.editPanel-slot {
+    width: 560px;
+    color: var(--muted);
+
+    /* Korean/Caption */
+    font-family: "Noto Sans KR";
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 19px; /* 158.333% */
+    letter-spacing: 0.2px;
+}
+
+.editPanel-label {
+    width: 560px;
+    color: var(--ink);
+
+    /* Korean/Label */
+    font-family: "Noto Sans KR";
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 22px; /* 157.143% */
+    letter-spacing: 0.1px;
+}
+
+.editPanel-input-box {
+    display: flex;
+    width: 560px;
+    height: 44px;
+    padding: 0 14px;
+    align-items: center;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--line);
+    background: var(--panel);
+}
+
+.editPanel-input {
+    width: 520px;
+    flex-shrink: 0;
+    color: var(--ink);
+
+    /* Korean/Body */
+    font-family: "Noto Sans KR";
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 26px; /* 162.5% */
+}
+
+.editPanel-label {
+    width: 560px;
+    color: var(--ink);
+
+    /* Korean/Label */
+    font-family: "Noto Sans KR";
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 22px; /* 157.143% */
+    letter-spacing: 0.1px;
+}
+
+.editPanel-role-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.editPanel-role {
+    display: flex;
+    padding: 10px 16px;
+    align-items: flex-start;
+    border-radius: var(--radius-full);
+    background: var(--panel-strong);
+    font-family: "Noto Sans KR";
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 22px; /* 157.143% */
+    letter-spacing: 0.1px;
+}
+
+.editPanel-role.active {
+    background: var(--blue);
+    color: var(--color-text-inverse);
+}
+
+.editPanel-role.active {
+    display: flex;
+    padding: 10px 16px;
+    align-items: flex-start;
+}
+
+.editPanel-button-box {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+    gap: 8px;
+    align-self: stretch;
+}
+
+.editPanel-cancel {
+    display: flex;
+    padding: var(--space-3) var(--space-5);
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-2);
+    border-radius: var(--radius-md);
+    border: var(--stroke-1) solid var(--color-border-strong);
+    background: var(--panel);
+
+    /* Elevation/Card */
+    box-shadow: 0 8px 24px 0 rgba(20, 33, 61, 0.08);
+
+    color: var(--ink);
+    font-family: "Noto Sans KR";
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+.editPanel-save {
+    display: flex;
+    padding: var(--space-3) var(--space-5);
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-2);
+    border-radius: var(--radius-md);
+    background: var(--red);
+
+    /* Elevation/Hard Red */
+    box-shadow: 0 4px 0 0 #B92F51;
+    color: var(--color-text-inverse);
+    font-family: "Noto Sans KR";
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+/*모바일 대응*/
+
+@media (max-width: 767px) {
+
+    .teamSlot-edit-box,
+    .teamSlot-delete-box,
+    .editPanel-cancel,
+    .editPanel-save {
+        padding: 10px var(--space-4);
+    }
+
+    .editPanel-box {
+        height: 100%;
+        width: 100%;
+        padding: 14px;
+        gap: 5px;
+    }
+
+    .editPanel-title {
+        font-size: 17px;
+    }
+
+    .editPanel-slot {
+        font-size: 10px;
+    }
+
+    .editPanel-label,
+    .editPanel-cancel,
+    .editPanel-save {
+        font-size: 12px;
+    }
+
+    .editPanel-input-box, .editPanel-input {
+        width: 100%;
+    }
+
+    .editPanel-input {
+        font-size: 13px;
+    }
+
+    .editPanel-role.active, .editPanel-role {
+        padding: 8px 14px;
+        font-size: 12px;
+    }
+}
