@@ -69,3 +69,14 @@ button {
 .app > * + * {
   margin-top: 24px;
 }
+
+@media (max-width: 767px) {
+  .app {
+    width: auto;
+    padding: 20px 24px 40px;
+  }
+
+  .app > * + * {
+    margin-top: 16px;
+  }
+}

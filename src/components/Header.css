@@ -41,7 +41,7 @@
 
 .header__nav-item {
   height: 34px;
-  padding: 0 13px;
+  padding: 0 14px;
   display: inline-flex;
   align-items: center;
   background-color: var(--color-artwork-bg);
@@ -58,7 +58,29 @@
 }
 
 .header__count {
-  margin-left: 4px;
   font-size: 12px;
   font-weight: 700;
+}
+@media (max-width: 767px) {
+  .header {
+    padding: 0 16px;
+  }
+
+  .header__title {
+    font-size: 17px;
+  }
+
+  .header__nav {
+    gap: 4px;
+  }
+
+  .header__nav-item {
+    height: 32px;
+    padding: 0 10px;
+    font-size: 11px;
+  }
+
+  .header__nav-item--pc-only {
+    display: none;
+  }
 }
