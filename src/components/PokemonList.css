@@ -15,6 +15,8 @@
   background: none;
   border: none;
   color: var(--color-link);
+  font-size: 12px;
+  font-weight: 700;
 }
 
 .pokemon-list__grid {
