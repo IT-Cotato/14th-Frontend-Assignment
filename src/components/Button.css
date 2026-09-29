@@ -28,3 +28,18 @@
   padding: 0 15px;
   font-size: 13px;
 }
+
+.button:disabled {
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.button--primary:disabled {
+  background-color: #f0a7be;
+}
+
+.button--secondary:disabled {
+  background-color: #f7faff;
+  border-color: #dee9f7;
+  color: #8d96a7;
+}

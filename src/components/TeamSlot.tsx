@@ -1,8 +1,12 @@
-import type { Pokemon, PokemonType } from '../types/pokemon';
+import Button from './Button';
+import type { PokemonType, TeamMember } from '../types/pokemon';
 import './TeamSlot.css';
 
 interface TeamSlotProps {
-  pokemon?: Pokemon;
+  member?: TeamMember;
+  isEditing?: boolean;
+  onEdit?: () => void;
+  onDelete?: () => void;
 }
 
 const TYPE_LABELS: Record<PokemonType, string> = {
@@ -26,8 +30,8 @@ const TYPE_LABELS: Record<PokemonType, string> = {
   FAIRY: '페어리',
 };
 
-function TeamSlot({ pokemon }: TeamSlotProps) {
-  if (!pokemon) {
+function TeamSlot({ member, isEditing = false, onEdit, onDelete }: TeamSlotProps) {
+  if (!member) {
     return (
       <div className="team-slot team-slot--empty">
         <div className="team-slot__text">
@@ -43,18 +47,29 @@ function TeamSlot({ pokemon }: TeamSlotProps) {
     );
   }
 
+  const { pokemon, nickname, role } = member;
+  const displayName = nickname || pokemon.name;
+  const subLabels = pokemon.types.map((type) => TYPE_LABELS[type]);
+  if (role) subLabels.push(role);
+
   return (
-    <div className="team-slot">
+    <div className={`team-slot${isEditing ? ' team-slot--editing' : ''}`}>
       <div className="team-slot__artwork">
         <img src={pokemon.imageUrl} alt={`${pokemon.name} 일러스트`} />
       </div>
       <div className="team-slot__text">
-        <p className="team-slot__name" title={pokemon.name}>
-          {pokemon.name}
+        <p className="team-slot__name" title={displayName}>
+          {displayName}
         </p>
-        <p className="team-slot__sub">
-          {pokemon.types.map((type) => TYPE_LABELS[type]).join(' · ')}
-        </p>
+        <p className="team-slot__sub">{subLabels.join(' · ')}</p>
+      </div>
+      <div className="team-slot__actions">
+        <Button variant={isEditing ? 'primary' : 'secondary'} size="sm" onClick={onEdit}>
+          편집
+        </Button>
+        <Button variant="primary" size="sm" onClick={onDelete}>
+          삭제
+        </Button>
       </div>
     </div>
   );
