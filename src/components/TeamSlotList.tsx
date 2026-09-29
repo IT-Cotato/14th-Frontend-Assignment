@@ -1,23 +1,32 @@
 import TeamSlot from './TeamSlot';
-import type { Pokemon } from '../types/pokemon';
+import type { TeamMember } from '../types/pokemon';
 import './TeamSlotList.css';
 
 interface TeamSlotListProps {
-  team: readonly Pokemon[];
+  title?: string;
+  team: readonly TeamMember[];
   size: number;
+  editingId?: number | null;
+  onEdit: (id: number) => void;
+  onDelete: (id: number) => void;
 }
 
-function TeamSlotList({ team, size }: TeamSlotListProps) {
-  // 팀이 없는 칸은 undefined
-  const slots = Array.from({ length: size }, (_, index): Pokemon | undefined => team[index]);
+function TeamSlotList({ title, team, size, editingId = null, onEdit, onDelete }: TeamSlotListProps) {
+  const slots = Array.from({ length: size }, (_, index): TeamMember | undefined => team[index]);
 
   return (
     <section className="team-slot-list">
-      <h2 className="team-slot-list__title">내 팀</h2>
+      {title && <h2 className="team-slot-list__title">{title}</h2>}
       <div className="team-slot-list__grid">
-        {slots.map((pokemon, index) =>
-          pokemon ? (
-            <TeamSlot key={pokemon.id} pokemon={pokemon} />
+        {slots.map((member, index) =>
+          member ? (
+            <TeamSlot
+              key={member.pokemon.id}
+              member={member}
+              isEditing={member.pokemon.id === editingId}
+              onEdit={() => onEdit(member.pokemon.id)}
+              onDelete={() => onDelete(member.pokemon.id)}
+            />
           ) : (
             <TeamSlot key={`empty-${index}`} />
           ),

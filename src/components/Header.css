@@ -45,6 +45,8 @@
   display: inline-flex;
   align-items: center;
   background-color: var(--color-artwork-bg);
+  border: none;
+  border-radius: var(--radius-pill);
   border-radius: var(--radius-pill);
   color: var(--color-text-sub);
   font-size: 13px;

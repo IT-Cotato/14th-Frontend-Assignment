@@ -1,0 +1,79 @@
+.team-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.team-title__heading {
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.team-title__description,
+.team-title__badge {
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+.team-title__description {
+  margin-top: 6px;
+  color: var(--color-text-sub);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.team-title__badge {
+  height: 30px;
+  padding: 0 12.5px;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  background-color: var(--color-badge);
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.team-title__actions {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding-bottom: 8px;
+}
+
+@media (max-width: 767px) {
+  .team-title {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    row-gap: 4px;
+    gap: 4px 8px;
+  }
+
+  .team-title__text {
+    flex-basis: 100%;
+  }
+
+  .team-title__heading {
+    font-size: 23px;
+  }
+
+  .team-title__description {
+    font-size: 13px;
+  }
+
+  .team-title__actions {
+    padding-bottom: 0;
+  }
+
+  .team-title__actions .button {
+    height: 40px;
+    padding: 0 16px;
+    font-size: 13px;
+    box-shadow: none;
+  }
+
+  .team-title__cancel {
+    display: none;
+  }
+}

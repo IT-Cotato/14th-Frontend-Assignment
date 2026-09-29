@@ -11,9 +11,10 @@
 }
 
 .pokemon-list__more {
+  padding: 0;
+  background: none;
+  border: none;
   color: var(--color-link);
-  font-size: 12px;
-  font-weight: 700;
 }
 
 .pokemon-list__grid {
@@ -23,8 +24,15 @@
 }
 
 .pokemon-list__head + .pokemon-list__grid,
-.pokemon-list__head + .pokemon-list__empty {
+.pokemon-list__head + .pokemon-list__empty,
+.pokemon-list__head + .pokemon-list__notice {
   margin-top: 19px;
+}
+
+.pokemon-list__notice + .pokemon-list__notice,
+.pokemon-list__notice + .pokemon-list__grid,
+.pokemon-list__notice + .pokemon-list__empty {
+  margin-top: 16px;
 }
 
 @media (max-width: 767px) {

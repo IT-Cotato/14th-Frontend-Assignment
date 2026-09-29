@@ -5,11 +5,18 @@ interface ButtonProps {
   children: ReactNode;
   variant?: 'primary' | 'secondary';
   size?: 'md' | 'sm';
+  disabled?: boolean;
+  onClick?: () => void;
 }
 
-function Button({ children, variant = 'primary', size = 'md' }: ButtonProps) {
+function Button({ children, variant = 'primary', size = 'md', disabled = false, onClick }: ButtonProps) {
   return (
-    <button type="button" className={`button button--${variant} button--${size}`}>
+    <button
+      type="button"
+      className={`button button--${variant} button--${size}`}
+      disabled={disabled}
+      onClick={onClick}
+    >
       {children}
     </button>
   );
