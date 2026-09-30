@@ -3,6 +3,7 @@ interface PokemonCardProps {
   name: string;
   type: string;
   image: string;
+  role: string;
 }
 
 function PokemonCard({
@@ -10,6 +11,7 @@ function PokemonCard({
   name,
   type,
   image,
+  role,
 }: PokemonCardProps) {
   return (
     <div className="pokemon-card">
@@ -17,17 +19,15 @@ function PokemonCard({
         <img src={image} alt={name} />
       </div>
 
-      <p className="pokemon-number">{number}</p>
+      <div className="pokemon-info">
+        <h3>{name}</h3>
+        <p>{role}</p>
+      </div>
 
-      <h3 className="pokemon-name">{name}</h3>
-
-      <span className={`pokemon-type ${type.toLowerCase()}`}>
-        {type}
-      </span>
-
-      <button className="team-button">
-        팀에 추가
-      </button>
+      <div className="actions">
+        <button className="edit-button">편집</button>
+        <button className="del-button">삭제</button>
+      </div>
     </div>
   );
 }

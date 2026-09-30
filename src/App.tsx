@@ -8,23 +8,22 @@ function App() {
 
       <main>
         <section className="hero">
-          
           <div className="hero-content">
-            <h1>포켓몬 도감</h1>
 
-            <p>
-              다양한 포켓몬을 만나고 팀에 추가해보세요.
-            </p>
+            <div className="title">
+              <h1>나의 팀</h1>
+              <p>최대 6마리의 포켓몬으로 나만의 팀을 완성하세요.</p>
+            </div>
 
-            <div className="total">전체 151마리</div>
-          </div>
-          
-        </section>
+            <div className="pill">
+              <span>3 / 6</span>
+            </div>
 
-        <section className="search-section">
-          <div className="search">
-            <input placeholder="이름 또는 번호" />
-            <button>검색</button>
+            <div className="actions">
+              <button className="primary-button">팀 저장</button>
+              <button className="secondary-button">초기화</button>
+            </div>
+
           </div>
         </section>
 
