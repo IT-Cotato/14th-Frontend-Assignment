@@ -1,6 +1,8 @@
 import searchIcon from '../assets/pokemon/search.svg'
 import PokemonCard from './PokemonCard.tsx'
 import type { Pokemon } from './PokemonCard.tsx'
+import { getAddStatus } from '../data/team.ts'
+import type { TeamMember } from '../data/team.ts'
 
 const searchPlaceholder = '이름 또는 번호'
 const emptyTitle = '검색 결과가 없어요'
@@ -8,9 +10,11 @@ const emptyDescription = '다른 이름이나 번호로 검색해 보세요.'
 
 type PokemonListProps = {
   pokemons: Pokemon[]
+  team: TeamMember[]
+  onAdd: (pokemon: Pokemon) => void
 }
 
-function PokemonList({ pokemons }: PokemonListProps) {
+function PokemonList({ pokemons, team, onAdd }: PokemonListProps) {
   return (
     <main className="pokemon-list">
       <div className="search" role="search">
@@ -52,6 +56,8 @@ function PokemonList({ pokemons }: PokemonListProps) {
                 name={pokemon.name}
                 types={pokemon.types}
                 imageUrl={pokemon.imageUrl}
+                addStatus={getAddStatus(team, pokemon.id)}
+                onAdd={() => onAdd(pokemon)}
               />
             </li>
           ))}
