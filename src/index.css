@@ -102,7 +102,7 @@
   width: 40px;
   height: 34px;
 
-  background: #EF476F;
+  background: #F2F7FF;
   border: none;
   border-radius: 999px;
 
@@ -111,7 +111,7 @@
   font-size: 13px;
   line-height: 16px;
 
-  color: #FFFFFF;
+  color: #667085;
   cursor: pointer;
 }
 
@@ -126,8 +126,9 @@
   width: auto;
   height: 34px;
 
-  background: #F2F7FF;
+  background: #F2F7FF; 
   border: none;
+  outline: none;
   border-radius: 999px;
   white-space: nowrap;
 
@@ -136,7 +137,7 @@
   font-size: 13px;
   line-height: 16px;
 
-  color: #667085;
+  color: #667085; 
   cursor: pointer;
 }
 
@@ -166,6 +167,13 @@
 
 
 
+.navigation button.active {
+  background: #EF476F;
+  color: #FFFFFF;
+}
+
+
+
 .team-count {
   width: 27px;
   height: 15px;
@@ -178,7 +186,7 @@
   color: #14213D;
 }
 
-/* 전체 요소의 크기 계산 방식 */
+
 * {
   box-sizing: border-box;
 }
@@ -197,7 +205,7 @@
   width: 1280px;
 }
 
-/* Pokémon Card */
+
 .pokemon-card {
   display: flex;
   flex-direction: column;
@@ -217,7 +225,7 @@
   flex: none;
 }
 
-/* Artwork */
+
 .pokemon-card .artwork {
   display: flex;
   justify-content: center;
@@ -278,16 +286,20 @@
   flex: none;
 }
 
-/* 타입 공통 */
-.pokemon-card .type {
+
+/* TypeChip: 공통 */
+.type-chip {
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
 
-  height: 29px;
   padding: 8px 12px;
 
+  width: auto;
+  height: 29px;
+
+  background: #9DA0AA; 
   border-radius: 999px;
 
   font-family: "Inter", sans-serif;
@@ -295,35 +307,33 @@
   font-weight: 600;
   font-size: 11px;
   line-height: 13px;
+  text-transform: uppercase;
+  white-space: nowrap;
 
-  color: #ffffff;
+  color: #FFFFFF;
 
   flex: none;
 }
 
-/* ELECTRIC */
-.pokemon-card .type.electric {
-  width: 78px;
-  background: #eed535;
-}
-
-/* FIRE */
-.pokemon-card .type.fire {
-  width: 48px;
-  background: #fd7d24;
-}
-
-/* GRASS */
-.pokemon-card .type.grass {
-  width: 62px;
-  background: #62b957;
-}
-
-/* WATER */
-.pokemon-card .type.water {
-  width: 63px;
-  background: #4a90da;
-}
+/* TypeChip: 타입별 색상 */
+.type-chip.bug      { background: #8CB230; }
+.type-chip.dark     { background: #58575F; }
+.type-chip.dragon   { background: #0F6AC0; }
+.type-chip.electric { background: #EED535; }
+.type-chip.fairy    { background: #ED6EC7; }
+.type-chip.fighting { background: #D04164; }
+.type-chip.fire     { background: #FD7D24; }
+.type-chip.flying   { background: #748FC9; }
+.type-chip.ghost    { background: #556AAE; }
+.type-chip.grass    { background: #62B957; }
+.type-chip.ground   { background: #DD7748; }
+.type-chip.ice      { background: #61CEC0; }
+.type-chip.normal   { background: #9DA0AA; }
+.type-chip.poison   { background: #A552CC; }
+.type-chip.psychic  { background: #EA5D60; }
+.type-chip.rock     { background: #BAAB82; }
+.type-chip.steel    { background: #417D9A; }
+.type-chip.water    { background: #4A90DA; }
 
 /* 팀에 추가 버튼 */
 .pokemon-card .action-btn {
@@ -713,58 +723,374 @@
   flex-grow: 0;
 }
 
-.section-header {
 
+/* Title Row */
+.pokedex-title {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 0px;
+  padding: 0;
 
   width: 1280px;
-  height: 26px;
-
+  height: 67px;
 
   flex: none;
-}
-
-.section-title {
-  width: auto;
-  height: 26px;
-
-  font-family: 'Noto Sans KR';
-  font-style: normal;
-  font-weight: 700;
-  font-size: 22px;
-  line-height: 26px;
-
-  color: #14213D;
-
-  white-space: nowrap;
-  flex: none;
-  order: 0;
+  align-self: stretch;
   flex-grow: 0;
 }
 
-.section-more {
+/* Title Copy */
+.pokedex-title__text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0;
+  gap: 6px;
+
+  width: 270px;
+  height: 67px;
+
+  flex: none;
+  flex-grow: 0;
+}
+
+/* 포켓몬 도감 */
+.pokedex-title__text h2 {
+  width: 145px;
+  height: 36px;
+  margin: 0;
+
+  font-family: "Noto Sans KR", sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 36px; 
+
+  color: #14213D;
+  white-space: nowrap;
+
+  flex: none;
+  flex-grow: 0;
+}
+
+/* 다양한 포켓몬을 만나고 팀에 추가해 보세요. */
+.pokedex-title__text p {
+  width: 270px;
+  height: 25px;
+  margin: 0;
+
+  font-family: "Noto Sans KR", sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 25px; 
+
+  color: #667085;
+  white-space: nowrap;
+
+  flex: none;
+  flex-grow: 0;
+}
+
+/* Pill */
+.pokedex-count {
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 8px 12px;
+
+  width: auto;
+  min-width: 93px;
+  height: 30px;
+
+  background: #FFD166;
+  border-radius: 999px;
+
+  flex: none;
+  flex-grow: 0;
+}
+
+/* 전체 151마리 */
+.pokedex-count__label {
   width: auto;
   height: 14px;
 
-  font-family: 'Noto Sans KR';
+  font-family: "Noto Sans KR", sans-serif;
   font-style: normal;
   font-weight: 700;
   font-size: 12px;
   line-height: 14px;
 
-  color: #1A5F9F;
-
+  color: #14213D;
   white-space: nowrap;
-  flex: none;
-  order: 1;
-  flex-grow: 0;
 
-  background: none;
-  border: none;
-  cursor: pointer;
+  flex: none;
+  flex-grow: 0;
+}
+
+/* 추가: Section Head (홈: 추천 포켓몬) */
+.section-head {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  width: 1280px;
+}
+
+.section-head h2 {
+  margin: 0;
+
+  font-family: "Noto Sans KR", sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 28px;
+
+  color: #14213D;
+}
+
+.section-head a {
+  font-family: "Noto Sans KR", sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 14px;
+
+  color: #2A75BB;
+  text-decoration: none;
+}
+
+/* Empty State (검색 결과 없음 / 목록 없음) */
+/* Empty State */
+.empty-state {
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  width: 100%;
+  height: 155px;
+
+  padding: 28px 24px;
+  gap: 10px;
+
+  background: #ffffff;
+  border: 1px solid #d8e4f2;
+  border-radius: 12px;
+
+  flex-shrink: 0;
+}
+
+.empty-state__symbol {
+  box-sizing: border-box;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+
+  background: #ffd166;
+  border-radius: 50%;
+
+  font-family: "Inter", sans-serif;
+  font-style: normal;
+  font-weight: 800;
+  font-size: 18px;
+  line-height: 22px;
+
+  color: #14213d;
+
+  flex-shrink: 0;
+}
+
+.empty-state__title {
+  width: auto;
+  height: 19px;
+
+  margin: 0;
   padding: 0;
+
+  font-family: "Noto Sans KR", sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 19px;
+
+  text-align: center;
+  white-space: nowrap;
+
+  color: #14213d;
+
+  flex-shrink: 0;
+}
+
+.empty-state__description {
+  width: auto;
+  height: 16px;
+
+  margin: 0;
+  padding: 0;
+
+  font-family: "Noto Sans KR", sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 16px;
+
+  text-align: center;
+  white-space: nowrap;
+
+  color: #667085;
+
+  flex-shrink: 0;
+}
+
+
+@media (max-width: 480px) {
+ 
+  .pokedex-shell {
+    width: 100%;
+    height: auto;
+    min-height: 100vh;
+    padding: 20px 24px 24px;
+    gap: 18px;
+  }
+
+  /* Header */
+  .header {
+    width: 100%;
+    height: 72px;
+    padding: 14px 16px;
+  }
+
+  .brand {
+    width: 132px;
+    gap: 10px;
+  }
+
+  .brand strong {
+    width: 84px;
+    height: 21px;
+    font-size: 17px;
+    line-height: 21px;
+  }
+
+  .navigation {
+    width: 119px;
+    height: 31px;
+    gap: 4px;
+  }
+
+  .nav-home {
+    display: none; 
+  }
+
+  .nav-pokedex,
+  .nav-my-team {
+    height: 31px;
+    padding: 9px 10px;
+    font-size: 11px;
+    line-height: 13px;
+  }
+
+  /* 추가: Section Head */
+  .section-head {
+    width: 100%;
+  }
+
+  /* Title Row */
+  .pokedex-title {
+    width: 100%;
+    height: 55px;
+  }
+
+  .pokedex-title__text {
+    width: auto;
+    height: 55px;
+  }
+
+  .pokedex-title__text h2 {
+    width: auto;
+    height: 28px;
+    font-size: 23px;
+    line-height: 28px;
+  }
+
+  .pokedex-title__text p {
+    width: auto;
+    height: 21px;
+    font-size: 13px;
+    line-height: 21px;
+  }
+
+  
+  .search-field {
+    width: calc(100% - 16px);
+    height: 44px;
+    gap: 12px;
+  }
+
+  .search-field .input {
+    width: auto;
+    flex: 1;
+  }
+
+  .search-field .query {
+    width: auto;
+  }
+
+  .search-field .action {
+    width: 56px;
+    height: 40px;
+    padding: 12px 16px;
+  }
+
+  .search-field .action .label {
+    width: 24px;
+    height: 16px;
+    font-size: 13px;
+    line-height: 16px;
+  }
+
+  /* Pokémon Grid: 2열 */
+  .pokemon-grid {
+    width: 100%;
+    height: auto;
+    gap: 14px;
+  }
+
+  /* Pokémon Card */
+  .pokemon-card {
+    width: calc((100% - 14px) / 2); 
+    height: 304px;
+    padding: 12px 10px;
+    gap: 10px;
+  }
+
+  .pokemon-card .artwork {
+    width: 100%;
+    max-width: 140px;
+    height: auto;
+    aspect-ratio: 1 / 1;
+  }
+
+  .pokemon-card .artwork img {
+    width: 86%; 
+    height: 86%;
+  }
+
+  .pokemon-card .name {
+    height: 18px;
+    font-size: 15px;
+    line-height: 18px;
+  }
 }
