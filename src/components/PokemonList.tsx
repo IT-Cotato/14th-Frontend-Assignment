@@ -1,9 +1,13 @@
 import PokemonCard from "./PokemonCard";
 import StatePanel from "./StatePanel";
-import { pokemons } from "../data/pokemons";
+import { pokemons, type Pokemon } from "../data/pokemons";
 import "./PokemonList.css";
 
-function PokemonList() {
+type PokemonListProps = {
+    onAdd: (pokemon: Pokemon) => void;
+};
+
+function PokemonList({ onAdd }: PokemonListProps) {
     if (pokemons.length === 0) {
         return (
             <StatePanel
@@ -22,6 +26,7 @@ function PokemonList() {
                         name={pokemon.name}
                         types={pokemon.types}
                         imageUrl={pokemon.imageUrl}
+                        onAdd={() => onAdd(pokemon)}
                     />
                 </li>
             ))}

@@ -1,12 +1,30 @@
-import SiteHeader from "./SiteHeader";
+import SiteHeader, { type MenuKey } from "./SiteHeader";
 import SearchBar from "./SearchBar";
 import PokemonList from "./PokemonList";
+import type { Pokemon } from "../data/pokemons";
 import "./PokedexPage.css";
 
-function PokedexPage() {
+type PokedexPageProps = {
+    teamCount: number;
+    maxTeamSize: number;
+    onNavigate: (menu: MenuKey) => void;
+    onAddToTeam: (pokemon: Pokemon) => void;
+};
+
+function PokedexPage({
+    teamCount,
+    maxTeamSize,
+    onNavigate,
+    onAddToTeam,
+}: PokedexPageProps) {
     return (
         <div className="page">
-            <SiteHeader activeMenu="도감" teamCount={3} maxTeamSize={6} />
+            <SiteHeader
+                activeMenu="pokedex"
+                teamCount={teamCount}
+                maxTeamSize={maxTeamSize}
+                onNavigate={onNavigate}
+            />
             <div className="pokedex__title-row">
                 <div className="pokedex__title-copy">
                     <h1 className="pokedex__title">포켓몬 도감</h1>
@@ -17,7 +35,7 @@ function PokedexPage() {
                 <span className="pokedex__pill">전체 151마리</span>
             </div>
             <SearchBar />
-            <PokemonList />
+            <PokemonList onAdd={onAddToTeam} />
         </div>
     );
 }

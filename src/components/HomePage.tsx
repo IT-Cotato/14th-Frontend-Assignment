@@ -1,13 +1,31 @@
-import SiteHeader from "./SiteHeader";
+import SiteHeader, { type MenuKey } from "./SiteHeader";
 import PokemonHeader from "./PokemonHeader";
 import SearchBar from "./SearchBar";
 import PokemonList from "./PokemonList";
+import type { Pokemon } from "../data/pokemons";
 import "./HomePage.css";
 
-function HomePage() {
+type HomePageProps = {
+    teamCount: number;
+    maxTeamSize: number;
+    onNavigate: (menu: MenuKey) => void;
+    onAddToTeam: (pokemon: Pokemon) => void;
+};
+
+function HomePage({
+    teamCount,
+    maxTeamSize,
+    onNavigate,
+    onAddToTeam,
+}: HomePageProps) {
     return (
         <div className="page">
-            <SiteHeader activeMenu="홈" teamCount={0} maxTeamSize={6} />
+            <SiteHeader
+                activeMenu="home"
+                teamCount={teamCount}
+                maxTeamSize={maxTeamSize}
+                onNavigate={onNavigate}
+            />
             <PokemonHeader
                 badge="오늘의 추천"
                 title="포켓몬과 함께하는 하루"
@@ -21,7 +39,7 @@ function HomePage() {
                         전체 보기
                     </button>
                 </div>
-                <PokemonList />
+                <PokemonList onAdd={onAddToTeam} />
             </section>
         </div>
     );

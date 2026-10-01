@@ -6,9 +6,10 @@ type PokemonCardProps = {
     name: string;
     types: PokemonType[];
     imageUrl: string;
+    onAdd: () => void;
 };
 
-function PokemonCard({ id, name, types, imageUrl }: PokemonCardProps) {
+function PokemonCard({ id, name, types, imageUrl, onAdd }: PokemonCardProps) {
     const number = `#${String(id).padStart(4, "0")}`;
 
     return (
@@ -32,7 +33,11 @@ function PokemonCard({ id, name, types, imageUrl }: PokemonCardProps) {
                     </span>
                 ))}
             </div>
-            <button className="pokemon-card__button" type="button">
+            <button
+                className="pokemon-card__button"
+                type="button"
+                onClick={onAdd}
+            >
                 팀에 추가
             </button>
         </article>
