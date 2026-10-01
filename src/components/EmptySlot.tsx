@@ -1,4 +1,14 @@
+import { useState } from 'react';
+
 function EmptySlot() {
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  function handleEditOpen() {
+    setIsEditOpen(!isEditOpen);
+  }
+  function handleEditClose() {
+    setIsEditOpen(false);
+  }
+
   return (
     <div className="pokemon-card">
         <div className="pokemon-info">
@@ -6,9 +16,9 @@ function EmptySlot() {
             <p>포켓몬을 추가해 보세요</p>
         </div>
 
-      <div className="handle">
+      <button className="handle" onClick={handleEditOpen}>
         ☰
-      </div>
+      </button>
     </div>
   );
 }
