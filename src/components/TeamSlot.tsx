@@ -3,10 +3,10 @@ import { getDisplayName, roleLabels, type TeamMember } from "../data/team";
 import "./TeamSlot.css";
 
 type TeamSlotProps =
-    | { member: TeamMember; onDelete: () => void }
-    | { member: null; onDelete?: never };
+    | { member: TeamMember; onEdit: () => void; onDelete: () => void }
+    | { member: null; onEdit?: never; onDelete?: never };
 
-function TeamSlot({ member, onDelete }: TeamSlotProps) {
+function TeamSlot({ member, onEdit, onDelete }: TeamSlotProps) {
     if (member === null) {
         return (
             <div className="team-slot team-slot--empty">
@@ -45,6 +45,7 @@ function TeamSlot({ member, onDelete }: TeamSlotProps) {
                 <button
                     type="button"
                     className="team-slot__button team-slot__button--secondary"
+                    onClick={onEdit}
                 >
                     편집
                 </button>

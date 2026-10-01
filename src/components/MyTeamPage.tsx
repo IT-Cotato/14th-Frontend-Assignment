@@ -2,7 +2,12 @@ import { useState } from "react";
 import SiteHeader, { type MenuKey } from "./SiteHeader";
 import TeamSlot from "./TeamSlot";
 import ConfirmDialog from "./ConfirmDialog";
-import { getDisplayName, type TeamMember } from "../data/team";
+import EditDialog from "./EditDialog";
+import {
+    getDisplayName,
+    type TeamMember,
+    type TeamMemberChanges,
+} from "../data/team";
 import "./MyTeamPage.css";
 
 type MyTeamPageProps = {
@@ -10,6 +15,7 @@ type MyTeamPageProps = {
     maxTeamSize: number;
     onNavigate: (menu: MenuKey) => void;
     onRemoveFromTeam: (pokemonId: number) => void;
+    onUpdateTeamMember: (pokemonId: number, changes: TeamMemberChanges) => void;
 };
 
 function MyTeamPage({
@@ -17,12 +23,18 @@ function MyTeamPage({
     maxTeamSize,
     onNavigate,
     onRemoveFromTeam,
+    onUpdateTeamMember,
 }: MyTeamPageProps) {
     const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
+    const [editTargetId, setEditTargetId] = useState<number | null>(null);
 
     const emptySlotCount = maxTeamSize - team.length;
     const deleteTarget =
         team.find((member) => member.pokemon.id === deleteTargetId) ?? null;
+    const editTargetIndex = team.findIndex(
+        (member) => member.pokemon.id === editTargetId,
+    );
+    const editTarget = editTargetIndex !== -1 ? team[editTargetIndex] : null;
 
     function handleConfirmDelete() {
         if (deleteTargetId !== null) {
@@ -33,6 +45,17 @@ function MyTeamPage({
 
     function handleCancelDelete() {
         setDeleteTargetId(null);
+    }
+
+    function handleSaveEdit(changes: TeamMemberChanges) {
+        if (editTargetId !== null) {
+            onUpdateTeamMember(editTargetId, changes);
+        }
+        setEditTargetId(null);
+    }
+
+    function handleCancelEdit() {
+        setEditTargetId(null);
     }
 
     return (
@@ -75,6 +98,7 @@ function MyTeamPage({
                     <li key={member.pokemon.id}>
                         <TeamSlot
                             member={member}
+                            onEdit={() => setEditTargetId(member.pokemon.id)}
                             onDelete={() =>
                                 setDeleteTargetId(member.pokemon.id)
                             }
@@ -87,6 +111,14 @@ function MyTeamPage({
                     </li>
                 ))}
             </ul>
+            {editTarget !== null && (
+                <EditDialog
+                    member={editTarget}
+                    slotNumber={editTargetIndex + 1}
+                    onSave={handleSaveEdit}
+                    onCancel={handleCancelEdit}
+                />
+            )}
             {deleteTarget !== null && (
                 <ConfirmDialog
                     title="팀에서 삭제할까요?"

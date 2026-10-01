@@ -5,7 +5,11 @@ import MyTeamPage from "./components/MyTeamPage";
 import Toast from "./components/Toast";
 import type { MenuKey } from "./components/SiteHeader";
 import type { Pokemon } from "./data/pokemons";
-import { MAX_TEAM_SIZE, type TeamMember } from "./data/team";
+import {
+    MAX_TEAM_SIZE,
+    type TeamMember,
+    type TeamMemberChanges,
+} from "./data/team";
 
 type ToastMessage = {
     id: number;
@@ -58,6 +62,19 @@ function App() {
         );
     }
 
+    function handleUpdateTeamMember(
+        pokemonId: number,
+        changes: TeamMemberChanges,
+    ) {
+        setTeam((prevTeam) =>
+            prevTeam.map((member) =>
+                member.pokemon.id === pokemonId
+                    ? { ...member, ...changes }
+                    : member,
+            ),
+        );
+    }
+
     return (
         <>
             {currentPage === "home" && (
@@ -86,6 +103,7 @@ function App() {
                     maxTeamSize={MAX_TEAM_SIZE}
                     onNavigate={setCurrentPage}
                     onRemoveFromTeam={handleRemoveFromTeam}
+                    onUpdateTeamMember={handleUpdateTeamMember}
                 />
             )}
             {toast !== null && (
