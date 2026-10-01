@@ -1,0 +1,36 @@
+.home__list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.home__list-header {
+    display: flex;
+    width: 1280px;
+    height: 26px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.home__list-title {
+    margin: 0;
+    font-family: "Noto Sans KR", sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    color: var(--color-text-primary);
+}
+
+.home__list-view-all {
+    font-family: "Noto Sans KR", sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    color: var(--color-text-brand);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
