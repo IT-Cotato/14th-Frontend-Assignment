@@ -64,6 +64,8 @@
     color: var(--color-text-secondary);
     background-color: var(--color-bg-subtle);
     white-space: nowrap;
+    border: none;
+    cursor: pointer;
 }
 
 .site-header__nav-item--active {

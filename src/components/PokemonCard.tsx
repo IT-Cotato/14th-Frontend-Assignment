@@ -6,13 +6,36 @@ type PokemonCardProps = {
     name: string;
     types: PokemonType[];
     imageUrl: string;
+    isAdded: boolean;
+    isTeamFull: boolean;
+    onAdd: () => void;
 };
 
-function PokemonCard({ id, name, types, imageUrl }: PokemonCardProps) {
+function PokemonCard({
+    id,
+    name,
+    types,
+    imageUrl,
+    isAdded,
+    isTeamFull,
+    onAdd,
+}: PokemonCardProps) {
     const number = `#${String(id).padStart(4, "0")}`;
 
+    let buttonLabel = "팀에 추가";
+    let buttonModifier = "";
+    if (isAdded) {
+        buttonLabel = "추가됨";
+        buttonModifier = " pokemon-card__button--added";
+    } else if (isTeamFull) {
+        buttonLabel = "팀이 가득 참";
+        buttonModifier = " pokemon-card__button--full";
+    }
+
     return (
-        <article className="pokemon-card">
+        <article
+            className={`pokemon-card${isAdded ? " pokemon-card--added" : ""}`}
+        >
             <div className="pokemon-card__image-box">
                 <img
                     className="pokemon-card__image"
@@ -32,8 +55,13 @@ function PokemonCard({ id, name, types, imageUrl }: PokemonCardProps) {
                     </span>
                 ))}
             </div>
-            <button className="pokemon-card__button" type="button">
-                팀에 추가
+            <button
+                className={`pokemon-card__button${buttonModifier}`}
+                type="button"
+                disabled={isAdded || isTeamFull}
+                onClick={onAdd}
+            >
+                {buttonLabel}
             </button>
         </article>
     );

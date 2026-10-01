@@ -1,0 +1,91 @@
+.confirm-dialog__overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background-color: rgba(var(--color-text-primary-rgb), 0.4);
+}
+
+.confirm-dialog {
+    display: flex;
+    flex-direction: column;
+    width: 360px;
+    max-width: 100%;
+    padding: 24px;
+    gap: var(--space-3);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border-default);
+    background-color: var(--color-bg-surface);
+    box-shadow: 0px 8px 24px 0px rgba(20, 33, 61, 0.08);
+}
+
+.confirm-dialog__title {
+    margin: 0;
+    font-family: "Noto Sans KR", sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 24px;
+    color: var(--color-text-primary);
+}
+
+.confirm-dialog__description {
+    margin: 0;
+    font-family: "Noto Sans KR", sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 21px;
+    color: var(--color-text-secondary);
+}
+
+.confirm-dialog__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+}
+
+.confirm-dialog__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 66px;
+    height: 41px;
+    padding: var(--space-3) 20px;
+    border-radius: var(--radius-md);
+    font-family: "Noto Sans KR", sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 17px;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.confirm-dialog__button--secondary {
+    border: 1px solid var(--color-border-strong);
+    background-color: var(--color-bg-surface);
+    box-shadow: 0px 8px 24px 0px rgba(20, 33, 61, 0.08);
+    color: var(--color-text-primary);
+}
+
+.confirm-dialog__button--danger {
+    border: none;
+    background-color: var(--color-bg-danger);
+    color: var(--color-text-inverse);
+}
+
+@media (max-width: 768px) {
+    .confirm-dialog {
+        padding: 20px;
+    }
+
+    .confirm-dialog__button {
+        min-width: 56px;
+        height: 40px;
+        padding: var(--space-3) var(--space-4);
+        font-size: 13px;
+        line-height: 16px;
+    }
+}

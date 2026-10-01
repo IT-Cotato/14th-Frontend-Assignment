@@ -1,0 +1,140 @@
+.team-slot {
+    display: flex;
+    align-items: center;
+    width: 560px;
+    height: 88px;
+    padding: var(--space-3);
+    gap: var(--space-2);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border-default);
+    background-color: var(--color-bg-surface);
+    box-shadow: 0px 8px 24px 0px rgba(20, 33, 61, 0.08);
+}
+
+.team-slot--empty {
+    padding: var(--space-3) 14px;
+    gap: var(--space-3);
+}
+
+.team-slot__artwork {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    background-color: var(--color-bg-subtle);
+}
+
+.team-slot__image {
+    width: 54.86px;
+    height: 54.86px;
+    object-fit: contain;
+}
+
+.team-slot__info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex: 1;
+    min-width: 0;
+    gap: 3px;
+}
+
+.team-slot__name {
+    margin: 0;
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-family: "Noto Sans KR", sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    line-height: 18px;
+    color: var(--color-text-primary);
+}
+
+.team-slot__meta {
+    margin: 0;
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-family: "Noto Sans KR", sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 14px;
+    color: var(--color-text-secondary);
+}
+
+.team-slot__actions {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    gap: var(--space-2);
+}
+
+.team-slot__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 66px;
+    height: 41px;
+    padding: var(--space-3) 20px;
+    gap: var(--space-2);
+    border-radius: var(--radius-md);
+    font-family: "Noto Sans KR", sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 17px;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.team-slot__button--secondary {
+    border: 1px solid var(--color-border-strong);
+    background-color: var(--color-bg-surface);
+    box-shadow: 0px 8px 24px 0px rgba(20, 33, 61, 0.08);
+    color: var(--color-text-primary);
+}
+
+.team-slot__button--danger {
+    border: none;
+    background-color: var(--color-bg-danger);
+    color: var(--color-text-inverse);
+}
+
+.team-slot__handle {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex-shrink: 0;
+    width: 100px;
+    height: 28px;
+    padding: var(--space-2);
+    gap: 3px;
+    border-radius: var(--radius-md);
+    background-color: var(--color-bg-subtle);
+}
+
+.team-slot__handle-bar {
+    width: 16px;
+    height: 2px;
+    border-radius: 1px;
+    background-color: var(--color-icon-brand);
+}
+
+@media (max-width: 768px) {
+    .team-slot {
+        width: 326px;
+    }
+
+    .team-slot__button {
+        min-width: 56px;
+        height: 40px;
+        padding: var(--space-3) var(--space-4);
+        font-size: 13px;
+        line-height: 16px;
+    }
+}

@@ -1,0 +1,150 @@
+.my-team__title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 1280px;
+    height: 67px;
+}
+
+.my-team__title-copy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+}
+
+.my-team__title {
+    margin: 0;
+    font-family: "Noto Sans KR", sans-serif;
+    font-weight: 700;
+    font-size: 30px;
+    line-height: 36px;
+    color: var(--color-text-primary);
+}
+
+.my-team__description {
+    margin: 0;
+    font-family: "Noto Sans KR", sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 25px;
+    color: var(--color-text-secondary);
+}
+
+/* PC에서는 래퍼가 없는 것처럼 pill과 actions가 title-row의 직접 자식으로 배치됨 */
+.my-team__controls {
+    display: contents;
+}
+
+.my-team__pill {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-full);
+    background-color: var(--color-bg-warning);
+    font-family: "Noto Sans KR", sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 14px;
+    color: var(--color-text-primary);
+    white-space: nowrap;
+}
+
+.my-team__actions {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.my-team__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 41px;
+    padding: var(--space-3) 20px;
+    gap: var(--space-2);
+    border-radius: var(--radius-md);
+    font-family: "Noto Sans KR", sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 17px;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.my-team__button--primary {
+    min-width: 82px;
+    border: none;
+    background-color: var(--color-bg-danger);
+    box-shadow: 0px 8px 0px 0px rgba(185, 47, 81, 1);
+    color: var(--color-text-inverse);
+}
+
+.my-team__button--secondary {
+    min-width: 66px;
+    border: 1px solid var(--color-border-strong);
+    background-color: var(--color-bg-surface);
+    box-shadow: 0px 8px 24px 0px rgba(20, 33, 61, 0.08);
+    color: var(--color-text-primary);
+}
+
+.my-team__grid {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    align-content: flex-start;
+    width: 1280px;
+    gap: var(--space-4) 20px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .my-team__title-row {
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: stretch;
+        width: 100%;
+        height: auto;
+        gap: var(--space-3);
+    }
+
+    .my-team__title {
+        font-size: 23px;
+        line-height: 28px;
+    }
+
+    .my-team__description {
+        font-size: 13px;
+        line-height: 21px;
+    }
+
+    .my-team__controls {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        height: 40px;
+        gap: var(--space-2);
+    }
+
+    .my-team__button {
+        height: 40px;
+        padding: var(--space-3) var(--space-4);
+        font-size: 13px;
+        line-height: 16px;
+    }
+
+    .my-team__button--primary {
+        min-width: 71px;
+    }
+
+    .my-team__button--cancel {
+        display: none;
+    }
+
+    .my-team__grid {
+        width: 100%;
+        gap: var(--space-3);
+    }
+}
