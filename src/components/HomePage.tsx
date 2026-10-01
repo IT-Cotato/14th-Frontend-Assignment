@@ -1,14 +1,32 @@
 import { useState } from "react";
 import PokemonHeader from "./PokemonHeader";
 import PokemonList from "./PokemonList";
+import TeamNoticePanel from "./TeamNoticePanel";
+import type { ActivePage, TeamMember } from "./teamTypes";
 
-function HomePage() {
+type HomePageProps = {
+  team: TeamMember[];
+  duplicateName: string | null;
+  onNavigate: (page: ActivePage) => void;
+  onAddToTeam: (member: TeamMember) => void;
+};
+
+function HomePage({
+  team,
+  duplicateName,
+  onNavigate,
+  onAddToTeam,
+}: HomePageProps) {
   const [heroFailed, setHeroFailed] = useState(false);
   const [iconFailed, setIconFailed] = useState(false);
 
   return (
     <>
-      <PokemonHeader activePage="home" />
+      <PokemonHeader
+        activePage="home"
+        teamCount={team.length}
+        onNavigate={onNavigate}
+      />
 
       <section className="hero">
         <div className="hero-copy">
@@ -17,8 +35,12 @@ function HomePage() {
           <p>좋아하는 포켓몬을 찾고 나만의 팀을 만들어 보세요.</p>
 
           <div className="hero-actions">
-            <button className="hero-primary">도감 보기</button>
-            <button className="hero-secondary">내 팀</button>
+            <button className="hero-primary" onClick={() => onNavigate("pokedex")}>
+              도감 보기
+            </button>
+            <button className="hero-secondary" onClick={() => onNavigate("team")}>
+              내 팀
+            </button>
           </div>
         </div>
 
@@ -54,10 +76,20 @@ function HomePage() {
 
       <div className="section-head">
         <h2>추천 포켓몬</h2>
-        <a href="#pokedex">전체 보기</a>
+        <a
+          href="#pokedex"
+          onClick={(e) => {
+            e.preventDefault();
+            onNavigate("pokedex");
+          }}
+        >
+          전체 보기
+        </a>
       </div>
 
-      <PokemonList />
+      <TeamNoticePanel team={team} duplicateName={duplicateName} />
+
+      <PokemonList team={team} onAddToTeam={onAddToTeam} limit={4} />
     </>
   );
 }
