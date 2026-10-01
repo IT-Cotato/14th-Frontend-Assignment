@@ -7,6 +7,7 @@ interface PokemonCardProps {
   type: string;
   image: string;
   role: string;
+  slot: number;
 }
 
 function PokemonCard({
@@ -15,6 +16,7 @@ function PokemonCard({
   type,
   image,
   role,
+  slot,
 }: PokemonCardProps) {
   const [isEditOpen, setIsEditOpen] = useState(false);
 
@@ -48,7 +50,7 @@ function PokemonCard({
 
       {isEditOpen && (
         <TeamEditDialog 
-        number={number}
+        slot={slot}
         name={name}
         role={role}
         onClose={handleEditClose}

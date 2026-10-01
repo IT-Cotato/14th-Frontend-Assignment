@@ -48,7 +48,10 @@ function PokemonList() {
               key={index}
               name={pokemon.name}
               role={pokemon.role}
-              image={pokemon.image} number={""} type={""}            />
+              image={pokemon.image} 
+              number={""} 
+              type={""}
+              slot={index + 1}            />
           ) : (
             <EmptySlot key={index} />
           );
