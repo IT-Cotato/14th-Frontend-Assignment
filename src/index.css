@@ -401,6 +401,21 @@ body {
 }
 
 
+
+
+
+.dialog-overlay {
+  position: fixed;
+  inset: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: rgba(20, 33, 61, 0.4);
+
+  z-index: 1000;
+}
 .team-edit-dialog {
   position: fixed;
 
@@ -420,4 +435,187 @@ body {
   border-radius: 16px;
 
   z-index: 1001;
+  white-space: nowrap;
+}
+.team-edit-dialog h2 {
+  width: 560px;
+  height: 34px;
+
+  margin: 0;
+
+  font-family: "Noto Sans KR", sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 34px;
+  letter-spacing: -0.3px;
+
+  color: #14213d;
+}
+.dialog-subtitle {
+  width: 560px;
+  height: 19px;
+
+  margin: 0;
+
+  font-family: "Noto Sans KR", sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 19px;
+  letter-spacing: 0.2px;
+
+  color: #667085;
+}
+.dialog-field {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  width: 592px;
+
+  gap: 8px;
+}
+.dialog-field label {
+  width: 560px;
+  height: 22px;
+
+  font-family: "Noto Sans KR", sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 22px;
+  letter-spacing: 0.1px;
+
+  color: #14213d;
+}
+
+.dialog-field input {
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+
+  width: 560px;
+  height: 44px;
+
+  padding: 0 14px;
+
+  background: #ffffff;
+  border: 1px solid #d8e4f2;
+  border-radius: 8px;
+
+  font-family: "Noto Sans KR", sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 26px;
+
+  color: #14213d;
+}
+
+.role-options {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+
+  gap: 8px;
+}
+
+.role-options button {
+  box-sizing: border-box;
+
+  height: 42px;
+  padding: 10px 16px;
+
+  border: none;
+  border-radius: 999px;
+
+  background: #f2f7ff;
+
+  font-family: "Noto Sans KR", sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 22px;
+  letter-spacing: 0.1px;
+
+  color: #14213d;
+
+  cursor: pointer;
+}
+
+.role-options button.selected {
+  background: #2a75bb;
+  color: #ffffff;
+}
+
+.dialog-actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: flex-start;
+
+  width: 592px;
+  height: 41px;
+
+  gap: 8px;
+
+  margin-top: auto;
+}
+.cancel-button {
+  box-sizing: border-box;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 66px;
+  height: 41px;
+
+  padding: 12px 20px;
+
+  background: #ffffff;
+  border: 1px solid #c6d8ee;
+  border-radius: 8px;
+
+  box-shadow: 0 8px 24px rgba(20, 33, 61, 0.08);
+
+  font-family: "Noto Sans KR", sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 17px;
+
+  color: #14213d;
+
+  cursor: pointer;
+}
+.save-button {
+  box-sizing: border-box;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 66px;
+  height: 41px;
+
+  padding: 12px 20px;
+
+  background: #ef476f;
+  border: none;
+  border-radius: 8px;
+
+  box-shadow: 0 8px 0 #b92f51;
+
+  font-family: "Noto Sans KR", sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 17px;
+
+  color: #ffffff;
+
+  cursor: pointer;
 }
