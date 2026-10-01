@@ -16,9 +16,9 @@ function EmptySlot() {
             <p>포켓몬을 추가해 보세요</p>
         </div>
 
-      <button className="handle" onClick={handleEditOpen}>
+      <div className="handle" onClick={handleEditOpen}>
         ☰
-      </button>
+      </div>
     </div>
   );
 }
