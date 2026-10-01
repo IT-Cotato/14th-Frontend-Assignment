@@ -48,6 +48,7 @@ function PokemonCard({
 
       {isEditOpen && (
         <TeamEditDialog 
+        number={number}
         name={name}
         role={role}
         onClose={handleEditClose}

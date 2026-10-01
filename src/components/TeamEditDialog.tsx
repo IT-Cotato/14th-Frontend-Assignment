@@ -2,32 +2,31 @@ import { useState } from 'react';
 
 
 interface TeamEditDialogProps {
-  name: string;
-  role: string;
+    number: string;
+    name: string;
+    role: string;
   onClose: () => void;
 }
 
 function TeamEditDialog({
-  name,
-  role,
-  onClose,
+    number,
+    name,
+    role,
+    onClose,
 }: TeamEditDialogProps) {
   return (
     <>
     <div className="dialog-overlay">
       <div className="team-edit-dialog">
-        <h2>팀 포켓몬 편집</h2>
+        <h2>{name} 편집</h2>
 
         <p className="dialog-subtitle">
-          팀에서 사용할 포켓몬 정보를 수정하세요.
+          팀 슬롯 #{number}
         </p>
 
         <div className="dialog-field">
           <label>별명 (선택)</label>
-          <input
-            type="text"
-            defaultValue={name}
-          />
+          <input/>
         </div>
 
         <div className="dialog-field">
