@@ -8,6 +8,8 @@ interface PokemonListProps {
   onAdd?: (id: number) => void
   onEdit?: (id: number) => void
   onView?: (id: number) => void
+  teamIds?: number[]
+  teamFull?: boolean
 }
 
 function PokemonList({
@@ -16,6 +18,8 @@ function PokemonList({
   onAdd,
   onEdit,
   onView,
+  teamIds = [],
+  teamFull = false,
 }: PokemonListProps) {
   const [query, setQuery] = useState('')
   const [type, setType] = useState<'ALL' | PokemonType>('ALL')
@@ -72,6 +76,8 @@ function PokemonList({
               <option value="GHOST">GHOST</option>
               <option value="NORMAL">NORMAL</option>
               <option value="ELECTRIC">ELECTRIC</option>
+              <option value="FIRE">FIRE</option>
+              <option value="GRASS">GRASS</option>
             </select>
           </label>
           <label>
@@ -94,7 +100,16 @@ function PokemonList({
           visibleItems.map((pokemon) => (
             <PokemonCard
               {...pokemon}
-              actionLabel={mode === 'team' ? '편집' : '팀에 추가'}
+              actionDisabled={mode !== 'team' && (teamFull || teamIds.includes(pokemon.id))}
+              actionLabel={
+                mode === 'team'
+                  ? '편집'
+                  : teamIds.includes(pokemon.id)
+                    ? '추가됨'
+                    : teamFull
+                      ? '팀 가득 참'
+                      : '팀에 추가'
+              }
               key={pokemon.id}
               onAction={mode === 'team' ? onEdit : onAdd}
               onView={onView}
