@@ -151,6 +151,23 @@
     cursor: pointer;
 }
 
+.pokemon-card__button:disabled {
+    cursor: not-allowed;
+}
+
+.pokemon-card__button.pokemon-card__button--added {
+    border: 1px solid var(--color-border-strong);
+    background: var(--color-bg-surface);
+    box-shadow: 0px 8px 24px 0px rgba(20, 33, 61, 0.08);
+    color: var(--color-text-primary);
+}
+
+.pokemon-card__button.pokemon-card__button--full {
+    background: var(--color-bg-disabled);
+    box-shadow: none;
+    color: var(--color-text-inverse);
+}
+
 @media (max-width: 768px) {
     .pokemon-card {
         width: 164px;

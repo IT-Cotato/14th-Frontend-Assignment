@@ -1,16 +1,39 @@
+import { useState } from "react";
 import SiteHeader, { type MenuKey } from "./SiteHeader";
 import TeamSlot from "./TeamSlot";
-import type { TeamMember } from "../data/team";
+import ConfirmDialog from "./ConfirmDialog";
+import { getDisplayName, type TeamMember } from "../data/team";
 import "./MyTeamPage.css";
 
 type MyTeamPageProps = {
     team: TeamMember[];
     maxTeamSize: number;
     onNavigate: (menu: MenuKey) => void;
+    onRemoveFromTeam: (pokemonId: number) => void;
 };
 
-function MyTeamPage({ team, maxTeamSize, onNavigate }: MyTeamPageProps) {
+function MyTeamPage({
+    team,
+    maxTeamSize,
+    onNavigate,
+    onRemoveFromTeam,
+}: MyTeamPageProps) {
+    const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
+
     const emptySlotCount = maxTeamSize - team.length;
+    const deleteTarget =
+        team.find((member) => member.pokemon.id === deleteTargetId) ?? null;
+
+    function handleConfirmDelete() {
+        if (deleteTargetId !== null) {
+            onRemoveFromTeam(deleteTargetId);
+        }
+        setDeleteTargetId(null);
+    }
+
+    function handleCancelDelete() {
+        setDeleteTargetId(null);
+    }
 
     return (
         <div className="page">
@@ -50,7 +73,12 @@ function MyTeamPage({ team, maxTeamSize, onNavigate }: MyTeamPageProps) {
             <ul className="my-team__grid">
                 {team.map((member) => (
                     <li key={member.pokemon.id}>
-                        <TeamSlot member={member} />
+                        <TeamSlot
+                            member={member}
+                            onDelete={() =>
+                                setDeleteTargetId(member.pokemon.id)
+                            }
+                        />
                     </li>
                 ))}
                 {Array.from({ length: emptySlotCount }, (_, index) => (
@@ -59,6 +87,15 @@ function MyTeamPage({ team, maxTeamSize, onNavigate }: MyTeamPageProps) {
                     </li>
                 ))}
             </ul>
+            {deleteTarget !== null && (
+                <ConfirmDialog
+                    title="팀에서 삭제할까요?"
+                    description={`${getDisplayName(deleteTarget)} 슬롯을 비워요. 취소하면 팀이 그대로 유지돼요.`}
+                    confirmLabel="삭제"
+                    onConfirm={handleConfirmDelete}
+                    onCancel={handleCancelDelete}
+                />
+            )}
         </div>
     );
 }

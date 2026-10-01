@@ -1,12 +1,15 @@
 import SiteHeader, { type MenuKey } from "./SiteHeader";
 import SearchBar from "./SearchBar";
 import PokemonList from "./PokemonList";
+import Notice from "./Notice";
 import type { Pokemon } from "../data/pokemons";
 import "./PokedexPage.css";
 
 type PokedexPageProps = {
     teamCount: number;
     maxTeamSize: number;
+    addedPokemonIds: number[];
+    isTeamFull: boolean;
     onNavigate: (menu: MenuKey) => void;
     onAddToTeam: (pokemon: Pokemon) => void;
 };
@@ -14,6 +17,8 @@ type PokedexPageProps = {
 function PokedexPage({
     teamCount,
     maxTeamSize,
+    addedPokemonIds,
+    isTeamFull,
     onNavigate,
     onAddToTeam,
 }: PokedexPageProps) {
@@ -35,7 +40,17 @@ function PokedexPage({
                 <span className="pokedex__pill">전체 151마리</span>
             </div>
             <SearchBar />
-            <PokemonList onAdd={onAddToTeam} />
+            {isTeamFull && (
+                <Notice
+                    title="팀이 가득 찼어요"
+                    description={`최대 ${maxTeamSize}마리까지 추가할 수 있어요. 내 팀에서 포켓몬을 삭제하면 다시 추가할 수 있어요.`}
+                />
+            )}
+            <PokemonList
+                addedPokemonIds={addedPokemonIds}
+                isTeamFull={isTeamFull}
+                onAdd={onAddToTeam}
+            />
         </div>
     );
 }

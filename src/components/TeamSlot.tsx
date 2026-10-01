@@ -1,12 +1,12 @@
 import { typeLabels } from "../data/pokemons";
-import { roleLabels, type TeamMember } from "../data/team";
+import { getDisplayName, roleLabels, type TeamMember } from "../data/team";
 import "./TeamSlot.css";
 
-type TeamSlotProps = {
-    member: TeamMember | null;
-};
+type TeamSlotProps =
+    | { member: TeamMember; onDelete: () => void }
+    | { member: null; onDelete?: never };
 
-function TeamSlot({ member }: TeamSlotProps) {
+function TeamSlot({ member, onDelete }: TeamSlotProps) {
     if (member === null) {
         return (
             <div className="team-slot team-slot--empty">
@@ -23,8 +23,7 @@ function TeamSlot({ member }: TeamSlotProps) {
         );
     }
 
-    const { pokemon, nickname, role } = member;
-    const displayName = nickname !== "" ? nickname : pokemon.name;
+    const { pokemon, role } = member;
     const typeText = pokemon.types.map((type) => typeLabels[type]).join(" · ");
 
     return (
@@ -37,7 +36,7 @@ function TeamSlot({ member }: TeamSlotProps) {
                 />
             </div>
             <div className="team-slot__info">
-                <p className="team-slot__name">{displayName}</p>
+                <p className="team-slot__name">{getDisplayName(member)}</p>
                 <p className="team-slot__meta">
                     {typeText} · {roleLabels[role]}
                 </p>
@@ -52,6 +51,7 @@ function TeamSlot({ member }: TeamSlotProps) {
                 <button
                     type="button"
                     className="team-slot__button team-slot__button--danger"
+                    onClick={onDelete}
                 >
                     삭제
                 </button>

@@ -15,3 +15,7 @@ export const roleLabels: Record<TeamRole, string> = {
 };
 
 export const MAX_TEAM_SIZE = 6;
+
+export function getDisplayName(member: TeamMember) {
+    return member.nickname !== "" ? member.nickname : member.pokemon.name;
+}

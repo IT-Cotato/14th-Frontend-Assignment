@@ -4,10 +4,12 @@ import { pokemons, type Pokemon } from "../data/pokemons";
 import "./PokemonList.css";
 
 type PokemonListProps = {
+    addedPokemonIds: number[];
+    isTeamFull: boolean;
     onAdd: (pokemon: Pokemon) => void;
 };
 
-function PokemonList({ onAdd }: PokemonListProps) {
+function PokemonList({ addedPokemonIds, isTeamFull, onAdd }: PokemonListProps) {
     if (pokemons.length === 0) {
         return (
             <StatePanel
@@ -19,17 +21,23 @@ function PokemonList({ onAdd }: PokemonListProps) {
 
     return (
         <ul className="pokemon-list">
-            {pokemons.map((pokemon) => (
-                <li key={pokemon.id}>
-                    <PokemonCard
-                        id={pokemon.id}
-                        name={pokemon.name}
-                        types={pokemon.types}
-                        imageUrl={pokemon.imageUrl}
-                        onAdd={() => onAdd(pokemon)}
-                    />
-                </li>
-            ))}
+            {pokemons.map((pokemon) => {
+                const isAdded = addedPokemonIds.includes(pokemon.id);
+
+                return (
+                    <li key={pokemon.id}>
+                        <PokemonCard
+                            id={pokemon.id}
+                            name={pokemon.name}
+                            types={pokemon.types}
+                            imageUrl={pokemon.imageUrl}
+                            isAdded={isAdded}
+                            isTeamFull={isTeamFull}
+                            onAdd={() => onAdd(pokemon)}
+                        />
+                    </li>
+                );
+            })}
         </ul>
     );
 }
