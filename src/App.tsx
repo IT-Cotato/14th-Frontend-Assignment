@@ -21,7 +21,7 @@ function App() {
 
             <div className="actions">
               <button className="primary-button">팀 저장</button>
-              <button className="secondary-button">초기화</button>
+              <button className="secondary-button">취소</button>
             </div>
 
           </div>
