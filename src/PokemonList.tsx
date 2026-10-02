@@ -4,19 +4,23 @@ import turtleImg from './assets/turtle.png'
 import turtleKingImg from './assets/turtleKing.png' 
 import duck from './assets/duck.png'
 import Eve from './assets/Eve.png'
-import PokemonCard from './PokemonCard';
+import fireMonkey from './assets/fireMonkey.png'
+import PokemonCard, { type Pokemon } from './PokemonCard';
 
 type PokemonListProps = {
     search: string;
+    onAddToTeam: (pokemon: Pokemon) => void;
+    isTeamFull: boolean;
 };
 
-function PokemonList({ search }: PokemonListProps) {
+// 포켓몬 카드 목록을 그리는 컴포넌트
+function PokemonList({ search, onAddToTeam, isTeamFull }: PokemonListProps) {
     const pokemons = [
         {
             id: 25,
             name: "피카츄",
             image: chuImg,
-            types: ['ELECTRIC'],
+            types: ['ELECTRIC', ],
         },
         {
             id: 6,
@@ -47,6 +51,12 @@ function PokemonList({ search }: PokemonListProps) {
             name: '이브이',
             image: Eve,
             types: ['NORMAL'],
+        },
+        {
+            id: 392,
+            name: '초염몽',
+            image: fireMonkey,
+            types: ['FIRE'],
         }
     ];
 
@@ -76,8 +86,10 @@ function PokemonList({ search }: PokemonListProps) {
                 ) : (
                     filteredPokemons.map((pokemon) => (
                         <PokemonCard
-                        key={pokemon.id}
-                        {...pokemon}
+                            key={pokemon.id}
+                            {...pokemon}
+                            onAdd={() => onAddToTeam(pokemon)} // 이 카드의 포켓몬을 넣어서 부르는 함수를 만들어 전달
+                            disabled={isTeamFull}
                         />
                     ))
                 )}

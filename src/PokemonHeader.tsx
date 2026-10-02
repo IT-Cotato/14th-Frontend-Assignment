@@ -117,6 +117,45 @@ function PokemonTitle() {
     );
 }
 
+type PokemonTeamProps = {
+    teamCount: number;
+    teamMax: number;
+};
+
+function PokemonTeam({
+    teamCount,
+    teamMax,
+}: PokemonTeamProps) {
+    return (
+        <> {/* Fragment: 불필요한 div를 하나 더 만들지 않고 여러 요소를 묶는 빈 껍데기 */}
+            <div className= 'myTeam-team-box'>
+                
+                <div className='myTeam-title-box'>
+                    <header className='myTeam-title'>나의 팀</header>
+                    <div className='myTeam-dict'>최대 6마리의 포켓몬으로 나만의 팀을 완성하세요.</div>
+                </div>
+                
+                <div className='myTeam-num-box'>
+                    <span className="myTeam-num">
+                            {teamCount}/{teamMax}
+                    </span>
+                </div>
+                
+
+                <div className='myTeam-button-box'>
+                    <div className='myTeam-store-box'>
+                        <button className='myTeam-store'>팀 저장</button>
+                    </div>
+                    <div className='myTeam-cancle-box'>
+                        <button className='myTeam-cancle'>취소</button>
+                    </div>
+                </div>
+            </div>
+                
+        </>
+    );
+}
+
 type PokemonSearchProps = {
     search: string;
     onSearchChange: (value: string) => void;
@@ -171,4 +210,5 @@ export {HeaderBox};
 export {PokemonTitle};
 export {PokemonSearch};
 export {PokemonReco};
+export {PokemonTeam};
 export default PokemonHeader; //이 파일 밖에서도 PokemonHeader를 사용할 수 있게 내보낸다.
