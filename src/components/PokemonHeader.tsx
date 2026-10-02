@@ -1,13 +1,15 @@
-import pikachuImage from '../assets/pokemon/pikachu.png'
-
 const brandName = 'PokéMate'
-const teamCount = 0
+
+/** 팀에 담긴 포켓몬의 도감 ID. 팀 담기 기능은 이후 주차라 개수만 표시한다. */
+const teamMemberIds = [25, 6, 1]
 const teamLimit = 6
 
-const heroBadge = '오늘의 추천'
-const heroTitle = '포켓몬과 함께하는 하루'
-const heroDescription = '좋아하는 포켓몬을 찾고 나만의 팀을 만들어 보세요.'
-const heroImageAlt = '피카츄 일러스트'
+/** 시안에 표시된 도감 전체 수. 화면에 그리는 로컬 예시 데이터 개수와는 별개 값이다. */
+const totalDexCount = 151
+
+const dexTitle = '포켓몬 도감'
+const dexDescription = '다양한 포켓몬을 만나고 팀에 추가해 보세요.'
+const dexBadge = `전체 ${totalDexCount}마리`
 
 function PokemonHeader() {
   return (
@@ -22,14 +24,14 @@ function PokemonHeader() {
 
         <div className="top-bar__actions">
           <nav className="top-nav" aria-label="주요 메뉴">
+            <button type="button" className="nav-pill nav-pill--home">
+              홈
+            </button>
             <button
               type="button"
               className="nav-pill nav-pill--active"
               aria-current="page"
             >
-              홈
-            </button>
-            <button type="button" className="nav-pill">
               도감
             </button>
             <button type="button" className="nav-pill">
@@ -38,36 +40,18 @@ function PokemonHeader() {
           </nav>
 
           <span className="team-count">
-            {teamCount} / {teamLimit}
+            {teamMemberIds.length} / {teamLimit}
           </span>
         </div>
       </div>
 
-      <section className="hero">
-        <div className="hero__content">
-          <span className="hero__badge">{heroBadge}</span>
-          <h1 className="hero__title">{heroTitle}</h1>
-          <p className="hero__description">{heroDescription}</p>
-          <div className="hero__actions">
-            <button type="button" className="button button--primary">
-              도감 보기
-            </button>
-            <button type="button" className="button button--secondary">
-              내 팀
-            </button>
-          </div>
+      <div className="dex-intro">
+        <div className="dex-intro__text">
+          <h1 className="dex-intro__title">{dexTitle}</h1>
+          <p className="dex-intro__description">{dexDescription}</p>
         </div>
-
-        <div className="hero__image-box">
-          <img
-            className="hero__image"
-            src={pikachuImage}
-            alt={heroImageAlt}
-            width={204}
-            height={204}
-          />
-        </div>
-      </section>
+        <span className="dex-intro__badge">{dexBadge}</span>
+      </div>
     </header>
   )
 }
