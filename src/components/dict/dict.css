@@ -172,7 +172,7 @@
 
 
 /*  */
-.search-section{
+.dict-search-section{
   box-sizing: border-box;
 
   display: flex;
@@ -186,7 +186,7 @@
   margin: 20px auto 0;
 
 }
-.search {
+.dict-search {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -196,7 +196,7 @@
   height: 44px;
 }
 
-.search input {
+.dict-search input {
   box-sizing: border-box;
 
   width: 682px;
@@ -217,7 +217,7 @@
   flex: 1;
 }
 
-.search input::placeholder {
+.dict-search input::placeholder {
   color: #8aa0b8;
 }
 
