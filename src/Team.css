@@ -1,0 +1,439 @@
+
+/* Team Page */
+
+.team-availability {
+  margin: 0;
+  font-family: "Noto Sans KR", sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 16px;
+  color: #2A75BB;
+}
+
+.team-page {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  width: 1280px;
+}
+
+.team-title {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  min-height: 67px;
+}
+
+.team-title__text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.team-title__text h2 {
+  margin: 0;
+  font-family: "Noto Sans KR", sans-serif;
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 36px;
+  color: #14213D;
+  white-space: nowrap;
+}
+
+.team-title__text p {
+  margin: 0;
+  font-family: "Noto Sans KR", sans-serif;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 25px;
+  color: #667085;
+  white-space: nowrap;
+}
+
+.team-title__actions {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 560px);
+  gap: 16px 20px;
+  align-content: start;
+  width: 1280px;
+}
+
+
+/* Team Slot */
+
+.team-slot {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 12px;
+  gap: 8px;
+  width: 560px;
+  height: 88px;
+  background: #FFFFFF;
+  border: 1px solid #D8E4F2;
+  box-shadow: 0px 8px 24px rgba(20, 33, 61, 0.08);
+  border-radius: 12px;
+}
+
+.team-slot--editing {
+  border: 2px solid #2A75BB;
+}
+
+.team-slot--empty {
+  padding: 12px 14px;
+  gap: 12px;
+}
+
+.team-slot__artwork {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 64px;
+  height: 64px;
+  background: #F2F7FF;
+  border-radius: 16px;
+  flex: none;
+}
+
+.team-slot__artwork img {
+  width: 54.86px;
+  height: 54.86px;
+  object-fit: contain;
+}
+
+.team-slot__info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  min-width: 0;
+  flex: 1;
+}
+
+.team-slot__name {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: "Noto Sans KR", sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 18px;
+  color: #14213D;
+}
+
+.team-slot__role {
+  font-family: "Noto Sans KR", sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 14px;
+  color: #667085;
+}
+
+.team-slot__actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+}
+
+.team-slot__handle {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 8px;
+  gap: 3px;
+  width: 100px;
+  height: 28px;
+  background: #F2F7FF;
+  border-radius: 8px;
+  flex: none;
+}
+
+.team-slot__handle span {
+  width: 16px;
+  height: 2px;
+  background: #2A75BB;
+  border-radius: 1px;
+}
+
+
+/* Toast */
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 32px;
+  transform: translateX(-50%);
+  z-index: 200;
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0px 8px 24px rgba(20, 33, 61, 0.2);
+  font-family: "Noto Sans KR", sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 17px;
+  white-space: nowrap;
+}
+
+.toast--success {
+  background: #14213D;
+  color: #FFFFFF;
+}
+
+
+/* Dialog (ConfirmDialog / EditDialog) */
+
+.dialog-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(20, 33, 61, 0.4);
+}
+
+.dialog {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 420px;
+  max-width: calc(100% - 32px);
+  padding: 24px;
+  background: #FFFFFF;
+  border: 1px solid #D8E4F2;
+  border-radius: 12px;
+  box-shadow: 0px 8px 24px rgba(20, 33, 61, 0.16);
+}
+
+.dialog__title {
+  margin: 0;
+  font-family: "Noto Sans KR", sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 24px;
+  color: #14213D;
+}
+
+.dialog__desc {
+  margin: -8px 0 0;
+  font-family: "Noto Sans KR", sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 16px;
+  color: #667085;
+}
+
+.dialog__actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+
+/* Form Field */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field__label {
+  font-family: "Noto Sans KR", sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 14px;
+  color: #14213D;
+}
+
+.field__input {
+  box-sizing: border-box;
+  width: 100%;
+  height: 42px;
+  padding: 11px 14px;
+  background: #FFFFFF;
+  border: 1px solid #D8E4F2;
+  border-radius: 8px;
+  font-family: "Noto Sans KR", sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 16px;
+  color: #14213D;
+}
+
+.field__input::placeholder {
+  color: #8AA0B8;
+}
+
+.field__input:focus {
+  outline: none;
+  border-color: #2A75BB;
+  box-shadow: 0 0 0 3px rgba(42, 117, 187, 0.18);
+}
+
+.field__input--error,
+.field__input--error:focus {
+  border-color: #EF476F;
+  box-shadow: 0 0 0 3px rgba(239, 71, 111, 0.16);
+}
+
+.field__error {
+  font-family: "Noto Sans KR", sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 14px;
+  color: #B92F51;
+}
+
+
+/* Role Pill */
+
+.role-group {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
+
+.role-pill {
+  box-sizing: border-box;
+  padding: 8px 14px;
+  background: #F2F7FF;
+  border: none;
+  border-radius: 999px;
+  font-family: "Noto Sans KR", sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 14px;
+  color: #667085;
+  cursor: pointer;
+}
+
+.role-pill--active {
+  background: #2A75BB;
+  color: #FFFFFF;
+}
+
+.role-pill:focus-visible {
+  outline: 2px solid #2A75BB;
+  outline-offset: 2px;
+}
+
+
+/* Mobile */
+
+@media screen and (max-width: 480px) {
+  .team-page {
+    width: 100%;
+    gap: 16px;
+  }
+
+
+  .team-title {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "text text"
+      "count actions";
+    column-gap: 8px;
+    row-gap: 12px;
+    align-items: center;
+    width: 100%;
+    min-height: auto;
+  }
+
+  /* 제목과 설명 */
+  .team-title__text {
+    grid-area: text;
+    width: 100%;
+    min-width: 0;
+    align-self: stretch;
+    gap: 6px;
+  }
+
+  .team-title__text h2 {
+    font-size: 23px;
+    line-height: 28px;
+  }
+
+  .team-title__text p {
+    font-size: 13px;
+    line-height: 21px;
+    white-space: normal;
+  }
+
+  /* 노란색 팀 인원 표시 */
+  .team-pill {
+    grid-area: count;
+    justify-self: end;
+    align-self: center;
+  }
+
+  /* 팀 저장 버튼 영역 */
+  .team-title__actions {
+    grid-area: actions;
+    display: flex;
+    flex-direction: row;
+    width: auto;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* 모바일 버튼 크기 */
+  .team-btn {
+    height: 36px;
+    padding: 10px 14px;
+    font-size: 12px;
+    line-height: 15px;
+  }
+
+  /* 제목 영역 버튼 크기 */
+  .team-title__actions .team-btn {
+    height: 40px;
+    padding: 12px 16px;
+    font-size: 13px;
+    line-height: 16px;
+  }
+
+  /* 모바일에서 취소 버튼 숨김 */
+  .team-title__actions button.team-btn--secondary {
+    display: none !important;
+  }
+
+
+  .team-grid {
+    grid-template-columns: minmax(0, 1fr);
+    width: 100%;
+  }
+
+  .team-slot {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .toast {
+    max-width: calc(100% - 32px);
+    white-space: normal;
+    text-align: center;
+  }
+}

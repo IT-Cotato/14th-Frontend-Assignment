@@ -1,5 +1,6 @@
 import PokemonCard from "./PokemonCard";
 import StatePanel from "./StatePanel";
+import type { TeamMember } from "./teamTypes";
 
 const defaultPokemons = [
   {
@@ -30,19 +31,67 @@ const defaultPokemons = [
     name: "거북왕",
     type: "WATER",
   },
+
+  {
+    id: 94,
+    image: "/Gengar.svg",
+    number: "#0094",
+    name: "팬텀",
+    type: "GHOST",
+  },
+
+  {
+    id: 54,
+    image: "/Psyduck.svg",
+    number: "#0054",
+    name: "고라파덕",
+    type: "WATER",
+  },
+
+  {
+    id: 149,
+    image: "/Dragonite.svg",
+    number: "#0149",
+    name: "망나뇽",
+    type: "DRAGON",
+  },
+
+  {
+    id: 133,
+    image: "/Eevee.svg",
+    number: "#0133",
+    name: "이브이",
+    type: "Normal",
+  }
 ];
 
-function PokemonList({ pokemons = defaultPokemons }) {
+type PokemonListProps = {
+  pokemons?: typeof defaultPokemons;
+  team: TeamMember[];
+  onAddToTeam: (member: TeamMember) => void;
+  limit?: number;
+};
+
+function PokemonList({
+  pokemons = defaultPokemons,
+  team,
+  onAddToTeam,
+  limit,
+}: PokemonListProps) {
   if (pokemons.length === 0) {
     return <StatePanel />;
   }
 
+  const visiblePokemons = limit ? pokemons.slice(0, limit) : pokemons;
+
   return (
     <div className="pokemon-grid">
-      {pokemons.map((pokemon) => (
+      {visiblePokemons.map((pokemon) => (
         <PokemonCard
           key={pokemon.id}
           {...pokemon}
+          team={team}
+          onAddToTeam={onAddToTeam}
         />
       ))}
     </div>

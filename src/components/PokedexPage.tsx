@@ -1,13 +1,31 @@
 import { useState } from "react";
 import PokemonHeader from "./PokemonHeader";
 import PokemonList from "./PokemonList";
+import TeamNoticePanel from "./TeamNoticePanel";
+import type { ActivePage, TeamMember } from "./teamTypes";
 
-function PokedexPage() {
+type PokedexPageProps = {
+  team: TeamMember[];
+  duplicateName: string | null;
+  onNavigate: (page: ActivePage) => void;
+  onAddToTeam: (member: TeamMember) => void;
+};
+
+function PokedexPage({
+  team,
+  duplicateName,
+  onNavigate,
+  onAddToTeam,
+}: PokedexPageProps) {
   const [iconFailed, setIconFailed] = useState(false);
 
   return (
     <>
-      <PokemonHeader activePage="pokedex" />
+      <PokemonHeader
+        activePage="pokedex"
+        teamCount={team.length}
+        onNavigate={onNavigate}
+      />
 
       <div className="pokedex-title">
         <div className="pokedex-title__text">
@@ -39,7 +57,9 @@ function PokedexPage() {
         </button>
       </div>
 
-      <PokemonList />
+      <TeamNoticePanel team={team} duplicateName={duplicateName} />
+
+      <PokemonList team={team} onAddToTeam={onAddToTeam} />
     </>
   );
 }
