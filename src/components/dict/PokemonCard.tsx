@@ -21,7 +21,7 @@ function PokemonCard({
 
       <h3 className="dict-pokemon-name">{name}</h3>
 
-      <span className={`pokemon-type ${type.toLowerCase()}`}>
+      <span className={`dict-pokemon-type ${type.toLowerCase()}`}>
         {type}
       </span>
 
