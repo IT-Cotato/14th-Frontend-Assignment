@@ -1,7 +1,14 @@
 import PokemonHeader from "./components/PokemonHeader";
 import PokemonList from "./components/PokemonList";
+import PokemonDictPage from "./components/dict/PokemonDictPage";
+import { useState } from "react";
 
 function App() {
+  const [page, setPage] = useState("team");
+
+  if (page === "dict") {
+    return <PokemonDictPage />;
+  }
   return (
     <>
       <PokemonHeader />
@@ -27,7 +34,7 @@ function App() {
           </div>
         </section>
 
-        <PokemonList />
+        <PokemonList onOpenDict={() => setPage("dict")} />
       </main>
     </>
   );

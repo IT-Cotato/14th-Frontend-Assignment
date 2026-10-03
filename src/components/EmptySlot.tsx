@@ -1,14 +1,7 @@
 import { useState } from 'react';
-import TeamEditDialog from "./TeamEditDialog";
+import PokemonDictPage from "./dict/PokemonDictPage";
 
-function EmptySlot() {
-  const [isEditOpen, setIsEditOpen] = useState(false);
-  function handleEditOpen() {
-    setIsEditOpen(!isEditOpen);
-  }
-  function handleEditClose() {
-    setIsEditOpen(false);
-  }
+function EmptySlot({ onOpenDict }: { onOpenDict: () => void }) {
 
   return (
     <>
@@ -18,7 +11,7 @@ function EmptySlot() {
               <p>포켓몬을 추가해 보세요</p>
           </div>
 
-        <div className="handle" onClick={handleEditOpen}>
+        <div className="handle" onClick={onOpenDict}>
           ☰
         </div>
       </div>

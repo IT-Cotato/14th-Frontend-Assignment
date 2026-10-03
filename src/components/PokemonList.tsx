@@ -5,7 +5,7 @@ import Charizard from "../assets/Charizard.png";
 import Bulbasaur from "../assets/Bulbasaur.png";
 import Blastoise from "../assets/Blastoise.png";
 
-function PokemonList() {
+function PokemonList({ onOpenDict }: { onOpenDict: () => void }) {
   const pokemonList = [
     {
       number: "#0025",
@@ -53,7 +53,7 @@ function PokemonList() {
               type={""}
               slot={index + 1}            />
           ) : (
-            <EmptySlot key={index} />
+            <EmptySlot onOpenDict={onOpenDict} />
           );
         })}
       </div>

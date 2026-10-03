@@ -1,6 +1,3 @@
-import { useState } from 'react';
-
-
 interface TeamEditDialogProps {
     slot: number;
     name: string;
