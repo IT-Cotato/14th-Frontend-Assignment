@@ -1,6 +1,6 @@
-import type { Pokemon } from './PokemonCard';   // 포켓몬 타입 가져오기
-import './TeamSlotList.css';   
-import { useState } from 'react';
+import type { Pokemon } from './PokemonCard';   // PokemonCard 파일에서 Pokemon 타입만 가져옴
+import './TeamSlotList.css';                     // 이 컴포넌트의 CSS 연결
+import { useState } from 'react';               // 기억해야 하는 값(state)을 만드는 기능
 
 // 영어 타입을 한글로 바꿔주는 표 (18종 전체)
 const TYPE_LABEL: Record<string, string> = {
@@ -24,13 +24,14 @@ const TYPE_LABEL: Record<string, string> = {
     WATER: '물',
 };
 
+// TeamSlotList가 부모(App)에게서 받는 값들
 type TeamSlotListProps = {
-    team: Pokemon[];
-    onRemove: (id: number) => void;
-    onUpdate: (id: number, nickname: string, role: string) => void;
+    team: Pokemon[];                                                  // 현재 팀 배열
+    onRemove: (id: number) => void;                                   // 삭제 요청 함수
+    onUpdate: (id: number, nickname: string, role: string) => void;  // 별명·역할 저장 요청 함수
 };
 
-// 팀 슬롯 6칸 + 편집 창을 그리는 컴포넌트
+// 팀 슬롯 6칸 + 편집 모달을 그리는 컴포넌트
 function TeamSlotList({ team, onRemove, onUpdate }: TeamSlotListProps) {
     // 지금 편집 중인 포켓몬의 id. 편집 중이 아니면 null
     const [editingId, setEditingId] = useState<number | null>(null);
@@ -38,8 +39,10 @@ function TeamSlotList({ team, onRemove, onUpdate }: TeamSlotListProps) {
     // 6칸짜리 배열: 포켓몬이 있으면 포켓몬, 없으면 undefined
     const slots = Array.from({ length: 6 }, (_, i) => team[i]);
 
-    // 편집 중인 포켓몬 객체와 몇 번째 슬롯인지 찾기
+    // 편집 중인 포켓몬 객체 (편집 중 아니면 undefined)
     const editingPokemon = team.find((p) => p.id === editingId);
+
+    // 편집 중인 포켓몬이 몇 번째 슬롯인지 (0부터 세니까 +1)
     const editingSlotNumber = team.findIndex((p) => p.id === editingId) + 1;
 
     // 삭제: 편집 중인 포켓몬을 지우면 편집 창도 닫음
@@ -55,73 +58,54 @@ function TeamSlotList({ team, onRemove, onUpdate }: TeamSlotListProps) {
         setEditingId(null);
     }
 
-        // 편집 중일 때: 편집하는 포켓몬 슬롯 하나 + 편집 창만 보여줌
-    if (editingPokemon) {
-        return (
-            <>
-                <div className="teamSlot-main-box">
-                    <FilledSlot
+    // 슬롯 6칸은 항상 그리고, 편집 중일 때만 그 위에 모달을 띄움
+    return (
+        <>
+            <div className="teamSlot-main-box">
+                {slots.map((pokemon, index) =>
+                    pokemon ? (
+                        <FilledSlot
+                            key={pokemon.id}
+                            pokemon={pokemon}
+                            isEditing={pokemon.id === editingId}       // 편집 중인 슬롯이면 true
+                            onEdit={() => setEditingId(pokemon.id)}    // 편집 누르면 이 포켓몬을 편집 중으로
+                            onRemove={() => handleRemove(pokemon.id)}  // 삭제 누르면 이 포켓몬 삭제
+                        />
+                    ) : (
+                        <EmptySlot key={`empty-${index}`} />
+                    )
+                )}
+            </div>
+
+            {/* 편집 중일 때만 오버레이를 그림 */}
+            {editingPokemon && (
+                <div
+                    className="editPanel-overlay"
+                    onClick={() => setEditingId(null)}   // 어두운 배경 클릭하면 닫기
+                >
+                    {/* 편집창을 오버레이 "안"으로 이동 */}
+                    <EditPanel
+                        key={editingPokemon.id}
                         pokemon={editingPokemon}
-                        onEdit={() => setEditingId(editingPokemon.id)}
-                        onRemove={() => handleRemove(editingPokemon.id)}
+                        slotNumber={editingSlotNumber}
+                        onCancel={() => setEditingId(null)}
+                        onSave={handleSave}
                     />
                 </div>
-
-                <EditPanel
-                    key={editingPokemon.id}
-                    pokemon={editingPokemon}
-                    slotNumber={editingSlotNumber}
-                    onCancel={() => setEditingId(null)}
-                    onSave={handleSave}
-                />
-            </>
-        );
-    }
-
-    // 평소: 슬롯 6칸 전체를 보여줌
-    return (
-        <div className="teamSlot-main-box">
-            {slots.map((pokemon, index) =>
-                pokemon ? (
-                    <FilledSlot
-                        key={pokemon.id}
-                        pokemon={pokemon}
-                        onEdit={() => setEditingId(pokemon.id)}
-                        onRemove={() => handleRemove(pokemon.id)}
-                    />
-                ) : (
-                    <EmptySlot key={`empty-${index}`} />
-                )
             )}
-        </div>
-    );
-
-    return (
-        <div className="teamSlot-main-box">
-            {slots.map((pokemon, index) =>
-                pokemon ? (
-                    <FilledSlot
-                        key={pokemon.id}
-                        pokemon={pokemon}
-                        onEdit={() => setEditingId(pokemon.id)}    // 이 포켓몬을 편집 중으로
-                        onRemove={() => handleRemove(pokemon.id)}  // 이 포켓몬을 삭제
-                    />
-                ) : (
-                    <EmptySlot key={`empty-${index}`} />
-                )
-            )}
-        </div>
+        </>
     );
 }
 
 type FilledSlotProps = {
-    pokemon: Pokemon;
-    onEdit: () => void;
-    onRemove: () => void;
+    pokemon: Pokemon;      // 이 슬롯에 들어갈 포켓몬
+    isEditing: boolean;    // 지금 편집 중인 슬롯인지 (true/false)
+    onEdit: () => void;    // 편집 버튼 누를 때
+    onRemove: () => void;  // 삭제 버튼 누를 때
 };
 
-// 포켓몬이 들어있는 슬롯 하나
-function FilledSlot({ pokemon, onEdit, onRemove }: FilledSlotProps) {
+// 포켓몬이 들어있는 슬롯 하나 (편집 중이면 editing 클래스 추가)
+function FilledSlot({ pokemon, isEditing, onEdit, onRemove }: FilledSlotProps) {  
     // ['ELECTRIC'] → "전기"
     const typeText = pokemon.types.map((type) => TYPE_LABEL[type] ?? type).join(', ');
 
@@ -129,7 +113,7 @@ function FilledSlot({ pokemon, onEdit, onRemove }: FilledSlotProps) {
     const desc = pokemon.role ? `${typeText} · ${pokemon.role}` : typeText;
 
     return (
-        <div className="teamSlot-box">
+        <div className={`teamSlot-box ${isEditing ? 'editing' : ''}`}>   {/* 편집 중이면 editing 클래스 추가 */}
             <div className="teamSlot-img-box">
                 <img className="teamSlot-img" src={pokemon.image} alt={pokemon.name} />
             </div>
@@ -160,6 +144,7 @@ function EmptySlot() {
                 <div className="teamSlot-name-empty">빈 슬롯</div>
                 <div className="teamSlot-desc-empty">포켓몬을 추가해 보세요</div>
             </div>
+            {/* 오른쪽 파란 줄 3개 아이콘 */}
             <div className="teamSlot-logo-box">
                 <div className="teamSlot-logo"></div>
                 <div className="teamSlot-logo"></div>
@@ -173,10 +158,10 @@ function EmptySlot() {
 const ROLES = ['공격', '방어', '서포트'];
 
 type EditPanelProps = {
-    pokemon: Pokemon;
-    slotNumber: number;
-    onCancel: () => void; //이벤트 핸들러 props
-    onSave: (nickname: string, role: string) => void; //이벤트 핸들러 props
+    pokemon: Pokemon;                                  // 편집할 포켓몬
+    slotNumber: number;                                // 몇 번 슬롯인지
+    onCancel: () => void;                              // 취소 누를 때
+    onSave: (nickname: string, role: string) => void;  // 저장 누를 때
 };
 
 // 포켓몬 별명·역할 편집 창
@@ -186,7 +171,10 @@ function EditPanel({ pokemon, slotNumber, onCancel, onSave }: EditPanelProps) {
     const [role, setRole] = useState(pokemon.role ?? '');
 
     return (
-        <div className="editPanel-box">
+        <div
+            className="editPanel-box"
+            onClick={(e) => e.stopPropagation()}
+        >
             <h2 className="editPanel-title">{pokemon.name} 편집</h2>
             <p className="editPanel-slot">팀 슬롯 #{slotNumber}</p>
 
@@ -195,8 +183,8 @@ function EditPanel({ pokemon, slotNumber, onCancel, onSave }: EditPanelProps) {
                 <input
                     className="editPanel-input"
                     type="text"
-                    value={nickname}                                   // 화면에 보이는 값 = state
-                    onChange={(e) => setNickname(e.target.value)}      // 입력할 때마다 state 갱신
+                    value={nickname}                                // 화면에 보이는 값 = state
+                    onChange={(e) => setNickname(e.target.value)}   // 입력할 때마다 state 갱신
                 />
             </div>
 
@@ -205,8 +193,8 @@ function EditPanel({ pokemon, slotNumber, onCancel, onSave }: EditPanelProps) {
                 {ROLES.map((r) => (
                     <button
                         key={r}
-                        className={`editPanel-role ${role === r ? 'active' : ''}`}   // 선택된 역할만 active
-                        onClick={() => setRole(r)}                                  // 누르면 그 역할로 선택
+                        className={`editPanel-role ${role === r ? 'active' : ''}`}  // 선택된 역할만 active
+                        onClick={() => setRole(r)}                                 // 누르면 그 역할 선택
                     >
                         {r}
                     </button>
@@ -221,4 +209,4 @@ function EditPanel({ pokemon, slotNumber, onCancel, onSave }: EditPanelProps) {
     );
 }
 
-export default TeamSlotList;
+export default TeamSlotList;   // App에서 import 할 수 있게 내보냄

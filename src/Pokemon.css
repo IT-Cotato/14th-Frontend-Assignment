@@ -25,7 +25,9 @@ button {
   --line: #D8E4F2;
   --yellow: #FFD166;
   --blue: #2A75BB;
-   --bg: #F7FBFF;
+  --bg: #F7FBFF;
+  --mint: #06D6A0;              /* 추가된 카드 테두리 */
+  --color-success-soft: #E9FFF8; /* 추가된 카드 배경 */
   --color-text-inverse: #FFFFFF; /* 어두운 배경 위 흰 텍스트 */
   --color-text-placeholder: #8AA0B8;
   --color-text-brand: #1A5A9F;
@@ -48,8 +50,9 @@ button {
   --radius-full: 999px;
 }
 
-/*PokemonList*/ 
+/*PokemonList*/
 
+/* 카드들을 담는 큰 상자: 가로로 나열하다 자리 없으면 다음 줄로 */
 .pokeCard-box {
   display: flex;
   align-items: flex-start;
@@ -59,6 +62,7 @@ button {
   flex-wrap: wrap;
 }
 
+/* 카드 하나 (기본 상태) */
 .card-box {
   display: flex;
   width: 260px;
@@ -72,6 +76,15 @@ button {
 
   /* Elevation/Card */
   box-shadow: 0 8px 24px 0 rgba(20, 33, 61, 0.08);
+
+  /* 배경·테두리 색이 바뀔 때 0.2초 동안 부드럽게 */
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+/* 팀에 추가된 카드: 민트 테두리 + 연한 민트 배경 */
+.card-box.added {
+  border: var(--stroke-1) solid var(--mint);
+  background: var(--color-success-soft);
 }
 
 .type-box {
@@ -107,7 +120,8 @@ button {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
-.pokemonNum{
+
+.pokemonNum {
   color: var(--muted);
   font-family: Inter;
   font-size: 11px;
@@ -150,6 +164,7 @@ button {
   line-height: normal;
 }
 
+/* 버튼 (기본 상태: 빨간 "팀에 추가") */
 .button-box {
   display: flex;
   padding: var(--space-3) var(--space-4);
@@ -172,13 +187,33 @@ button {
   line-height: normal;
 }
 
+/* 추가됨 버튼: 흰 배경 + 테두리 (누를 수 있음 → 누르면 중복 안내)
+   .button-box보다 아래 + 클래스 하나 더 → 빨간 배경을 덮어씀 */
+.button-box.added {
+  background: var(--panel);                                 /* 빨강 대신 흰색 */
+  border: var(--stroke-1) solid var(--color-border-strong); /* 연한 파란 테두리 */
+  box-shadow: 0 8px 24px 0 rgba(20, 33, 61, 0.08);          /* Elevation/Card */
+}
+
+/* 추가됨 버튼 "안에 있는" 글자: 흰색 대신 진한 색 (띄어쓰기 = 안쪽 요소) */
+.button-box.added .button-chip {
+  color: var(--ink);
+}
+
+/* 비활성화된 버튼 (팀 가득 참 + 아직 추가 안 된 카드) */
+.button-box:disabled {
+  cursor: not-allowed;   /* 마우스를 올리면 금지 표시 */
+  opacity: 0.45;         /* 45%만 보이게 → 빨강이 흐린 분홍으로 보임 */
+  box-shadow: none;      /* 눌리는 버튼처럼 보이는 아래 그림자 제거 */
+}
+
 .pokemon-image {
   width: 120px;
   height: 120px;
   flex-shrink: 0;
 }
 
-/*없는 카드일 때*/
+/*없는 카드일 때 / 안내 박스*/
 
 .empty-box {
   display: flex;
@@ -191,6 +226,13 @@ button {
   border-radius: var(--radius-lg);
   border: var(--stroke-1) solid var(--line);
   background: var(--panel);
+}
+
+/* 위치 이동: .empty-box보다 "아래"에 있어야 width: 100%가 이김
+   (중복 안내 / 팀 가득 참 안내 박스: 가로 꽉 차게 + 아래 여백) */
+.team-full-box {
+  width: 100%;           /* empty-box의 760px 대신 줄 전체 너비 */
+  margin-bottom: 20px;   /* 아래 카드 목록과 간격 (카드 사이 gap과 같은 값) */
 }
 
 .empty-number-box {
@@ -231,12 +273,6 @@ button {
   font-style: normal;
   font-weight: 400;
   line-height: normal;
-}
-
-/* 비활성화된 추가 버튼 */
-.button-box:disabled {
-  cursor: not-allowed;   /* 마우스를 올리면 금지 표시 */
-  /* 배경, 글자색, 그림자 등은 Figma Disabled 값으로 */
 }
 
 /*모바일 대응*/
