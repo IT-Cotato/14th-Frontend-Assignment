@@ -12,20 +12,20 @@ function PokemonCard({
   image,
 }: PokemonCardProps) {
   return (
-    <div className="pokemon-card">
-      <div className="pokemon-image">
+    <div className="dict-pokemon-card">
+      <div className="dict-pokemon-image">
         <img src={image} alt={name} />
       </div>
 
-      <p className="pokemon-number">{number}</p>
+      <p className="dict-pokemon-number">{number}</p>
 
-      <h3 className="pokemon-name">{name}</h3>
+      <h3 className="dict-pokemon-name">{name}</h3>
 
       <span className={`pokemon-type ${type.toLowerCase()}`}>
         {type}
       </span>
 
-      <button className="team-button">
+      <button className="dict-team-button">
         팀에 추가
       </button>
     </div>

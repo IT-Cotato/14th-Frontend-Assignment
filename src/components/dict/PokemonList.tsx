@@ -33,8 +33,8 @@ function PokemonList() {
   ];
 
   return (
-    <section className="pokemon-section">
-      <div className="pokemon-grid">
+    <section className="dict-pokemon-section">
+      <div className="dict-pokemon-grid">
         {pokemonList.map((pokemon) => (
           <PokemonCard
             key={pokemon.number}

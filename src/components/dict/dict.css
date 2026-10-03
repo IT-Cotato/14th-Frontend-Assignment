@@ -1,0 +1,389 @@
+body {
+  margin: 0;
+  background-color: #F7FBFF;
+}
+.app {
+  width: 100%;
+  min-height: 100vh;
+}
+.header {
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 14px 24px;
+
+  width: 1280px;
+  height: 72px;
+
+  background: #FFFFFF;
+  border: 1px solid #D8E4F2;
+  border-radius: 12px;
+  margin: 30px auto 0;
+}
+
+.dict-nav-active{
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 9px 14px;
+
+  height: 34px;
+
+  background: #EF476F;
+  border-radius: 999px;
+  color: #FFFFFF;
+  white-space: nowrap;
+}
+.dict-nav-button {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 9px 14px;
+
+  background: #F2F7FF;
+  border-radius: 999px;
+
+  color: #667085;
+  white-space: nowrap;
+}
+
+
+/*  */
+.dict-hero {
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+
+  gap: 36px;
+
+  width: 1280px;
+
+  margin: 20px auto 0;
+}
+.dict-hero-content{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0px;
+  gap: 14px;
+
+  margin-left: 0;
+  width: 1280px;
+  height: 67px;
+  white-space: nowrap;
+}
+.dict-total {
+  margin: -70px 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+  width: 93px;
+  height: 30px;
+  padding: 8px 12px;
+
+  margin-left: auto;
+
+  background: #FFD166;
+  border-radius: 999px;
+
+  font-family: 'Noto Sans KR', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 14px;
+  color: #14213D;
+
+  white-space: nowrap;
+}
+.dict-hero-content h1 {
+  width: 145px;
+  height: 36px;
+
+  margin: 0;
+
+  font-family: 'Noto Sans KR';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 36px;
+
+  color: #14213D;
+  white-space: nowrap;
+}
+.dict-hero-content p {
+  width: 270px;
+  height: 25px;
+
+  margin: 0;
+
+  font-family: 'Noto Sans KR';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 26px;
+
+  color: #667085;
+}
+.dict-secondary-button {
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 20px;
+  gap: 8px;
+
+  width: 69px;
+  height: 41px;
+  white-space: nowrap;
+  background: #FFFFFF;
+  border: 1px solid #C6D8EE;
+  box-shadow: 0px 8px 24px rgba(20, 33, 61, 0.08);
+  border-radius: 8px;
+
+  font-family: 'Noto Sans KR';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 17px;
+
+  color: #14213D;
+}
+.dict-hero-image {
+  position: relative;
+
+  width: 238px;
+  height: 238px;
+
+  background: #F2F7FF;
+  border-radius: 27.2px;
+}
+.dict-hero-image img {
+  position: absolute;
+
+  width: 204px;
+  height: 204px;
+  left: 17px;
+  top: 17px;
+
+  object-fit: contain;
+}
+
+
+/*  */
+.search-section{
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+
+  gap: 36px;
+
+  width: 1280px;
+
+  margin: 20px auto 0;
+
+}
+.search {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+
+  width: 760px;
+  height: 44px;
+}
+
+.search input {
+  box-sizing: border-box;
+
+  width: 682px;
+  height: 42px;
+
+  padding: 11px 14px;
+
+  background: #ffffff;
+  border: 1px solid #d8e4f2;
+  border-radius: 8px;
+
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 16px;
+  color: #8aa0b8;
+
+  flex: 1;
+}
+
+.search input::placeholder {
+  color: #8aa0b8;
+}
+
+.dict-search button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 66px;
+  height: 41px;
+
+  padding: 12px 20px;
+
+  background: #ef476f;
+  border: none;
+  border-radius: 8px;
+
+  box-shadow: 0 8px 0 #b92f51;
+
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 17px;
+  color: #ffffff;
+
+  cursor: pointer;
+}
+
+
+
+/*  */
+.dict-pokemon-card {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 18px;
+  gap: 14px;
+
+  width: 260px;
+  height: 336px;
+
+  background: #FFFFFF;
+  border: 1px solid #D8E4F2;
+  box-shadow: 0px 8px 24px rgba(20, 33, 61, 0.08);
+  border-radius: 12px;
+}
+.dict-pokemon-name {
+  font-size: 20px;
+  font-weight: 700;
+}
+.dict-pokemon-grid {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 20px;
+
+  width: 1280px;
+  margin: 20px auto 0;
+}
+.dict-pokemon-image {
+  width: 140px;
+  height: 140px;
+
+  background: #F2F7FF;
+  border-radius: 16px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.dict-pokemon-image img {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+}
+.dict-pokemon-number {
+  margin: 0;
+
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 13px;
+
+  color: #667085;
+}
+.dict-pokemon-name {
+  margin: 0;
+
+  font-family: 'Noto Sans KR';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 22px;
+  text-align: center;
+
+  color: #14213D;
+}
+.dict-pokemon-type {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 12px;
+
+  height: 29px;
+
+  border-radius: 999px;
+
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 13px;
+
+  color: #FFFFFF;
+}
+.dict-pokemon-type.electric {
+  width: 78px;
+  background: #EED535;
+}
+
+.dict-pokemon-type.fire {
+  width: 48px;
+  background: #FD7D24;
+}
+
+.dict-pokemon-type.grass {
+  width: 62px;
+  background: #62B957;
+}
+
+.dict-pokemon-type.water {
+  width: 63px;
+  background: #4A90DA;
+}
+.dict-team-button {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 16px;
+  gap: 8px;
+
+  width: 83px;
+  height: 40px;
+
+  background: #EF476F;
+  box-shadow: 0px 8px 0px #B92F51;
+  border-radius: 8px;
+  border: none;
+  white-space: nowrap;
+
+  font-family: 'Noto Sans KR';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 16px;
+
+  color: #FFFFFF;
+}
