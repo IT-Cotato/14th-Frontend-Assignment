@@ -1,11 +1,4 @@
-body {
-  margin: 0;
-  background-color: #F7FBFF;
-}
-.app {
-  width: 100%;
-  min-height: 100vh;
-}
+
 .header {
   box-sizing: border-box;
 
