@@ -1,6 +1,7 @@
 import type { Pokemon } from './PokemonCard';   // PokemonCard 파일에서 Pokemon 타입만 가져옴
 import './TeamSlotList.css';                     // 이 컴포넌트의 CSS 연결
 import { useState } from 'react';               // 기억해야 하는 값(state)을 만드는 기능
+import { createPortal } from 'react-dom';       // 컴포넌트를 다른 위치(body)에 그려주는 기능
 
 // 영어 타입을 한글로 바꿔주는 표 (18종 전체)
 const TYPE_LABEL: Record<string, string> = {
@@ -77,13 +78,12 @@ function TeamSlotList({ team, onRemove, onUpdate }: TeamSlotListProps) {
                 )}
             </div>
 
-            {/* 편집 중일 때만 오버레이를 그림 */}
-            {editingPokemon && (
+            {/* 🔧 편집 중일 때만, 오버레이를 body 바로 아래에 그림 (화면 정중앙 보장) */}
+            {editingPokemon && createPortal(
                 <div
                     className="editPanel-overlay"
                     onClick={() => setEditingId(null)}   // 어두운 배경 클릭하면 닫기
                 >
-                    {/* 편집창을 오버레이 "안"으로 이동 */}
                     <EditPanel
                         key={editingPokemon.id}
                         pokemon={editingPokemon}
@@ -91,7 +91,8 @@ function TeamSlotList({ team, onRemove, onUpdate }: TeamSlotListProps) {
                         onCancel={() => setEditingId(null)}
                         onSave={handleSave}
                     />
-                </div>
+                </div>,
+                document.body                            // 그릴 장소: <body> 태그
             )}
         </>
     );
@@ -105,7 +106,7 @@ type FilledSlotProps = {
 };
 
 // 포켓몬이 들어있는 슬롯 하나 (편집 중이면 editing 클래스 추가)
-function FilledSlot({ pokemon, isEditing, onEdit, onRemove }: FilledSlotProps) {  
+function FilledSlot({ pokemon, isEditing, onEdit, onRemove }: FilledSlotProps) {
     // ['ELECTRIC'] → "전기"
     const typeText = pokemon.types.map((type) => TYPE_LABEL[type] ?? type).join(', ');
 
@@ -113,7 +114,7 @@ function FilledSlot({ pokemon, isEditing, onEdit, onRemove }: FilledSlotProps) {
     const desc = pokemon.role ? `${typeText} · ${pokemon.role}` : typeText;
 
     return (
-        <div className={`teamSlot-box ${isEditing ? 'editing' : ''}`}>   {/* 편집 중이면 editing 클래스 추가 */}
+        <div className={`teamSlot-box ${isEditing ? 'editing' : ''}`}>
             <div className="teamSlot-img-box">
                 <img className="teamSlot-img" src={pokemon.image} alt={pokemon.name} />
             </div>
@@ -173,7 +174,7 @@ function EditPanel({ pokemon, slotNumber, onCancel, onSave }: EditPanelProps) {
     return (
         <div
             className="editPanel-box"
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}   // 창 안쪽 클릭이 오버레이까지 올라가서 닫히는 것 방지
         >
             <h2 className="editPanel-title">{pokemon.name} 편집</h2>
             <p className="editPanel-slot">팀 슬롯 #{slotNumber}</p>
