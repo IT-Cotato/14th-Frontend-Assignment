@@ -310,6 +310,7 @@ box-shadow: 0 8px 24px 0 rgba(20, 33, 61, 0.08);
   align-items: center;
   gap: 10px;
   flex: 1 0 0;
+  min-width: 0;
   border-radius: var(--radius-md);
   border: var(--stroke-1) solid var(--line);
   background: var(--panel);
@@ -317,6 +318,7 @@ box-shadow: 0 8px 24px 0 rgba(20, 33, 61, 0.08);
 
 .searchBar {
   flex: 1 0 0;
+  min-width: 0;
   color: var(--color-text-placeholder);
   font-family: "Noto Sans KR";
   font-size: 13px;
@@ -347,20 +349,171 @@ box-shadow: 0 8px 24px 0 rgba(20, 33, 61, 0.08);
   justify-content: center;
   align-items: center;
   gap: var(--space-2);
+  flex-shrink: 0;        /* 자리가 모자라도 버튼은 줄어들지 않게 */
+  white-space: nowrap;   /* 글자를 한 줄로 유지 (줄바꿈 금지) */
   border-radius: var(--radius-md);
   background: var(--red);
 
   /* Elevation/Hard Red */
   box-shadow: 0 8px 0 0 #B92F51;
-}
 
-.search {
   color: var(--color-text-inverse);
   font-family: "Noto Sans KR";
   font-size: 14px;
   font-style: normal;
-  font-weight: 760;
+  font-weight: 700;
   line-height: normal;
+}
+
+/* 필터 버튼 */
+.filterButton-box {
+  display: flex;
+  padding: var(--space-3) var(--space-5);
+  justify-content: center;
+  align-items: center;
+  gap: 6px;              /* "필터" 글자와 숫자 배지 사이 */
+  flex-shrink: 0;        /* 자리가 모자라도 버튼은 줄어들지 않게 */
+  white-space: nowrap;   /* "필터"를 한 줄로 유지 */
+  border-radius: var(--radius-md);
+  border: var(--stroke-1) solid var(--color-border-strong);
+  background: var(--panel);
+
+  /* Elevation/Card */
+  box-shadow: 0 8px 24px 0 rgba(20, 33, 61, 0.08);
+  color: var(--ink);
+  font-family: "Noto Sans KR";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+
+/* 필터 버튼 안 선택 개수 배지 (빨간 동그라미 숫자) */
+.filter-count {
+  display: flex;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 6px;
+  justify-content: center;
+  align-items: center;
+  border-radius: var(--radius-full);
+  background: var(--red);
+  color: var(--color-text-inverse);
+  font-family: Inter;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* 필터 모달 흰 패널*/
+.filterOpen-box {
+  display: flex;
+  width: 420px;
+  max-width: 100%;                                  /* 화면이 좁으면 그만큼 줄어듦 */
+  padding: 24px;
+  flex-direction: column;                           /* 제목 → 타입 → 정렬 → 버튼 순으로 세로 쌓기 */
+  gap: 20px;
+  border-radius: 16px;
+  border: var(--stroke-1) solid var(--line);
+  background: var(--panel);
+  box-shadow: 0 24px 48px 0 rgba(20, 33, 61, 0.2); /* 떠 있는 느낌 */
+}
+
+.filter-title {
+  color: var(--ink);
+  font-family: "Noto Sans KR";
+  font-size: 20px;
+  font-weight: 700;
+  line-height: normal;
+}
+
+/* 라벨 + 버튼들을 묶는 구역 */
+.filter-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;                                        /* 라벨과 버튼 사이 */
+}
+
+/* "타입", "정렬" 라벨 */
+.filter-label {
+  color: var(--muted);
+  font-family: "Noto Sans KR";
+  font-size: 13px;
+  font-weight: 700;
+  line-height: normal;
+}
+
+/* chip 묶음: 가로 나열, 넘치면 다음 줄 */
+.filter-type-box {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* 패널 "안의" chip만: 선택 안 됐을 때 흐리게 */
+.filter-type-box .type-chip {
+  opacity: 0.35;
+  cursor: pointer;
+  transition: opacity 0.15s ease, outline-color 0.15s ease;
+}
+
+/* 패널 안의 선택된 chip */
+.filter-type-box .type-chip.active {
+  opacity: 1;
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;                              /* chip과 링 사이 틈 */
+}
+
+/* 번호 버튼 두 개를 가로로 나란히 */
+.filter-sort-box {
+  display: flex;
+  gap: 8px;
+}
+
+/* 번호 버튼 (선택 안 됐을 때: 흰 배경 + 테두리) */
+.filter-sort-button {
+  display: flex;
+  padding: 10px 16px;
+  justify-content: center;
+  align-items: center;
+  border-radius: var(--radius-md);
+  border: var(--stroke-1) solid var(--color-border-strong);
+  background: var(--panel);
+  color: var(--ink);
+  font-family: "Noto Sans KR";
+  font-size: 14px;
+  font-weight: 700;
+  line-height: normal;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+/* 선택된 번호 버튼 */
+.filter-sort-button.active {
+  border-color: var(--blue);
+  background: var(--blue);
+  color: var(--color-text-inverse);
+}
+
+/* 아래 버튼 줄 */
+.filter-footer {
+  display: flex;
+  justify-content: space-between;                   /* 양 끝으로 벌리기 */
+  align-items: center;
+  border-top: var(--stroke-1) solid var(--line);    /* 위쪽 구분선 */
+  padding-top: 16px;
+}
+
+/* 초기화 */
+.filter-reset {
+  color: var(--muted);
+  font-family: "Noto Sans KR";
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+/* 사이드바(나의 팀)에서 빈 슬롯 숨기기 */
+.sideBar-box .teamSlot-box-empty {
+  display: none;
 }
 
 .header2-box {
@@ -470,7 +623,7 @@ box-shadow: 0 8px 24px 0 rgba(20, 33, 61, 0.08);
   line-height: 25px; /* 줄 높이 고정 → 줄 간격이 일정하게 보임 */
 }
 
-.myTeam-num-box {
+.myTeam-num-box2 {
   display: flex;
   padding: 8px 12px;
   align-items: flex-start;
@@ -478,13 +631,18 @@ box-shadow: 0 8px 24px 0 rgba(20, 33, 61, 0.08);
   background: var(--yellow);
 }
 
-.myTeam-num {
+.myTeam-num-box {
   color: var(--ink);
   font-family: "Noto Sans KR";
   font-size: 12px;
   font-style: normal;
   font-weight: 700;
   line-height: normal;
+  display: flex;
+  padding: 8px 12px;
+  align-items: flex-start;
+  border-radius: 999px;
+  background: var(--yellow);
 }
 
 .myTeam-button-box {
@@ -538,6 +696,76 @@ box-shadow: 0 8px 24px 0 rgba(20, 33, 61, 0.08);
   line-height: normal;
 }
 
+/* ===== 저장 데이터 복구 안내 (StatePanel · Error/Recover) ===== */
+.recover-box {
+  display: flex;
+  width: 100%;                                     /* 페이지 너비 꽉 차게 */
+  padding: 28px 24px;
+  flex-direction: column;
+  align-items: center;                              /* 가운데 정렬 */
+  gap: 10px;
+  border-radius: var(--radius-lg);
+  border: var(--stroke-1) solid #F4A3B6;           /* 분홍 테두리 (Figma 값으로 교체 가능) */
+  background: #FFF1F4;                             /* 연한 분홍 배경 (Figma 값으로 교체 가능) */
+}
+
+/* 빨간 동그라미 */
+.recover-mark-box {
+  display: flex;
+  width: 44px;
+  height: 44px;
+  justify-content: center;
+  align-items: center;
+  border-radius: var(--radius-full);
+  background: var(--red);
+}
+
+/* 동그라미 안 흰 ! */
+.recover-mark {
+  color: var(--color-text-inverse);
+  font-family: Inter;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: normal;
+}
+
+/* 제목 */
+.recover-title {
+  color: var(--ink);
+  text-align: center;
+  font-family: "Noto Sans KR";
+  font-size: 16px;
+  font-weight: 700;
+  line-height: normal;
+}
+
+/* 설명 */
+.recover-desc {
+  color: var(--muted);
+  text-align: center;
+  font-family: "Noto Sans KR";
+  font-size: 13px;
+  font-weight: 400;
+  line-height: normal;
+}
+
+/* 확인 버튼 (빨간 버튼, "다시 시도" 버튼과 같은 모양) */
+.recover-button {
+  display: flex;
+  margin-top: 4px;
+  padding: var(--space-3) var(--space-5);
+  justify-content: center;
+  align-items: center;
+  border-radius: var(--radius-md);
+  background: var(--red);
+  box-shadow: 0 4px 0 0 #B92F51;                  /* Elevation/Hard Red */
+  color: var(--color-text-inverse);
+  font-family: "Noto Sans KR";
+  font-size: 13px;
+  font-weight: 700;
+  line-height: normal;
+}
+
 /*모바일 대응*/
 
 @media (max-width: 767px) {
@@ -556,9 +784,21 @@ box-shadow: 0 8px 24px 0 rgba(20, 33, 61, 0.08);
         width: 100%;
     }
     .search-container {
-        width: 326px;
+        width: 100%;
+        gap: 8px;
     }
 
+    .search-box, .filterButton-box {
+      padding: 10px 16px;
+      font-size: 12px;
+    }
+
+    .filter-count {
+      min-width: 16px;
+      height: 16px;
+      font-size: 10px;
+    }
+    
     .home-box {
         display: none;
     }
@@ -601,6 +841,14 @@ box-shadow: 0 8px 24px 0 rgba(20, 33, 61, 0.08);
         font-size: 13px;
     }
 
+    .myTeam-num-box0 {
+      display: flex;
+      width: 342px;
+      height: 30px;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 8px;
+    }
     .myTeam-team-box {
         flex-direction: row;       /* column → row 로 복구 */
         flex-wrap: wrap;           /* 한 줄에 안 들어가면 줄바꿈 */
@@ -641,7 +889,21 @@ box-shadow: 0 8px 24px 0 rgba(20, 33, 61, 0.08);
         .myTeam-store-box {
         padding: var(--space-3) var(--space-4);
     }
-    .myTeam-store {
-        font-size: 13px;
+
+    .header2-box {
+      flex-direction: column;
+    }
+
+    .title-box {
+      align-self: stretch;
+    }
+
+    .myTeam-num-box1 {
+      display: flex;
+      width: 100%;
+      height: 30px;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 8px;
     }
 }
