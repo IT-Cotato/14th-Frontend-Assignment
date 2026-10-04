@@ -78,7 +78,7 @@ function TeamSlotList({ team, onRemove, onUpdate }: TeamSlotListProps) {
                 )}
             </div>
 
-            {/* 🔧 편집 중일 때만, 오버레이를 body 바로 아래에 그림 (화면 정중앙 보장) */}
+            {/* 편집 중일 때만, 오버레이를 body 바로 아래에 그림 (화면 정중앙 보장) */}
             {editingPokemon && createPortal(
                 <div
                     className="editPanel-overlay"

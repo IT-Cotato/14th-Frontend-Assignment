@@ -1,11 +1,5 @@
-import chuImg from './assets/chu.png'
-import dragonImg from './assets/dragon.png'
-import turtleImg from './assets/turtle.png'
-import turtleKingImg from './assets/turtleKing.png'
-import duck from './assets/duck.png'
-import Eve from './assets/Eve.png'
-import fireMonkey from './assets/fireMonkey.png'
 import PokemonCard, { type Pokemon } from './PokemonCard';
+import { pokemons } from './pokemonData'
 
 // PokemonList가 부모(App)에게서 받는 값들
 type PokemonListProps = {
@@ -14,6 +8,8 @@ type PokemonListProps = {
     onAddToTeam: (pokemon: Pokemon) => void;     // 팀에 추가할 때 부를 함수
     isTeamFull: boolean;                         // 팀이 꽉 찼는지
     duplicateName: string | null;                // 중복 추가를 시도한 포켓몬 이름 (없으면 null)
+    sortOrder: 'asc' | 'desc';   
+    selectedType : string[];
 };
 
 // 이름 끝 글자에 받침이 있으면 '은', 없으면 '는'을 돌려주는 함수
@@ -25,52 +21,7 @@ function getTopicParticle(word: string) {
 }
 
 // 포켓몬 카드 목록을 그리는 컴포넌트
-function PokemonList({ search, team, onAddToTeam, isTeamFull, duplicateName }: PokemonListProps) {
-    // 도감에 보여줄 포켓몬 데이터
-    const pokemons = [
-        {
-            id: 25,
-            name: "피카츄",
-            image: chuImg,
-            types: ['ELECTRIC'],
-        },
-        {
-            id: 6,
-            name: '리자몽',
-            image: dragonImg,
-            types: ['FIRE'],
-        },
-        {
-            id: 1,
-            name: '이상해씨',
-            image: turtleImg,
-            types: ['GRASS'],
-        },
-        {
-            id: 9,
-            name: '거북왕',
-            image: turtleKingImg,
-            types: ['WATER'],
-        },
-        {
-            id: 555,
-            name: '가라르폼불비달마',
-            image: duck,
-            types: ['ELECTRIC'],
-        },
-        {
-            id: 133,
-            name: '이브이',
-            image: Eve,
-            types: ['NORMAL'],
-        },
-        {
-            id: 392,
-            name: '초염몽',
-            image: fireMonkey,
-            types: ['FIRE'],
-        }
-    ];
+function PokemonList({ search, team, onAddToTeam, isTeamFull, duplicateName, sortOrder, selectedType }: PokemonListProps) {
 
     // 검색어가 이름이나 번호에 포함된 포켓몬만 남기기
     const filteredPokemons = pokemons.filter((pokemon) => {
@@ -80,6 +31,24 @@ function PokemonList({ search, team, onAddToTeam, isTeamFull, duplicateName }: P
             pokemon.name.toLowerCase().includes(keyword) ||
             String(pokemon.id).includes(keyword)
         );
+    });
+
+    // 검색 결과를 선택한 타입으로 한 번 더 거르기
+    const typeFilteredPokemons = filteredPokemons.filter((pokemon) => {
+        // 조건 1: 아무 타입도 안 골랐으면?
+        if(selectedType.length === 0) {
+            return true
+        }
+        // 조건 2: 골랐으면?
+        return pokemon.types.some((t) => selectedType.includes(t))
+    });
+
+    // 검색으로 거른 결과를 번호순으로 정렬 (복사본을 정렬해서 원본은 그대로)
+    const sortedPokemons = [...typeFilteredPokemons].sort((a, b) => {
+        if (sortOrder === 'asc') {
+            return a.id - b.id; // 작은 번호가 앞에 오게 하는 공식
+        }
+        return b.id - a.id; // 큰 번호가 앞에 오게 하는 공식
     });
 
     // 위에 띄울 안내 박스 내용 정하기 (중복 안내가 가득 참 안내보다 우선)
@@ -99,7 +68,9 @@ function PokemonList({ search, team, onAddToTeam, isTeamFull, duplicateName }: P
     }
 
     return (
-        <section>
+        <section className='dict-content2-box'>
+                <div className='dict-name'>도감 </div>
+            
 
             {/* 안내할 내용이 있을 때만 박스 표시 */}
             {notice && (
@@ -115,7 +86,7 @@ function PokemonList({ search, team, onAddToTeam, isTeamFull, duplicateName }: P
             )}
 
             <div className='pokeCard-box'>
-                {filteredPokemons.length === 0 ? ( // 검색 결과가 없으면 안내, 있으면 카드 목록
+                {sortedPokemons.length === 0 ? ( // 검색 결과가 없으면 안내, 있으면 카드 목록
                     <div className='empty-box'>
                         <div className='empty-number-box'>
                             <div className='empty-number'>0</div>
@@ -126,7 +97,7 @@ function PokemonList({ search, team, onAddToTeam, isTeamFull, duplicateName }: P
                         <p className='discription'>다른 이름이나 번호로 검색해 보세요.</p>
                     </div>
                 ) : (
-                    filteredPokemons.map((pokemon) => (
+                    sortedPokemons.map((pokemon) => (
                         <PokemonCard
                             key={pokemon.id}
                             {...pokemon}
