@@ -24,6 +24,7 @@ function loadTeam() {
 function App() {
   const [activeNavigation, setActiveNavigation] = useState('홈')
   const [team, setTeam] = useState<Pokemon[]>(loadTeam)
+  const [teamCheckpoint, setTeamCheckpoint] = useState<Pokemon[]>(() => team)
   const [editingNumber, setEditingNumber] = useState<number | null>(null)
   const editingPokemon = team.find((pokemon) => pokemon.number === editingNumber)
   const [teamMessage, setTeamMessage] = useState('')
@@ -47,6 +48,24 @@ function App() {
   function removeFromTeam(number: number) {
     setTeam((currentTeam) => currentTeam.filter((pokemon) => pokemon.number !== number))
     setTeamMessage('')
+  }
+
+  function navigateTo(navigation: string) {
+    if (navigation === '내 팀' && activeNavigation !== '내 팀') {
+      setTeamCheckpoint([...team])
+      setTeamMessage('')
+    }
+    setActiveNavigation(navigation)
+  }
+
+  function saveTeam() {
+    try {
+      localStorage.setItem(TEAM_STORAGE_KEY, JSON.stringify(team))
+      setTeamCheckpoint([...team])
+      setTeamMessage('팀을 저장했어요.')
+    } catch {
+      setTeamMessage('팀을 저장하지 못했어요. 브라우저 저장 공간 설정을 확인해 주세요.')
+    }
   }
 
   useEffect(() => {
@@ -74,7 +93,7 @@ function App() {
               }`}
               key={navigation}
               type="button"
-              onClick={() => setActiveNavigation(navigation)}
+              onClick={() => navigateTo(navigation)}
             >
               {navigation}
             </button>
@@ -107,6 +126,11 @@ function App() {
           team={team}
           onDelete={removeFromTeam}
           onEdit={setEditingNumber}
+          onSave={saveTeam}
+          onCancel={() => {
+            setTeam([...teamCheckpoint])
+            setTeamMessage('변경을 취소했어요.')
+          }}
           message={teamMessage}
         />
       )}
@@ -121,7 +145,7 @@ function App() {
               </p>
               <div className="daily-pokemon-card__actions">
                 <Button>도감 보기</Button>
-                <Button variant="secondary" onClick={() => setActiveNavigation('내 팀')}>내 팀</Button>
+                <Button variant="secondary" onClick={() => navigateTo('내 팀')}>내 팀</Button>
               </div>
             </div>
             <div className="daily-pokemon-card__art">

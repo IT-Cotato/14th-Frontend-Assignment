@@ -1,4 +1,5 @@
 import PokemonSlot from '../PokemonSlot/PokemonSlot'
+import Button from '../Button/Button'
 import type { Pokemon } from '../../types/pokemon'
 import './TeamPage.css'
 
@@ -6,6 +7,8 @@ type TeamPageProps = {
   team: Pokemon[]
   onDelete: (number: number) => void
   onEdit: (number: number) => void
+  onSave: () => void
+  onCancel: () => void
   message?: string
 }
 
@@ -16,7 +19,7 @@ const typeLabels: Record<string, string> = {
   WATER: '물',
 }
 
-function TeamPage({ team, onDelete, onEdit, message }: TeamPageProps) {
+function TeamPage({ team, onDelete, onEdit, onSave, onCancel, message }: TeamPageProps) {
   return (
     <section className="team-page" aria-labelledby="team-title">
       <div className="team-page__heading">
@@ -25,6 +28,10 @@ function TeamPage({ team, onDelete, onEdit, message }: TeamPageProps) {
           <p className="team-page__description">최대 6마리의 포켓몬으로 나만의 팀을 완성하세요.</p>
         </div>
         <span className="team-page__count">{team.length} / 6</span>
+        <div className="team-page__actions">
+          <Button onClick={onSave}>팀 저장</Button>
+          <Button variant="secondary" onClick={onCancel}>취소</Button>
+        </div>
       </div>
       <div className="team-page__slots">
         {team.map((pokemon) => (
