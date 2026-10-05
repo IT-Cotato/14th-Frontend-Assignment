@@ -4,18 +4,21 @@ export const pokemonList: Pokemon[] = [
   {
     number: 25,
     name: '피카츄',
+    role: '스피드',
     types: ['ELECTRIC'],
     imageSrc: '/0025.svg',
   },
   {
     number: 6,
     name: '리자몽',
+    role: '공격',
     types: ['FIRE'],
     imageSrc: '/0006.svg',
   },
   {
     number: 1,
     name: '이상해씨',
+    role: '서포트',
     types: ['GRASS'],
     imageSrc: '/0001.svg',
   },

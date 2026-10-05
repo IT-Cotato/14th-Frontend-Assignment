@@ -1,0 +1,59 @@
+.pokedex-team {
+  min-width: 0;
+  padding: 20px;
+  border: var(--stroke-1) solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--panel);
+}
+
+.pokedex-team__title {
+  margin: 0 0 12px;
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.pokedex-team__list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pokedex-team__save {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+  padding-bottom: 8px;
+}
+
+.pokedex-team__empty {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 25px;
+}
+
+.pokedex-team .team-slot {
+  width: 100%;
+  padding: 8px;
+}
+
+.pokedex-team .team-slot__image {
+  width: 56px;
+  height: 56px;
+}
+
+.pokedex-team .team-slot__image img {
+  width: 48px;
+  height: 48px;
+}
+
+.pokedex-team .team-slot__actions {
+  flex-shrink: 0;
+}
+
+.pokedex-team .button {
+  padding: 8px 10px;
+  font-size: 12px;
+}

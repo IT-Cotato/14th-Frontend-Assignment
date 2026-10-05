@@ -6,6 +6,7 @@ import './PokemonCard.css'
 type PokemonCardProps = Pokemon & {
   children?: ReactNode
   imageAlt?: string
+  onAdd?: () => void
 }
 
 function PokemonCard({
@@ -15,6 +16,7 @@ function PokemonCard({
   name,
   number,
   types,
+  onAdd,
 }: PokemonCardProps) {
   return (
     <article className="pokemon-card">
@@ -36,7 +38,9 @@ function PokemonCard({
         </div>
       )}
       {children}
-      <Button>팀에 추가</Button>
+      <Button onClick={onAdd}>
+        팀에 추가
+      </Button>
     </article>
   )
 }

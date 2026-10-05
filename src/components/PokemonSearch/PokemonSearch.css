@@ -1,7 +1,7 @@
 .pokemon-search-row {
   display: flex;
   width: 100%;
-
+  flex-wrap: wrap;
   align-items: center;
   gap: 12px;
 }
@@ -9,6 +9,7 @@
 .pokemon-search {
   display: flex;
   width: auto;
+  min-width: 0;
   flex: 0 1 682px;
   height: 42px;
   padding: 0 14px;
@@ -53,5 +54,17 @@
 
 .pokemon-search__input:focus {
   border: 0;
+}
+
+.pokemon-search__type-filter {
+  height: 42px;
+  padding: 0 12px;
+  border: var(--stroke-1) solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--panel);
+  color: var(--ink);
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 13px;
+  cursor: pointer;
 }
 

@@ -4,9 +4,10 @@ import './PokemonList.css'
 
 type PokemonListProps = {
   pokemon: Pokemon[]
+  onAdd?: (pokemon: Pokemon) => void
 }
 
-function PokemonList({ pokemon }: PokemonListProps) {
+function PokemonList({ pokemon, onAdd }: PokemonListProps) {
   if (pokemon.length === 0) {
     return (
       <div className="pokemon-empty" role="status">
@@ -26,6 +27,7 @@ function PokemonList({ pokemon }: PokemonListProps) {
           name={item.name}
           types={item.types}
           imageSrc={item.imageSrc}
+          onAdd={() => onAdd?.(item)}
         />
       ))}
     </div>
