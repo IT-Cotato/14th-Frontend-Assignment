@@ -1,18 +1,26 @@
 import "./SiteHeader.css";
 
+export type MenuKey = "home" | "pokedex" | "team";
+
 type SiteHeaderProps = {
-    activeMenu: string;
+    activeMenu: MenuKey;
     teamCount: number;
     maxTeamSize: number;
+    onNavigate: (menu: MenuKey) => void;
 };
 
-const menus = [
+const menus: { key: MenuKey; label: string }[] = [
     { key: "home", label: "홈" },
     { key: "pokedex", label: "도감" },
     { key: "team", label: "내 팀" },
 ];
 
-function SiteHeader({ activeMenu, teamCount, maxTeamSize }: SiteHeaderProps) {
+function SiteHeader({
+    activeMenu,
+    teamCount,
+    maxTeamSize,
+    onNavigate,
+}: SiteHeaderProps) {
     return (
         <header className="site-header">
             <div className="site-header__brand">
@@ -22,18 +30,23 @@ function SiteHeader({ activeMenu, teamCount, maxTeamSize }: SiteHeaderProps) {
 
             <nav className="site-header__nav">
                 {menus.map((menu) => (
-                    <span
+                    <button
                         key={menu.key}
+                        type="button"
                         className={[
                             "site-header__nav-item",
                             `site-header__nav-item--${menu.key}`,
-                            menu.label === activeMenu
+                            menu.key === activeMenu
                                 ? "site-header__nav-item--active"
                                 : "",
                         ].join(" ")}
+                        aria-current={
+                            menu.key === activeMenu ? "page" : undefined
+                        }
+                        onClick={() => onNavigate(menu.key)}
                     >
                         {menu.label}
-                    </span>
+                    </button>
                 ))}
                 <span className="site-header__team-count">
                     {teamCount} / {maxTeamSize}
