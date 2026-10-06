@@ -9,8 +9,10 @@ import StatePanel from "./StatePanel";
 import Notice from "./Notice";
 import {
     DEFAULT_FILTERS,
+    countByType,
     getAvailableTypes,
     getVisiblePokemons,
+    matchesQuery,
     pokemons,
     type Pokemon,
     type PokemonFilters,
@@ -45,6 +47,9 @@ function HomePage({
 
     const availableTypes = getAvailableTypes(pokemons);
     const visiblePokemons = getVisiblePokemons(pokemons, searchQuery, filters);
+    const typeCounts = countByType(
+        pokemons.filter((pokemon) => matchesQuery(pokemon, searchQuery)),
+    );
 
     function handleApplyFilters(nextFilters: PokemonFilters) {
         setFilters(nextFilters);
@@ -112,6 +117,7 @@ function HomePage({
             {isFilterOpen && (
                 <FilterDialog
                     availableTypes={availableTypes}
+                    typeCounts={typeCounts}
                     initialFilters={filters}
                     onApply={handleApplyFilters}
                     onCancel={() => setIsFilterOpen(false)}

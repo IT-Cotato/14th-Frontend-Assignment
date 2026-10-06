@@ -10,6 +10,7 @@ import "./FilterDialog.css";
 
 type FilterDialogProps = {
     availableTypes: PokemonType[];
+    typeCounts: Record<PokemonType, number>;
     initialFilters: PokemonFilters;
     onApply: (filters: PokemonFilters) => void;
     onCancel: () => void;
@@ -19,6 +20,7 @@ const sortOrders: SortOrder[] = ["asc", "desc"];
 
 function FilterDialog({
     availableTypes,
+    typeCounts,
     initialFilters,
     onApply,
     onCancel,
@@ -99,7 +101,7 @@ function FilterDialog({
                                     aria-pressed={isSelected}
                                     onClick={() => handleToggleType(type)}
                                 >
-                                    {type.toUpperCase()}
+                                    {type.toUpperCase()} {typeCounts[type]}
                                 </button>
                             );
                         })}
