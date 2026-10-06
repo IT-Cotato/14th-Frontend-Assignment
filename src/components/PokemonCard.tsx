@@ -1,4 +1,4 @@
-import { TYPE_BG_CLASS, type Pokemon } from "../types/pokemon";
+import { TYPE_BG_CLASS, type Pokemon } from "@/types/pokemon";
 
 export default function PokemonCard({ id, name, image, type }: Pokemon) {
   return (
