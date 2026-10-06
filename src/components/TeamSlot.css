@@ -1,23 +1,27 @@
 .team-slot {
-  height: 72px;
-  padding: 0 16px 0 12px;
+  height: 88px;
+  padding: 0 12px 0 11px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-card);
 }
 
+.team-slot--editing {
+  padding: 0 11px 0 10px;
+  border: 2px solid #2a75bb;
+}
+
 .team-slot--empty {
-  padding-left: 16px;
-  box-shadow: none;
+  padding-left: 13px;
 }
 
 .team-slot__artwork {
-  width: 48px;
-  height: 48px;
+  width: 64px;
+  height: 64px;
   flex-shrink: 0;
   background-color: var(--color-artwork-bg);
   border-radius: var(--radius-input);
@@ -35,7 +39,7 @@
 }
 
 .team-slot__name {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
   overflow: hidden;
   white-space: nowrap;
@@ -48,14 +52,40 @@
   font-size: 12px;
 }
 
+.team-slot__actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: 10px;
+}
+
+.team-slot__actions .button {
+  width: 64px;
+  height: 41px;
+  padding: 0;
+  font-size: 14px;
+  box-shadow: none;
+}
+
 .team-slot__handle {
-  width: 80px;
-  height: 24px;
-  padding-left: 10px;
+  width: 100px;
+  height: 28px;
+  padding-left: 8px;
   display: flex;
   align-items: center;
   flex-shrink: 0;
   background-color: var(--color-artwork-bg);
   border-radius: var(--radius-button);
   color: #2a75bb;
+}
+
+@media (max-width: 767px) {
+  .team-slot {
+    height: 84px;
+  }
+
+  .team-slot__actions .button {
+    width: 53px;
+    height: 40px;
+    font-size: 13px;
+  }
 }

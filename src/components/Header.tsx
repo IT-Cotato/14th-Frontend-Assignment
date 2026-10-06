@@ -6,6 +6,7 @@ interface HeaderProps {
   activeNav: NavItem;
   teamCount: number;
   teamLimit: number;
+  onNavigate: (nav: NavItem) => void;
 }
 
 const NAV_ITEMS: { label: NavItem; pcOnly: boolean }[] = [
@@ -14,7 +15,7 @@ const NAV_ITEMS: { label: NavItem; pcOnly: boolean }[] = [
   { label: '내 팀', pcOnly: false },
 ];
 
-function Header({ activeNav, teamCount, teamLimit }: HeaderProps) {
+function Header({ activeNav, teamCount, teamLimit, onNavigate }: HeaderProps) {
   return (
     <header className="header">
       <div className="header__brand">
@@ -29,9 +30,15 @@ function Header({ activeNav, teamCount, teamLimit }: HeaderProps) {
           if (pcOnly) classNames.push('header__nav-item--pc-only');
 
           return (
-            <span key={label} className={classNames.join(' ')}>
+            <button
+              key={label}
+              type="button"
+              className={classNames.join(' ')}
+              aria-current={label === activeNav ? 'page' : undefined}
+              onClick={() => onNavigate(label)}
+            >
               {label}
-            </span>
+            </button>
           );
         })}
         <span className="header__count">
@@ -43,4 +50,3 @@ function Header({ activeNav, teamCount, teamLimit }: HeaderProps) {
 }
 
 export default Header;
-
