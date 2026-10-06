@@ -9,6 +9,15 @@
     margin: 0;
 }
 
+.pokemon-list.pokemon-list--compact {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    align-content: flex-start;
+    width: 100%;
+    gap: 14px;
+}
+
 @media (max-width: 768px) {
     .pokemon-list {
         grid-template-columns: repeat(2, 164px);

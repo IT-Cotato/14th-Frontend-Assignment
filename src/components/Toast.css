@@ -32,6 +32,10 @@
     color: var(--color-text-inverse);
 }
 
+.toast__badge.toast__badge--error {
+    background-color: var(--color-bg-danger);
+}
+
 .toast__text {
     display: flex;
     flex-direction: column;
