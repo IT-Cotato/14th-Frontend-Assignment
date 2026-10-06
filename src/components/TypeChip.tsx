@@ -3,9 +3,10 @@ import './TypeChip.css';
 
 interface TypeChipProps {
   type: PokemonType;
+  selected?: boolean;
+  onClick?: () => void;
 }
 
-// Record<PokemonType, string>이므로 18개 타입 중 하나라도 빠지면 타입 오류가 납니다.
 const TYPE_COLORS: Record<PokemonType, string> = {
   NORMAL: '#9da0aa',
   FIRE: '#fd7d24',
@@ -27,7 +28,21 @@ const TYPE_COLORS: Record<PokemonType, string> = {
   FAIRY: '#ed6ec7',
 };
 
-function TypeChip({ type }: TypeChipProps) {
+function TypeChip({ type, selected = false, onClick }: TypeChipProps) {
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        className={`type-chip type-chip--button${selected ? ' type-chip--selected' : ''}`}
+        style={{ backgroundColor: TYPE_COLORS[type] }}
+        aria-pressed={selected}
+        onClick={onClick}
+      >
+        {type}
+      </button>
+    );
+  }
+
   return (
     <span className="type-chip" style={{ backgroundColor: TYPE_COLORS[type] }}>
       {type}
@@ -36,4 +51,3 @@ function TypeChip({ type }: TypeChipProps) {
 }
 
 export default TypeChip;
-
