@@ -22,8 +22,10 @@ type HomePageProps = {
     maxTeamSize: number;
     addedPokemonIds: number[];
     isTeamFull: boolean;
+    isRestoreNoticeOpen: boolean;
     onNavigate: (menu: MenuKey) => void;
     onAddToTeam: (pokemon: Pokemon) => void;
+    onDismissRestoreNotice: () => void;
 };
 
 function HomePage({
@@ -31,8 +33,10 @@ function HomePage({
     maxTeamSize,
     addedPokemonIds,
     isTeamFull,
+    isRestoreNoticeOpen,
     onNavigate,
     onAddToTeam,
+    onDismissRestoreNotice,
 }: HomePageProps) {
     const [searchInput, setSearchInput] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
@@ -82,6 +86,15 @@ function HomePage({
                         전체 보기
                     </button>
                 </div>
+                {isRestoreNoticeOpen && (
+                    <StatePanel
+                        variant="error"
+                        title="저장된 팀을 불러오지 못했어요"
+                        description="저장 데이터를 초기화했어요."
+                        actionLabel="확인"
+                        onAction={onDismissRestoreNotice}
+                    />
+                )}
                 {visiblePokemons.length === 0 ? (
                     <StatePanel
                         title="검색 결과가 없어요"

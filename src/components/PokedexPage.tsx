@@ -23,10 +23,12 @@ type PokedexPageProps = {
     maxTeamSize: number;
     addedPokemonIds: number[];
     isTeamFull: boolean;
+    isRestoreNoticeOpen: boolean;
     onNavigate: (menu: MenuKey) => void;
     onAddToTeam: (pokemon: Pokemon) => void;
     onRemoveFromTeam: (pokemonId: number) => void;
     onUpdateTeamMember: (pokemonId: number, changes: TeamMemberChanges) => void;
+    onDismissRestoreNotice: () => void;
 };
 
 function PokedexPage({
@@ -34,10 +36,12 @@ function PokedexPage({
     maxTeamSize,
     addedPokemonIds,
     isTeamFull,
+    isRestoreNoticeOpen,
     onNavigate,
     onAddToTeam,
     onRemoveFromTeam,
     onUpdateTeamMember,
+    onDismissRestoreNotice,
 }: PokedexPageProps) {
     const [searchInput, setSearchInput] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
@@ -110,6 +114,15 @@ function PokedexPage({
                             onClick={() => setIsFilterOpen(true)}
                         />
                     </div>
+                    {isRestoreNoticeOpen && (
+                        <StatePanel
+                            variant="error"
+                            title="저장된 팀을 불러오지 못했어요"
+                            description="저장 데이터를 초기화했어요."
+                            actionLabel="확인"
+                            onAction={onDismissRestoreNotice}
+                        />
+                    )}
                     {visiblePokemons.length === 0 ? (
                         <StatePanel
                             title="검색 결과가 없어요"
