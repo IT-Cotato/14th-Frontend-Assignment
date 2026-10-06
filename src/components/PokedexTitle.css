@@ -35,6 +35,16 @@
 }
 
 @media (max-width: 767px) {
+  .pokedex-title {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 4px 8px;
+  }
+
+  .pokedex-title__text {
+    flex-basis: 100%;
+  }
+
   .pokedex-title__heading {
     font-size: 23px;
   }

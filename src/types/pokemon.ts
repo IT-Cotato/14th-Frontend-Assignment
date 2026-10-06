@@ -33,3 +33,6 @@ export interface TeamMember {
   nickname: string;
   role?: TeamRole;
 }
+
+
+export type SortOrder = 'asc' | 'desc';
