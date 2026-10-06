@@ -6,10 +6,16 @@
 
 .home__list-header {
     display: flex;
-    width: 1280px;
     height: 26px;
+    width: 1280px;
     justify-content: space-between;
     align-items: center;
+}
+
+.home__search-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
 }
 
 .home__list-title {

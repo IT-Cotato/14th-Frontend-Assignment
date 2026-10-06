@@ -65,3 +65,69 @@ export const typeLabels: Record<PokemonType, string> = {
     steel: "강철",
     fairy: "페어리",
 };
+
+export const pokemonTypes = Object.keys(typeLabels) as PokemonType[];
+
+export type SortOrder = "asc" | "desc";
+
+export type PokemonFilters = {
+    types: PokemonType[];
+    sortOrder: SortOrder | null; // null이면 기본(데이터) 순서
+};
+
+export const DEFAULT_FILTERS: PokemonFilters = {
+    types: [],
+    sortOrder: null,
+};
+
+export const sortOrderLabels: Record<SortOrder, string> = {
+    asc: "번호 ↑",
+    desc: "번호 ↓",
+};
+
+// 이름 일부 또는 도감 번호("25", "025", "#0025")로 검색
+export function matchesQuery(pokemon: Pokemon, query: string) {
+    const keyword = query.trim().replace(/^#/, "");
+    if (keyword === "") {
+        return true;
+    }
+    if (/^\d+$/.test(keyword)) {
+        return pokemon.id === Number(keyword);
+    }
+    return pokemon.name.includes(keyword);
+}
+
+// 선택한 타입이 없으면 전체, 있으면 하나라도 일치하면 표시
+export function matchesTypes(pokemon: Pokemon, selectedTypes: PokemonType[]) {
+    return (
+        selectedTypes.length === 0 ||
+        pokemon.types.some((type) => selectedTypes.includes(type))
+    );
+}
+
+// 렌더링 중 계산: 목록에 실제로 있는 타입만
+export function getAvailableTypes(list: Pokemon[]) {
+    return pokemonTypes.filter((type) =>
+        list.some((pokemon) => pokemon.types.includes(type)),
+    );
+}
+
+// 렌더링 중 계산: 검색어·타입·정렬을 적용한 목록
+export function getVisiblePokemons(
+    list: Pokemon[],
+    query: string,
+    filters: PokemonFilters,
+) {
+    const filtered = list.filter(
+        (pokemon) =>
+            matchesQuery(pokemon, query) &&
+            matchesTypes(pokemon, filters.types),
+    );
+    if (filters.sortOrder === null) {
+        return filtered;
+    }
+    // sort는 원본을 바꾸므로 복사본을 정렬
+    return [...filtered].sort((a, b) =>
+        filters.sortOrder === "asc" ? a.id - b.id : b.id - a.id,
+    );
+}

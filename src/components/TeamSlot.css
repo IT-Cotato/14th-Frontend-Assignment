@@ -125,6 +125,18 @@
     background-color: var(--color-icon-brand);
 }
 
+.team-slot.team-slot--compact {
+    width: 100%;
+}
+
+.team-slot--compact .team-slot__button {
+    min-width: 56px;
+    height: 40px;
+    padding: var(--space-3) var(--space-4);
+    font-size: 13px;
+    line-height: 16px;
+}
+
 @media (max-width: 768px) {
     .team-slot {
         width: 326px;

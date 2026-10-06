@@ -31,6 +31,11 @@
     color: var(--color-text-secondary);
 }
 
+/* PC에서는 래퍼가 없는 것처럼 pill이 title-row의 직접 자식으로 배치됨 */
+.pokedex__controls {
+    display: contents;
+}
+
 .pokedex__pill {
     display: inline-flex;
     align-items: center;
@@ -45,10 +50,54 @@
     white-space: nowrap;
 }
 
+.pokedex__content {
+    display: flex;
+    align-items: flex-start;
+    width: 1280px;
+    gap: 24px;
+}
+
+.pokedex__catalog {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    gap: 14px;
+}
+
+.pokedex__section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.pokedex__section-title {
+    margin: 0;
+    font-family: "Noto Sans KR", sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 22px;
+    color: var(--color-text-primary);
+}
+
+.pokedex__search-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.filter-button.pokedex__filter--mobile {
+    display: none;
+}
+
 @media (max-width: 768px) {
     .pokedex__title-row {
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: stretch;
         width: 100%;
-        height: 55px;
+        height: auto;
     }
 
     .pokedex__title {
@@ -59,5 +108,28 @@
     .pokedex__description {
         font-size: 13px;
         line-height: 21px;
+    }
+
+    .pokedex__controls {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        height: 30px;
+        gap: var(--space-2);
+    }
+
+    .pokedex__content {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+        gap: 18px;
+    }
+
+    .filter-button.pokedex__filter--pc {
+        display: none;
+    }
+
+    .filter-button.pokedex__filter--mobile {
+        display: inline-flex;
     }
 }

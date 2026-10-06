@@ -1,0 +1,199 @@
+.filter-dialog__overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background-color: rgba(var(--color-text-primary-rgb), 0.4);
+}
+
+.filter-dialog {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 640px;
+    max-width: 100%;
+    padding: 24px;
+    gap: var(--space-4);
+    border-radius: 16px;
+    border: 1px solid var(--color-border-default);
+    background-color: var(--color-bg-surface);
+}
+
+.filter-dialog__title {
+    margin: 0;
+    font-family: "Noto Sans KR", sans-serif;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 34px;
+    letter-spacing: -0.3px;
+    color: var(--color-text-primary);
+}
+
+.filter-dialog__subtitle {
+    margin: 0;
+    font-family: "Noto Sans KR", sans-serif;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 19px;
+    letter-spacing: 0.2px;
+    color: var(--color-text-secondary);
+}
+
+.filter-dialog__field {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    align-self: stretch;
+    gap: var(--space-2);
+}
+
+.filter-dialog__label {
+    margin: 0;
+    font-family: "Noto Sans KR", sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 22px;
+    letter-spacing: 0.1px;
+    color: var(--color-text-primary);
+}
+
+.filter-dialog__chips {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.filter-dialog__chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 29px;
+    padding: var(--space-2) var(--space-3);
+    border: none;
+    border-radius: var(--radius-full);
+    font-family: "Inter", sans-serif;
+    font-weight: 600;
+    font-size: 11px;
+    line-height: 13px;
+    color: var(--color-text-inverse);
+    white-space: nowrap;
+    opacity: 0.45;
+    cursor: pointer;
+}
+
+.filter-dialog__chip.filter-dialog__chip--selected {
+    opacity: 1;
+    box-shadow:
+        0 0 0 2px var(--color-bg-surface),
+        0 0 0 4px var(--color-text-primary);
+}
+
+.filter-dialog__sorts {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.filter-dialog__sort {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 83px;
+    height: 41px;
+    padding: var(--space-3) 20px;
+    gap: var(--space-2);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+    background-color: var(--color-bg-surface);
+    box-shadow: 0px 8px 24px 0px rgba(20, 33, 61, 0.08);
+    font-family: "Noto Sans KR", sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 17px;
+    color: var(--color-text-primary);
+    white-space: nowrap;
+    opacity: 0.45;
+    cursor: pointer;
+}
+
+.filter-dialog__sort.filter-dialog__sort--selected {
+    opacity: 1;
+}
+
+.filter-dialog__actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+    align-self: stretch;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+}
+
+.filter-dialog__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 66px;
+    height: 41px;
+    padding: var(--space-3) 20px;
+    gap: var(--space-2);
+    border-radius: var(--radius-md);
+    font-family: "Noto Sans KR", sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 17px;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.filter-dialog__button--secondary {
+    border: 1px solid var(--color-border-strong);
+    background-color: var(--color-bg-surface);
+    box-shadow: 0px 8px 24px 0px rgba(20, 33, 61, 0.08);
+    color: var(--color-text-primary);
+}
+
+.filter-dialog__button--secondary:disabled {
+    opacity: 0.45;
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
+.filter-dialog__button--primary {
+    border: none;
+    background-color: var(--color-bg-danger);
+    box-shadow: 0px 8px 0px 0px rgba(185, 47, 81, 1);
+    color: var(--color-text-inverse);
+}
+
+.filter-dialog__button--reset {
+    margin-right: auto;
+}
+
+@media (max-width: 768px) {
+    .filter-dialog {
+        max-height: 100%;
+        padding: 20px;
+        overflow-y: auto;
+    }
+
+    .filter-dialog__sort {
+        min-width: 56px;
+        height: 40px;
+        padding: var(--space-3) var(--space-4);
+        font-size: 13px;
+        line-height: 16px;
+    }
+
+    .filter-dialog__button {
+        min-width: 56px;
+        height: 40px;
+        padding: var(--space-3) var(--space-4);
+        font-size: 13px;
+        line-height: 16px;
+    }
+}

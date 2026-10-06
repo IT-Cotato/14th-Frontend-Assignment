@@ -89,12 +89,14 @@ function App() {
             )}
             {currentPage === "pokedex" && (
                 <PokedexPage
-                    teamCount={team.length}
+                    team={team}
                     maxTeamSize={MAX_TEAM_SIZE}
                     addedPokemonIds={addedPokemonIds}
                     isTeamFull={isTeamFull}
                     onNavigate={setCurrentPage}
                     onAddToTeam={handleAddToTeam}
+                    onRemoveFromTeam={handleRemoveFromTeam}
+                    onUpdateTeamMember={handleUpdateTeamMember}
                 />
             )}
             {currentPage === "team" && (
