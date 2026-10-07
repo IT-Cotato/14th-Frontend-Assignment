@@ -14,3 +14,17 @@ export const pokemons: Pokemon[] = [
 
 /** Empty UI 확인용 빈 목록. 원본 배열을 비우지 않고 별도의 배열을 쓴다. */
 export const emptyPokemons: Pokemon[] = []
+
+/**
+ * 6마리 정원과 7번째 추가 차단 확인용 목록(?preview=team-test).
+ * 기본 4마리에 서로 다른 포켓몬 5마리를 더한다. 이미지 자산이 없는 포켓몬은
+ * imageUrl을 비워 두고 이름 대체 UI로 표시한다.
+ */
+export const teamTestPokemons: Pokemon[] = [
+  ...pokemons,
+  { id: 4, name: '파이리', types: ['FIRE'] },
+  { id: 7, name: '꼬부기', types: ['WATER'] },
+  { id: 2, name: '이상해풀', types: ['GRASS', 'POISON'] },
+  { id: 26, name: '라이츄', types: ['ELECTRIC'] },
+  { id: 130, name: '갸라도스', types: ['WATER', 'FLYING'] },
+]
