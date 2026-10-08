@@ -1,0 +1,6 @@
+reviews:
+    auto_review:
+        base_branches:
+            - "develop"
+            - "Limlim0208"
+language: "ko-KR"
