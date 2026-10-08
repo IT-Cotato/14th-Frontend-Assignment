@@ -1,15 +1,19 @@
 interface PokemonCardProps {
-  number: string
-  name: string
-  type: string
-  image: string
+  number: string;
+  name: string;
+  type: string;
+  role: string
+  image: string;
+  onAdd: () => void;
 }
 
 function PokemonCard({
   number,
   name,
   type,
+  role,
   image,
+  onAdd,
 }: PokemonCardProps) {
   return (
     <div className="pokemon-card">
@@ -21,8 +25,9 @@ function PokemonCard({
       <h2>{name}</h2>
       <span className={`type ${type.toLowerCase()}`}>{type}</span>
 
-      <button className="team-button">팀에 추가</button>
+      <button className="red-shadow-button" onClick={onAdd}>팀에 추가</button>
     </div>
-  )
+  );
 }
-export default PokemonCard
+
+export default PokemonCard;
