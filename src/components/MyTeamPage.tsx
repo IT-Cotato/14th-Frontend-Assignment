@@ -17,6 +17,7 @@ type MyTeamPageProps = {
   onUpdate: (id: number, changes: TeamMemberChanges) => void;
   onSave: () => void;
   onCancel: () => void;
+  hasUnsavedChanges: boolean;
 };
 
 function MyTeamPage({
@@ -26,6 +27,7 @@ function MyTeamPage({
   onUpdate,
   onSave,
   onCancel,
+  hasUnsavedChanges,
 }: MyTeamPageProps) {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
@@ -76,6 +78,7 @@ function MyTeamPage({
               type="button"
               className="team-btn team-btn--primary"
               onClick={onSave}
+              disabled={!hasUnsavedChanges}
             >
               팀 저장
             </button>
@@ -83,6 +86,7 @@ function MyTeamPage({
               type="button"
               className="team-btn team-btn--secondary"
               onClick={onCancel}
+              disabled={!hasUnsavedChanges}
             >
               취소
             </button>
