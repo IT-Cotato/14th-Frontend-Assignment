@@ -1,18 +1,30 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import PokemonHeader from './components/PokemonHeader';
 import PokemonList from './components/PokemonList';
 import MyTeamList from './components/MyTeamList';
 
-interface Pokemon {
+export interface Pokemon {
   number: string;
   name: string;
   type: string;
   role: string;
   image: string;
+  nickname?: string;
 }
 
 function App() {
-  const [team, setTeam] = useState<Pokemon[]>([]);
+  const [team, setTeam] = useState<Pokemon[]>(() => {
+    const savedTeam = localStorage.getItem('myTeam');
+
+    return savedTeam ? JSON.parse(savedTeam) : [];
+  });
+
+  const [search, setSearch] = useState('');
+  const [selectedType, setSelectedType] = useState('ALL');
+
+  useEffect(() => {
+    localStorage.setItem('myTeam', JSON.stringify(team));
+  }, [team]);
 
   const handleAddPokemon = (pokemon: Pokemon) => {
     setTeam((prevTeam) => {
@@ -40,23 +52,51 @@ function App() {
     );
   };
 
+  const handleEditPokemon = (
+    number: string,
+    nickname: string,
+    role: string
+  ) => {
+    setTeam((prevTeam) =>
+      prevTeam.map((pokemon) =>
+        pokemon.number === number
+          ? { ...pokemon, nickname, role }
+          : pokemon
+      )
+    );
+  };
+
   return (
     <div className="app-container">
-      <PokemonHeader teamCount={team.length} />
+      <PokemonHeader
+        teamCount={team.length}
+        search={search}
+        setSearch={setSearch}
+        selectedType={selectedType}
+        setSelectedType={setSelectedType}
+      />
 
       <div className="main-content">
         <div className="cardlist">
           <h3>도감</h3>
-          <PokemonList onAdd={handleAddPokemon} />
+
+          <PokemonList
+            onAdd={handleAddPokemon}
+            search={search}
+            selectedType={selectedType}
+          />
         </div>
+
         <div className="teamlist">
           <div className="teamlist-title">
-          <h3>나의 팀</h3>
+            <h3>나의 팀</h3>
           </div>
-        <MyTeamList
-          team={team}
-          onRemove={handleRemovePokemon}
-        />
+
+          <MyTeamList
+            team={team}
+            onRemove={handleRemovePokemon}
+            onEdit={handleEditPokemon}
+          />
         </div>
       </div>
     </div>
@@ -64,3 +104,4 @@ function App() {
 }
 
 export default App;
+

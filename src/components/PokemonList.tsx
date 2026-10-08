@@ -36,13 +36,31 @@ const pokemons = [
 ];
 
 interface PokemonListProps {
-  onAdd: (pokemon: any) => void;
+  onAdd: (pokemon: (typeof pokemons)[number]) => void;
+  search: string;
+  selectedType: string;
 }
 
-function PokemonList({ onAdd }: PokemonListProps) {
+function PokemonList({
+  onAdd,
+  search,
+  selectedType,
+}: PokemonListProps) {
+  const filteredPokemons = pokemons.filter((pokemon) => {
+    const matchesSearch =
+      pokemon.name.includes(search) ||
+      pokemon.number.includes(search);
+
+    const matchesType =
+      selectedType === 'ALL' ||
+      pokemon.type === selectedType;
+
+    return matchesSearch && matchesType;
+  });
+
   return (
     <div className="pokemon-list">
-      {pokemons.map((pokemon) => (
+      {filteredPokemons.map((pokemon) => (
         <PokemonCard
           key={pokemon.number}
           number={pokemon.number}
