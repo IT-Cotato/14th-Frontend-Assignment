@@ -28,7 +28,7 @@ export default function PokemonHeader({
                         <button
                             key={item.key}
                             onClick={() => handleCurrentTab(item.key)}
-                            aria-selected={currentTab === item.key}
+                            aria-pressed={currentTab === item.key}
                             className={`justify-start text-[13px] font-bold font-['Noto_Sans_KR'] px-[14px] py-[9px] rounded-full
                               ${
                                   currentTab === item.key

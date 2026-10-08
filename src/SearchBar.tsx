@@ -9,6 +9,7 @@ export default function SearchBar() {
                 />
                 <input
                     type="text"
+                    aria-label="포켓몬 이름 또는 번호 검색"
                     placeholder="이름 또는 번호"
                     className="flex w-full h-[42px] pl-[38px] pr-[14px] py-[11px] items-center gap-[10px] rounded-2 border border-neutral-line bg-neutral-white
                         placeholder:text--neutral-muted placeholder:text-[13px] placeholder:h-max"

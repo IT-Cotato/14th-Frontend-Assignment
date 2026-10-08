@@ -1,10 +1,9 @@
 import { useState } from "react";
 import PokemonHeader from "./PokemonHeader";
 import MainPanel from "./MainPanel";
+import type { TabKey } from "./types/tab";
 
 function App() {
-    type TabKey = "home" | "pokedex" | "myTeam";
-
     const [currentTab, setCurrentTab] = useState<TabKey>("home");
 
     const handleCurrentTab = (tab: TabKey) => {

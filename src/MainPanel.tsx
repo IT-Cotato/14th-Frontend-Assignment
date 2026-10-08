@@ -3,8 +3,7 @@ import HomePanel from "./home/HomePanel";
 import RecommendationList from "./home/RecommendationList";
 import PokemonList from "./PokemonList";
 import SearchBar from "./SearchBar";
-
-type TabKey = "home" | "pokedex" | "myTeam";
+import type { TabKey } from "./types/tab";
 
 export default function MainPanel({
     currentTab,
