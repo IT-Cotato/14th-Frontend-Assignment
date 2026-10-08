@@ -5,6 +5,9 @@ import MyTeamPage from "./components/MyTeamPage";
 import Toast, { type Notice } from "./components/Toast";
 import {
   MAX_TEAM_SIZE,
+  TEAM_STORAGE_KEY,
+  isSameTeam,
+  loadSavedTeam,
   type ActivePage,
   type TeamMember,
   type TeamMemberChanges,
@@ -13,9 +16,12 @@ import {
 function App() {
   const [page, setPage] = useState<ActivePage>("home");
  
-  const [team, setTeam] = useState<TeamMember[]>([]);
+  const [initialTeam] = useState(loadSavedTeam);
 
-  const [savedTeam, setSavedTeam] = useState<TeamMember[]>([]);
+  const [team, setTeam] = useState<TeamMember[]>(initialTeam.team);
+
+  const [savedTeam, setSavedTeam] = useState<TeamMember[]>(initialTeam.team);
+  const [loadError, setLoadError] = useState(initialTeam.failed);
   const [notice, setNotice] = useState<Notice | null>(null);
   
   const [duplicate, setDuplicate] = useState<{ name: string } | null>(null);
@@ -36,6 +42,18 @@ function App() {
 
     return () => clearTimeout(timer);
   }, [duplicate]);
+
+  useEffect(() => {
+    if (!loadError) return;
+
+    try {
+      localStorage.removeItem(TEAM_STORAGE_KEY);
+    } catch {
+      // 저장소 접근 불가 시에는 빈 팀으로만 시작
+    }
+  }, [loadError]);
+
+  const hasUnsavedChanges = !isSameTeam(team, savedTeam);
 
   const handleAddToTeam = (member: TeamMember) => {
     if (team.some((m) => m.id === member.id)) {
@@ -72,6 +90,17 @@ function App() {
   };
 
   const handleSaveTeam = () => {
+    try {
+      localStorage.setItem(TEAM_STORAGE_KEY, JSON.stringify(team));
+    } catch {
+      setNotice({
+        type: "info",
+        text: "팀을 저장하지 못했어요.",
+        duration: 2500,
+      });
+      return;
+    }
+
     setSavedTeam(team);
     setNotice({
       type: "success",
@@ -104,8 +133,12 @@ function App() {
         <PokedexPage
           team={team}
           duplicateName={duplicate?.name ?? null}
+          loadError={loadError}
           onNavigate={setPage}
           onAddToTeam={handleAddToTeam}
+          onRemove={handleRemoveFromTeam}
+          onUpdate={handleUpdateMember}
+          onDismissLoadError={() => setLoadError(false)}
         />
       )}
 
@@ -117,6 +150,7 @@ function App() {
           onUpdate={handleUpdateMember}
           onSave={handleSaveTeam}
           onCancel={handleCancelTeam}
+          hasUnsavedChanges={hasUnsavedChanges}
         />
       )}
 
