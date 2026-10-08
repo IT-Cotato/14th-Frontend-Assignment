@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, type FormEvent } from 'react'
+import searchIcon from '../assets/search.svg'
 import { POKEMON, type Pokemon, type PokemonType } from '../pokemon'
 import PokemonCard from './PokemonCard'
 
@@ -12,6 +13,16 @@ interface PokemonListProps {
   teamFull?: boolean
 }
 
+const filterTypes: Array<'ALL' | PokemonType> = [
+  'ALL',
+  'ELECTRIC',
+  'FIRE',
+  'GRASS',
+  'DRAGON',
+  'GHOST',
+  'NORMAL',
+]
+
 function PokemonList({
   items = POKEMON,
   mode = 'featured',
@@ -23,9 +34,7 @@ function PokemonList({
 }: PokemonListProps) {
   const [query, setQuery] = useState('')
   const [type, setType] = useState<'ALL' | PokemonType>('ALL')
-  const [sort, setSort] = useState<'number' | 'name'>('number')
-  const [page, setPage] = useState(1)
-  const pageSize = 3
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
 
   const filteredItems = useMemo(() => {
     const keyword = query.trim().replace(/^#/, '').toLowerCase()
@@ -36,65 +45,78 @@ function PokemonList({
     )
 
     return [...nextItems].sort((a, b) =>
-      sort === 'name' ? a.name.localeCompare(b.name, 'ko') : a.id - b.id,
+      sortDirection === 'asc' ? a.id - b.id : b.id - a.id,
     )
-  }, [items, query, sort, type])
+  }, [items, query, sortDirection, type])
 
-  const pageCount = Math.max(1, Math.ceil(filteredItems.length / pageSize))
-  const visibleItems =
-    mode === 'catalog'
-      ? filteredItems.slice((Math.min(page, pageCount) - 1) * pageSize, Math.min(page, pageCount) * pageSize)
-      : items
+  const typeCounts = items.reduce<Partial<Record<PokemonType, number>>>((counts, pokemon) => {
+    counts[pokemon.type] = (counts[pokemon.type] ?? 0) + 1
+    return counts
+  }, {})
+
+  const resetFilters = () => {
+    setQuery('')
+    setType('ALL')
+    setSortDirection('asc')
+  }
+
+  const keepCurrentSearch = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+  }
+
+  const visibleItems = mode === 'catalog' ? filteredItems : items
 
   return (
     <section className={`pokemon-list-wrap pokemon-list-wrap--${mode}`} aria-label="포켓몬 목록">
       {mode === 'catalog' && (
-        <div className="catalog-controls">
-          <label className="catalog-controls__search">
-            <span>검색</span>
-            <input
-              type="search"
-              placeholder="이름 또는 도감 번호"
-              value={query}
-              onChange={(event) => {
-                setQuery(event.target.value)
-                setPage(1)
-              }}
-            />
-          </label>
-          <label>
-            <span>타입</span>
-            <select
-              value={type}
-              onChange={(event) => {
-                setType(event.target.value as 'ALL' | PokemonType)
-                setPage(1)
-              }}
+        <div className="catalog-toolbar">
+          <form className="catalog-search" role="search" onSubmit={keepCurrentSearch}>
+            <label>
+              <span className="sr-only">포켓몬 이름 또는 번호 검색</span>
+              <img src={searchIcon} alt="" />
+              <input
+                type="search"
+                placeholder="피카츄 또는 25"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+              />
+            </label>
+            <button type="submit">검색</button>
+          </form>
+
+          <div className="catalog-filter-row">
+            <div className="catalog-type-filters" aria-label="타입 필터">
+              {filterTypes.map((filterType) => (
+                <button
+                  className={`catalog-type-filter catalog-type-filter--${filterType.toLowerCase()}${type === filterType ? ' is-selected' : ''}`}
+                  key={filterType}
+                  type="button"
+                  aria-pressed={type === filterType}
+                  onClick={() => setType(filterType)}
+                >
+                  {filterType === 'ALL' ? `전체 ${items.length}` : `${filterType} ${typeCounts[filterType] ?? 0}`}
+                </button>
+              ))}
+            </div>
+            <button
+              className="catalog-sort"
+              type="button"
+              onClick={() => setSortDirection((direction) => direction === 'asc' ? 'desc' : 'asc')}
             >
-              <option value="ALL">전체</option>
-              <option value="DRAGON">DRAGON</option>
-              <option value="GHOST">GHOST</option>
-              <option value="NORMAL">NORMAL</option>
-              <option value="ELECTRIC">ELECTRIC</option>
-              <option value="FIRE">FIRE</option>
-              <option value="GRASS">GRASS</option>
-            </select>
-          </label>
-          <label>
-            <span>정렬</span>
-            <select value={sort} onChange={(event) => setSort(event.target.value as 'number' | 'name')}>
-              <option value="number">도감 번호</option>
-              <option value="name">이름</option>
-            </select>
-          </label>
+              번호 {sortDirection === 'asc' ? '↑' : '↓'}
+            </button>
+          </div>
+
+          <p className="catalog-result-count" aria-live="polite">검색 결과 {filteredItems.length}마리</p>
         </div>
       )}
 
       <div className="pokemon-list">
         {visibleItems.length === 0 ? (
           <div className="pokemon-list__empty">
-            <strong>조건에 맞는 포켓몬이 없어요.</strong>
-            <span>검색어나 타입 필터를 다시 확인해 주세요.</span>
+            <strong>검색 결과가 없어요</strong>
+            <span>다른 이름이나 번호, 타입으로 검색해 보세요.</span>
+            {mode === 'catalog' && <button type="button" onClick={resetFilters}>조건 초기화</button>}
           </div>
         ) : (
           visibleItems.map((pokemon) => (
@@ -117,18 +139,6 @@ function PokemonList({
           ))
         )}
       </div>
-
-      {mode === 'catalog' && filteredItems.length > 0 && (
-        <nav className="pagination" aria-label="페이지 이동">
-          <button type="button" disabled={page <= 1} onClick={() => setPage((value) => value - 1)}>
-            이전
-          </button>
-          <span>{Math.min(page, pageCount)} / {pageCount}</span>
-          <button type="button" disabled={page >= pageCount} onClick={() => setPage((value) => value + 1)}>
-            다음
-          </button>
-        </nav>
-      )}
     </section>
   )
 }
