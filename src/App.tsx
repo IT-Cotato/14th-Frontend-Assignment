@@ -12,12 +12,15 @@ function App() {
     };
 
     return (
-        <div className="flex flex-col gap-6 px-[80px] py-[36px] gap-[24px] bg-canvas">
+        <div className="flex flex-col gap-6 px-[80px] py-[36px] gap-[24px] bg-bg-canvas">
             <PokemonHeader
                 currentTab={currentTab}
                 handleCurrentTab={handleCurrentTab}
             />
-            <MainPanel currentTab={currentTab} />
+            <MainPanel
+                currentTab={currentTab}
+                handleCurrentTab={handleCurrentTab}
+            />
         </div>
     );
 }

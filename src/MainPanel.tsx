@@ -6,12 +6,18 @@ import SearchBar from "./SearchBar";
 
 type TabKey = "home" | "pokedex" | "myTeam";
 
-export default function MainPanel({ currentTab }: { currentTab: TabKey }) {
+export default function MainPanel({
+    currentTab,
+    handleCurrentTab,
+}: {
+    currentTab: TabKey;
+    handleCurrentTab: (tab: TabKey) => void;
+}) {
     switch (currentTab) {
         case "home":
             return (
                 <>
-                    <HomePanel />
+                    <HomePanel handleCurrentTab={handleCurrentTab} />
                     <SearchBar />
                     <RecommendationList />
                 </>

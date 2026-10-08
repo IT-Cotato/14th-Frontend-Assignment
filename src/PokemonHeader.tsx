@@ -1,4 +1,4 @@
-type TabKey = "home" | "pokedex" | "myTeam";
+import type { TabKey } from "./types/tab";
 
 export default function PokemonHeader({
     currentTab,

@@ -1,6 +1,11 @@
 import TitleBadge from "../components/TitleBadge";
+import type { TabKey } from "../types/tab";
 
-export default function HomePanel() {
+export default function HomePanel({
+    handleCurrentTab,
+}: {
+    handleCurrentTab: (tab: TabKey) => void;
+}) {
     return (
         <section className=" shadow-card flex w-full h-max px-9 py-[34px] gap-9 justify-between items-center shrink-0 rounded-lg border border-border-default bg-white">
             <div className="flex flex-col gap-[14px] ">
@@ -15,12 +20,14 @@ export default function HomePanel() {
                     <button
                         className="text-label rounded-lg py-3 px-5 bg-brand-red shadow-hard-red text-text-inverse"
                         lang="ko"
+                        onClick={() => handleCurrentTab("pokedex")}
                     >
                         도감 보기
                     </button>
                     <button
                         className="text-label rounded-lg py-3 px-5 border border-border-strong shadow-card"
                         lang="ko"
+                        onClick={() => handleCurrentTab("myTeam")}
                     >
                         내 팀
                     </button>
