@@ -2,6 +2,7 @@ import type { Pokemon } from '../pokemon'
 
 interface PokemonCardProps extends Pokemon {
   actionLabel?: string
+  actionDisabled?: boolean
   onAction?: (id: number) => void
   onView?: (id: number) => void
 }
@@ -13,6 +14,7 @@ function PokemonCard({
   type,
   imageUrl,
   actionLabel = '팀에 추가',
+  actionDisabled = false,
   onAction,
   onView,
 }: PokemonCardProps) {
@@ -28,7 +30,12 @@ function PokemonCard({
         <strong className="pokemon-card__name">{name}</strong>
       </button>
       <span className={typeClassName}>{type}</span>
-      <button className="pokemon-card__team-button" type="button" onClick={() => onAction?.(id)}>
+      <button
+        className="pokemon-card__team-button"
+        type="button"
+        disabled={actionDisabled}
+        onClick={() => onAction?.(id)}
+      >
         {actionLabel}
       </button>
     </article>

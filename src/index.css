@@ -222,6 +222,385 @@ button {
   color: var(--ink);
 }
 
+.pokemon-card__team-button:disabled,
+.primary-button:disabled {
+  background: #aeb8c7;
+  box-shadow: 0 8px 0 #8491a3;
+  cursor: not-allowed;
+  opacity: 0.75;
+}
+
+.my-team-page {
+  position: relative;
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 24px;
+  padding: 30px 60px 64px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: #ffffff;
+}
+
+.my-team-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 28px;
+}
+
+.my-team-heading__copy {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.my-team-heading__title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.my-team-heading h1,
+.my-team-heading p {
+  margin: 0;
+}
+
+.my-team-heading h1 {
+  font-size: 28px;
+  line-height: 40px;
+}
+
+.my-team-heading p {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.my-team-count {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: #fff1b8;
+  color: #805c00;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.my-team-heading__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.team-action-button,
+.team-dialog__actions button {
+  padding: 10px 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.team-action-button--primary,
+.team-dialog__actions button.is-primary {
+  border-color: var(--red);
+  background: var(--red);
+  color: #ffffff;
+}
+
+.team-feedback {
+  margin: -6px 0 0;
+  padding: 11px 14px;
+  border: 1px solid #b9d5f5;
+  border-radius: 9px;
+  background: #eef7ff;
+  color: #285a8e;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.team-slot-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 20px;
+}
+
+.team-slot {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  height: 88px;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.team-slot__artwork {
+  display: flex;
+  width: 64px;
+  height: 64px;
+  flex: 0 0 64px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: var(--panel-strong);
+}
+
+.team-slot__artwork img {
+  width: 58px;
+  height: 58px;
+  object-fit: contain;
+}
+
+.team-slot__copy {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.team-slot__copy strong {
+  overflow: hidden;
+  font-size: 15px;
+  line-height: 20px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.team-slot__copy span {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 17px;
+}
+
+.team-slot__actions {
+  display: flex;
+  gap: 6px;
+}
+
+.team-slot__actions button {
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #ffffff;
+  color: #536176;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.team-slot__actions button.is-danger,
+.team-dialog__actions button.is-danger {
+  border-color: #ffd0da;
+  background: #fff2f5;
+  color: #c72f53;
+}
+
+.team-slot--empty {
+  border-style: dashed;
+  background: #f9fbfe;
+}
+
+.team-slot__empty-icon {
+  display: flex;
+  width: 64px;
+  height: 64px;
+  flex: 0 0 64px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: #edf4fc;
+  color: #8ca1ba;
+  font-size: 25px;
+  font-weight: 400;
+}
+
+.team-slot__handle {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 15px 12px;
+  border-radius: 8px;
+  background: #edf4fc;
+}
+
+.team-slot__handle i {
+  display: block;
+  width: 20px;
+  height: 2px;
+  border-radius: 99px;
+  background: #7ca9d8;
+}
+
+.team-dialog-backdrop {
+  position: fixed;
+  z-index: 20;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgb(20 33 61 / 42%);
+}
+
+.team-dialog {
+  display: flex;
+  width: min(100%, 520px);
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 24px 60px rgb(20 33 61 / 20%);
+}
+
+.team-dialog__heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.team-dialog__heading span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.team-dialog__heading h2 {
+  margin: 4px 0 0;
+  font-size: 21px;
+}
+
+.team-dialog__heading > button {
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--panel-strong);
+  color: var(--muted);
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.team-dialog__field {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.team-dialog__field input {
+  width: 100%;
+  height: 44px;
+  padding: 0 54px 0 13px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  outline: none;
+  font: inherit;
+}
+
+.team-dialog__field input:focus {
+  border-color: #79a9d8;
+  box-shadow: 0 0 0 3px #e9f3fd;
+}
+
+.team-dialog__field small {
+  position: absolute;
+  right: 12px;
+  bottom: 13px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.team-dialog__roles {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.team-dialog__roles legend {
+  margin-bottom: 9px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.team-dialog__roles div {
+  display: flex;
+  gap: 8px;
+}
+
+.team-dialog__roles button {
+  min-width: 72px;
+  padding: 9px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.team-dialog__roles button.is-selected {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: #ffffff;
+}
+
+.team-dialog__error {
+  margin: -8px 0 0;
+  color: #c72f53;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.team-dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.team-delete-dialog {
+  align-items: center;
+  text-align: center;
+}
+
+.team-delete-dialog__icon {
+  display: flex;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: #fff0f3;
+  color: var(--red);
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.team-delete-dialog h2,
+.team-delete-dialog p {
+  margin: 0;
+}
+
+.team-delete-dialog p {
+  color: var(--muted);
+  font-size: 13px;
+}
+
 .pokemon-hero__artwork {
   display: flex;
   width: 252px;
@@ -1129,6 +1508,38 @@ button {
   .team-empty-slots {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 14px;
+  }
+
+  .my-team-page {
+    padding: 24px 18px 40px;
+  }
+
+  .my-team-heading {
+    flex-direction: column;
+  }
+
+  .my-team-heading__actions {
+    width: 100%;
+  }
+
+  .team-action-button {
+    flex: 1;
+  }
+
+  .team-slot-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .team-slot {
+    height: 88px;
+  }
+
+  .team-slot__actions {
+    flex-direction: column;
+  }
+
+  .team-slot__actions button {
+    padding-block: 4px;
   }
 
   .route-page,
