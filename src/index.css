@@ -145,8 +145,11 @@ body {
 }
 
 .firstdiv{
+  width: 1280px;
   display: flex;
+  justify-content: space-between;
   align-items: center;
+  /* background-color: red; */
   gap: 10px;
 }
 
@@ -180,6 +183,7 @@ body {
 }
 
 .popup_content {
+  /* background-color: blue; */
   box-sizing: border-box;
 
   display: flex;
@@ -188,7 +192,7 @@ body {
 
   padding: 0;
 
-  width: 650px;
+  /* width: 900px; */
   height: 67px;
 
   gap: 2px;
@@ -274,6 +278,29 @@ body {
   height: 41px;
 
   flex: none;
+}
+
+.main-content {
+  width: 1280px;
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.cardlist {
+  width: 890px;
+  overflow-x: auto;
+}
+
+.teamlist {
+  width: 366px;
+  background-color: white;
+  border: 1px solid #D8E4F2;
+  border-radius: 12px;
+}
+
+.teamlist-title {
+  padding-left: 20px;
 }
 
 .red-shadow-button {
@@ -411,8 +438,10 @@ body {
   gap: 12px;
   width: 760px;
   height: 44px;
-  margin-top: 24px;
+  margin-top: 7px;
+  margin-bottom: 7px;
   flex: none;
+  /* background-color: red; */
 }
 
 .search_field .search_input {
@@ -638,15 +667,15 @@ body {
 }
 
 .my-team-container{
-  width: 1280px;
+  width: 100%;
 }
 
-/* 가로형 슬롯 2열 그리드 및 카드 스타일 */
 .slot-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-  margin-top: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-bottom: 20px;
+  gap: 12px;
 }
 
 .slot-card {
@@ -657,6 +686,7 @@ body {
   height: 80px;
   display: flex;
   align-items: center;
+  box-shadow: 0px 8px 24px rgba(20, 33, 61, 0.08)
 }
 
 .slot-content {
@@ -664,7 +694,7 @@ body {
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  /* background-color: blue; */
+  /* \\background-color: blue; */
 }
 
 .slot-desc {

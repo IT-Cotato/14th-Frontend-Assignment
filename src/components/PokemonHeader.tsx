@@ -1,3 +1,5 @@
+import searchImage from '../assets/Search.png'
+
 interface PokemonHeaderProps {
   teamCount: number;
 }
@@ -22,17 +24,22 @@ function PokemonHeader({ teamCount }: PokemonHeaderProps) {
       <section className="alert">
         <div className="firstdiv">
           <div className="popup_content">
-            <h1>나의 팀</h1>
-            <p>최대 6마리의 포켓몬으로 나만의 팀을 완성하세요.</p>
+            <h1>포켓몬을 찾고 팀을 완성하세요</h1>
+            <p>도감과 나의 팀을 한 화면에서 관리할 수 있어요.</p>
           </div>
           <div className="entire">
-            <span className="yellow-box">{teamCount} / 6</span>
+            <span className="yellow-box">내 팀 {teamCount} / 6</span>
           </div>
         </div>
-        <div className="save">
-          <button className="red-shadow-button">팀 저장</button>
-          <button className="white-button">취소</button>
-        </div>
+      </section>
+      <section className="search_field">
+        <img src={searchImage} alt='검색'/>
+        <input
+        className="search_input"
+        type="search"
+        placeholder="이름 또는 번호"
+        aria-label='포켓몬 이름 또는 번호로 검색'/>
+        <button className="red-shadow-button">검색</button>
       </section>
     </>
   );
