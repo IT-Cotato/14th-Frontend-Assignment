@@ -4,7 +4,7 @@ import bulbasaurImage from '../assets/pokemon/bulbasaur.png'
 import blastoiseImage from '../assets/pokemon/blastoise.png'
 import type { Pokemon } from '../components/PokemonCard.tsx'
 
-/** 화면에 그리는 로컬 예시 데이터. 헤더 배지의 도감 전체 수(151)와는 별개다. */
+/** 화면에 그리는 로컬 예시 데이터. */
 export const pokemons: Pokemon[] = [
   { id: 25, name: '피카츄', types: ['ELECTRIC'], imageUrl: pikachuImage },
   { id: 6, name: '리자몽', types: ['FIRE'], imageUrl: charizardImage },
@@ -28,3 +28,16 @@ export const teamTestPokemons: Pokemon[] = [
   { id: 26, name: '라이츄', types: ['ELECTRIC'] },
   { id: 130, name: '갸라도스', types: ['WATER', 'FLYING'] },
 ]
+
+/**
+ * 저장된 팀을 포켓몬 ID로 복원할 때 찾는 전체 로컬 카탈로그.
+ * team-test에서 저장한 팀원도 기본 화면에서 복원되도록 두 목록을 합치고 ID 중복을 걸러 낸다.
+ * 도감에 표시하는 목록은 이 값이 아니라 preview 설정으로 고른 목록이다.
+ */
+export const pokemonCatalog: Pokemon[] = [
+  ...pokemons,
+  ...teamTestPokemons,
+].filter(
+  (pokemon, index, all) =>
+    all.findIndex((other) => other.id === pokemon.id) === index,
+)
