@@ -3,6 +3,7 @@ export interface Pokemon {
   name: string;
   image: string;
   type: string;
+  role: string;
 }
 
 export const TYPE_BG_CLASS: Record<string, string> = {
@@ -11,3 +12,16 @@ export const TYPE_BG_CLASS: Record<string, string> = {
   grass: "bg-type-grass",
   water: "bg-type-water",
 };
+
+export const TYPE_LABEL: Record<string, string> = {
+  electric: "전기",
+  fire: "불꽃",
+  grass: "풀",
+  water: "물",
+};
+
+export const MAX_TEAM_SIZE = 6;
+
+export interface TeamMember {
+  id: string;
+}
