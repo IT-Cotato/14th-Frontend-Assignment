@@ -19,7 +19,12 @@
   cursor: pointer;
 }
 
-.button:active {
+.button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.button:active:not(:disabled) {
   transform: translateY(2px);
   box-shadow: 0 6px 0 0 #b92f51;
 }
