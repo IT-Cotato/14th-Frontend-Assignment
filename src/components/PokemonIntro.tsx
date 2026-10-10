@@ -1,6 +1,11 @@
 import pikachuImg from "@/assets/pokemon/Pikachu.png";
+import type { NavKey } from "./Navbar";
 
-export default function PokemonIntro() {
+export default function PokemonIntro({
+  onNavigate,
+}: {
+  onNavigate: (tab: NavKey) => void;
+}) {
   return (
     <div className="flex flex-col gap-6">
       <section className="flex px-9 py-8.5 gap-9 justify-between rounded-2xl border border-border-strong shadow-[0_8px_24px_0_rgba(20,33,61,0.08)] bg-white">
@@ -15,10 +20,16 @@ export default function PokemonIntro() {
             좋아하는 포켓몬을 찾고 나만의 팀을 만들어 보세요.
           </p>
           <div className="flex gap-2.5">
-            <button className="flex items-center justify-center px-5 py-3 rounded-md text-[14px] font-bold text-text-inverse bg-brand-red shadow-[0_8px_0_0_var(--color-brand-red-dark)]">
+            <button
+              className="flex items-center justify-center px-5 py-3 rounded-md text-[14px] font-bold text-text-inverse bg-brand-red shadow-[0_8px_0_0_var(--color-brand-red-dark)]"
+              onClick={() => onNavigate("dex")}
+            >
               도감 보기
             </button>
-            <button className="flex items-center justify-center px-4 py-3 rounded-md border border-border-strong bg-white shadow-[0_8px_24px_0_rgba(20,33,61,0.08)] text-[14px] font-bold leading-none text-neutral-ink">
+            <button
+              className="flex items-center justify-center px-4 py-3 rounded-md border border-border-strong bg-white shadow-[0_8px_24px_0_rgba(20,33,61,0.08)] text-[14px] font-bold leading-none text-neutral-ink"
+              onClick={() => onNavigate("team")}
+            >
               내 팀
             </button>
           </div>

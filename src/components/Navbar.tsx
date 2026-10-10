@@ -1,10 +1,18 @@
-type NavKey = "home" | "dex" | "team";
+import { MAX_TEAM_SIZE } from "@/types/pokemon";
+
+export type NavKey = "home" | "dex" | "team";
 
 interface NavbarProps {
   activeTab: NavKey;
+  onNavigate: (tab: NavKey) => void;
+  teamCount: number;
 }
 
-export default function Navbar({ activeTab }: NavbarProps) {
+export default function Navbar({
+  activeTab,
+  onNavigate,
+  teamCount,
+}: NavbarProps) {
   const tabs: { key: NavKey; label: string }[] = [
     { key: "home", label: "홈" },
     { key: "dex", label: "도감" },
@@ -26,12 +34,15 @@ export default function Navbar({ activeTab }: NavbarProps) {
         {tabs.map((tab) => (
           <button
             key={tab.key}
+            onClick={() => onNavigate(tab.key)}
             className={`flex items-center justify-center px-[14px] py-[9px] rounded-full text-[13px] font-bold leading-none ${activeTab === tab.key ? "bg-brand-red text-text-inverse" : "bg-neutral-surface-strong text-neutral-muted"}`}
           >
             {tab.label}
           </button>
         ))}
-        <p className="text-neutral-ink text-caption font-bold">0 / 6</p>
+        <p className="text-neutral-ink text-caption font-bold">
+          {teamCount} / {MAX_TEAM_SIZE}
+        </p>
       </div>
     </div>
   );
