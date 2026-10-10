@@ -100,3 +100,9 @@
   --radius-2xl: 20px;
   --radius-full: 9999px;
 }
+
+@layer base {
+  html {
+    scrollbar-gutter: stable;
+  }
+}
