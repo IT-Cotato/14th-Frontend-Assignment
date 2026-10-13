@@ -59,4 +59,10 @@
     height: 40px;
     padding: 0 16px;
   }
+
+  
+  .search-bar--with-filter .search-bar__field {
+    min-width: 0;
+    max-width: none;
+  }
 }

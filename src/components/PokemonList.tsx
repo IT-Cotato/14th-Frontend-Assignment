@@ -13,6 +13,7 @@ interface PokemonListProps {
   duplicateName?: string | null;
   onAdd: (pokemon: Pokemon) => void;
   onMoreClick?: () => void;
+  onReset?: () => void;
 }
 
 function PokemonList({
@@ -24,6 +25,7 @@ function PokemonList({
   duplicateName = null,
   onAdd,
   onMoreClick,
+  onReset,
 }: PokemonListProps) {
   const isTeamFull = teamIds.length >= teamLimit;
 
@@ -66,6 +68,7 @@ function PokemonList({
             icon="0"
             title="검색 결과가 없어요"
             description="다른 이름이나 번호로 검색해 보세요."
+            action={onReset && { label: '조건 초기화', onClick: onReset }}
           />
         </div>
       ) : (

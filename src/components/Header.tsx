@@ -17,7 +17,7 @@ const NAV_ITEMS: { label: NavItem; pcOnly: boolean }[] = [
 
 function Header({ activeNav, teamCount, teamLimit, onNavigate }: HeaderProps) {
   return (
-    <header className="header">
+    <header className={`header${activeNav === '도감' ? ' header--pokedex' : ''}`}>
       <div className="header__brand">
         <span className="header__logo">PM</span>
         <span className="header__title">PokéMate</span>
@@ -42,6 +42,7 @@ function Header({ activeNav, teamCount, teamLimit, onNavigate }: HeaderProps) {
           );
         })}
         <span className="header__count">
+          <span className="header__count-label">내 팀 </span>
           {teamCount} / {teamLimit}
         </span>
       </nav>

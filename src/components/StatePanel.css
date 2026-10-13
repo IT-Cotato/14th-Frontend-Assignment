@@ -32,3 +32,18 @@
   color: var(--color-text-sub);
   font-size: 12px;
 }
+
+
+.state-panel__action {
+  margin-top: 12px;
+}
+
+.state-panel--error {
+  background-color: #fff0f3;
+  border-color: var(--color-primary);
+}
+
+.state-panel--error .state-panel__icon {
+  background-color: var(--color-primary);
+  color: #ffffff;
+}

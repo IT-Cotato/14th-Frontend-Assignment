@@ -1,0 +1,40 @@
+.filter-dialog__label {
+  margin-top: 18px;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.filter-dialog__types {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.filter-dialog__types + .filter-dialog__label {
+  margin-top: 20px;
+}
+
+.filter-dialog__sorts {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+}
+
+.filter-dialog__sort {
+  height: 40px;
+  padding: 0 16px;
+  background-color: var(--color-surface);
+  border: 1px solid #e5edf7;
+  border-radius: var(--radius-button);
+  color: #959aa7;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.filter-dialog__sort--selected {
+  border-color: var(--color-border-strong);
+  color: var(--color-text);
+  box-shadow: var(--shadow-card);
+}
