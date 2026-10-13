@@ -1,19 +1,20 @@
-import PokemonCard from './PokemonCard';
+import PokemonCard, { PokemonCardError } from './PokemonCard';
 import StatePanel from './StatePanel';
 import { withTopicParticle } from '../utils/josa';
-import type { Pokemon } from '../types/pokemon';
+import type { FailedPokemon, Pokemon } from '../types/pokemon';
 import './PokemonList.css';
 
 interface PokemonListProps {
   title?: string;
   moreLabel?: string;
-  pokemons: readonly Pokemon[];
+  pokemons: readonly (Pokemon | FailedPokemon)[];
   teamIds: readonly number[];
   teamLimit: number;
   duplicateName?: string | null;
   onAdd: (pokemon: Pokemon) => void;
   onMoreClick?: () => void;
   onReset?: () => void;
+  onRetryCard?: (id: number) => void;
 }
 
 function PokemonList({
@@ -26,6 +27,7 @@ function PokemonList({
   onAdd,
   onMoreClick,
   onReset,
+  onRetryCard,
 }: PokemonListProps) {
   const isTeamFull = teamIds.length >= teamLimit;
 
@@ -74,6 +76,16 @@ function PokemonList({
       ) : (
         <div className="pokemon-list__grid">
           {pokemons.map((pokemon) => {
+            if ('failed' in pokemon) {
+              return (
+                <PokemonCardError
+                  key={pokemon.id}
+                  id={pokemon.id}
+                  onRetry={() => onRetryCard?.(pokemon.id)}
+                />
+              );
+            }
+
             const addStatus = teamIds.includes(pokemon.id)
               ? 'added'
               : isTeamFull

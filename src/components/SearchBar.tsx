@@ -9,31 +9,41 @@ interface SearchBarProps {
   onChange: (value: string) => void;
   onSearch: () => void;
   onFilterClick?: () => void;
+  status?: 'default' | 'loading' | 'error';
 }
 
-function SearchBar({ placeholder, value, onChange, onSearch, onFilterClick }: SearchBarProps) {
+function SearchBar({
+  placeholder,
+  value,
+  onChange,
+  onSearch,
+  onFilterClick,
+  status = 'default',
+}: SearchBarProps) {
+  const isLoading = status === 'loading';
+  const classNames = ['search-bar'];
+  if (onFilterClick) classNames.push('search-bar--with-filter');
+  if (status !== 'default') classNames.push(`search-bar--${status}`);
+
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     onSearch();
   }
 
   return (
-    <form
-      className={`search-bar${onFilterClick ? ' search-bar--with-filter' : ''}`}
-      onSubmit={handleSubmit}
-    >
+    <form className={classNames.join(' ')} onSubmit={handleSubmit}>
       <div className="search-bar__field">
         <img className="search-bar__icon" src={searchIcon} alt="" />
         <input
           className="search-bar__input"
           type="text"
-          placeholder={placeholder}
+          placeholder={isLoading ? '불러오는 중...' : placeholder}
           value={value}
           onChange={(event) => onChange(event.target.value)}
         />
       </div>
-      <Button variant="primary" onClick={onSearch}>
-        검색
+      <Button variant="primary" disabled={isLoading} onClick={onSearch}>
+        {isLoading ? '검색 중' : '검색'}
       </Button>
       {onFilterClick && (
         <Button variant="secondary" onClick={onFilterClick}>

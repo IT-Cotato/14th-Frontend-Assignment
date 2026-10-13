@@ -28,17 +28,19 @@
   display: inline-flex;
   align-items: center;
   flex-shrink: 0;
-  background-color: var(--color-badge);
+  background-color: var(--color-online-bg);
   border-radius: var(--radius-pill);
+  color: var(--color-online-text);
   font-size: 12px;
   font-weight: 700;
 }
 
 @media (max-width: 767px) {
   .pokedex-title {
+    padding: 3px 0;
     flex-wrap: wrap;
     justify-content: flex-end;
-    gap: 4px 8px;
+    gap: 1px 8px;
   }
 
   .pokedex-title__text {
@@ -50,6 +52,7 @@
   }
 
   .pokedex-title__description {
+    margin-top: 4px;
     font-size: 13px;
   }
 }

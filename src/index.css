@@ -13,6 +13,8 @@
   --color-primary: #ef476f;
   --color-primary-dark: #b92f51;
   --color-badge: #ffd166;
+  --color-online-bg: #e9fff8;
+  --color-online-text: #049f78;
 
   /* ── 모서리 ────────────────────────────────── */
   --radius-card: 16px;
@@ -70,30 +72,6 @@ button {
   margin-top: 24px;
 }
 
-.pokedex-layout {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 24px;
-}
-
-.pokedex-layout__list {
-  flex: 1;
-  min-width: 0;
-}
-
-.pokedex-layout__heading {
-  margin-bottom: 12px;
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 1.4;
-}
-
-.pokedex-layout .pokemon-list__grid {
-  grid-template-columns: repeat(3, 260px);
-  gap: 14px;
-}
-
 @media (max-width: 767px) {
   .app {
     width: auto;
@@ -104,16 +82,4 @@ button {
     margin-top: 16px;
   }
 
-  .pokedex-layout {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .pokedex-layout__heading {
-    margin-bottom: 16px;
-  }
-
-  .pokedex-layout .pokemon-list__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
