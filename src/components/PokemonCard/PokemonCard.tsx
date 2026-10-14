@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import type { Pokemon } from '../../types/pokemon'
 import Button from '../Button/Button'
+import TypeChip from '../TypeChip/TypeChip'
 import './PokemonCard.css'
 
 type PokemonCardProps = Pokemon & {
@@ -28,12 +29,7 @@ function PokemonCard({
       {types.length > 0 && (
         <div className="pokemon-card__types">
           {types.map((type) => (
-            <span
-              className={`pokemon-card__type pokemon-card__type--${type.toLowerCase()}`}
-              key={type}
-            >
-              {type}
-            </span>
+            <TypeChip key={type} type={type} />
           ))}
         </div>
       )}

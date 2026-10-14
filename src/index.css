@@ -55,7 +55,10 @@ body {
   --color-bg-danger:var(--brand-red);
   --color-bg-warning:var(--brand-yellow);
   --color-bg-success:var(--brand-mint);
+  --color-success-soft:var(--brand-mint-soft);
+  --color-danger-soft:var(--brand-red-soft);
   --red: var(--brand-red);
+  --blue: var(--brand-blue);
   --yellow: var(--brand-yellow);
   --ink: var(--neutral-ink);
   --muted: var(--neutral-muted);

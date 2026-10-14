@@ -64,37 +64,3 @@
   margin-top: auto;
 }
 
-.pokemon-card__type {
-  display: flex;
-  padding: var(--space-2) var(--space-3);
-  justify-content: center;
-  align-items: center;
-  border-radius: var(--radius-full);
-  background: var(--color-type-electric);
-  color: var(--color-text-inverse);
-  font-family: Inter, sans-serif;
-  font-size: 11px;
-  font-style: normal;
-  font-weight: 600;
-  line-height: normal;
-}
-
-.pokemon-card__type--fire {
-  background: var(--color-type-fire);
-}
-
-.pokemon-card__type--grass {
-  background: var(--color-type-grass);
-}
-
-.pokemon-card__type--water {
-  background: var(--color-type-water);
-}
-
-.pokemon-card__type--flying {
-  background: var(--color-type-flying);
-}
-
-.pokemon-card__type--poison {
-  background: var(--color-type-poison);
-}
