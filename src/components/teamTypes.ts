@@ -64,3 +64,44 @@ export function withTopicParticle(word: string): string {
   const hasBatchim = (lastChar - 0xac00) % 28 !== 0;
   return `${word}${hasBatchim ? "은" : "는"}`;
 }
+
+export const TEAM_STORAGE_KEY = "pokemate-team";
+
+export type SortOrder = "asc" | "desc";
+
+function isTeamMember(value: unknown): value is TeamMember {
+  if (typeof value !== "object" || value === null) return false;
+
+  const member = value as Record<string, unknown>;
+
+  return (
+    typeof member.id === "number" &&
+    typeof member.name === "string" &&
+    typeof member.type === "string" &&
+    typeof member.nickname === "string" &&
+    typeof member.image === "string" &&
+    typeof member.role === "string" &&
+    (TEAM_ROLES as readonly string[]).includes(member.role)
+  );
+}
+
+export function loadSavedTeam(): { team: TeamMember[]; failed: boolean } {
+  try {
+    const raw = localStorage.getItem(TEAM_STORAGE_KEY);
+    if (raw === null) return { team: [], failed: false };
+
+    const parsed: unknown = JSON.parse(raw);
+
+    if (
+      !Array.isArray(parsed) ||
+      parsed.length > MAX_TEAM_SIZE ||
+      !parsed.every(isTeamMember)
+    ) {
+      throw new Error("invalid team data");
+    }
+
+    return { team: parsed, failed: false };
+  } catch {
+    return { team: [], failed: true };
+  }
+}
