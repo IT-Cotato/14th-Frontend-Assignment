@@ -52,6 +52,35 @@ button {
 
 /*PokemonList*/
 
+.dict-content-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  align-self: stretch;
+}
+
+.dict-content2-box {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  flex: 1 0 0;
+}
+
+.dict-content-box3 {
+  display: flex;
+  gap: 12px;
+}
+
+.dict-name {
+  color: var(--ink);
+  font-family: "Noto Sans KR";
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+
 /* 카드들을 담는 큰 상자: 가로로 나열하다 자리 없으면 다음 줄로 */
 .pokeCard-box {
   display: flex;
@@ -290,5 +319,4 @@ button {
   .empty-box {
     width: 100%;
   }
-
 }

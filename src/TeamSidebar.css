@@ -1,0 +1,89 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  /* width/height에 padding과 border를 포함시켜서 계산하도록 변경.
+     이렇게 하면 Figma에서 지정한 width 값 그대로가 최종 렌더링 크기가 됨. */
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+button {
+  border: none;
+  background: none;
+  outline: none;
+  font: inherit;      /* 버튼도 부모 폰트를 상속받게 함 */
+  cursor: pointer;
+}
+
+:root {
+  --ink: #14213D;               /* 진한 텍스트 (로고, 활성 상태) */
+  --muted: #667085;             /* 흐린 텍스트 (비활성 메뉴) */
+  --red: #EF476F;               /* PM 배지, 홈 버튼 배경 */
+  --panel-strong: #F2F7FF;      /* 도감/내 팀 필 배경 */
+  --panel: #FFFFFF;
+  --line: #D8E4F2;
+  --yellow: #FFD166;
+  --blue: #2A75BB;
+  --bg: #F7FBFF;
+  --color-text-inverse: #FFFFFF; /* 어두운 배경 위 흰 텍스트 */
+  --color-text-placeholder: #8AA0B8;
+  --color-text-brand: #1A5A9F;
+  --color-border-strong: #C6D8EE;
+  --color-type-fire: #FD7D24;
+  --color-type-electric: #EED535;
+  --color-type-grass: #62B957;
+  --color-type-water: #4A90DA;
+  --page-padding-x: 80px;
+  --page-padding-top: 36px;
+  --section-gap: 24px;
+  --stroke-1: 1px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --radius-xl: 16px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 999px;
+}
+
+.sideBar-box {
+    width: 366px;
+    height: 100%;
+    display: flex;
+    padding: 20px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;border-radius: 16px;
+    border: var(--stroke-1) solid var(--line);
+    background: var(--panel);
+}
+
+.TeamSidebar .teamSlot-main-box {
+    display: flex;
+    width: 326px;
+    height: 88px;
+    padding: 12px;
+    align-items: center;
+    gap: 8px;
+}
+
+.sideBar-myTeam-name {
+    color: var(--ink);
+    font-family: "Noto Sans KR";
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+/*모바일 대응*/
+
+@media (max-width: 767px) {
+
+    .sideBar-box {
+        display: none;
+    }
+}
