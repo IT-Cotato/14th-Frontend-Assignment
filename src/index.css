@@ -762,6 +762,54 @@ button {
   background: #62b957;
 }
 
+.pokemon-card__type--water {
+  background: #4a90da;
+}
+
+.pokemon-card__type--ice {
+  background: #51c4e7;
+}
+
+.pokemon-card__type--fighting {
+  background: #d56723;
+}
+
+.pokemon-card__type--poison {
+  background: #b97fc9;
+}
+
+.pokemon-card__type--ground {
+  background: #ab9842;
+}
+
+.pokemon-card__type--flying {
+  background: #3dc7ef;
+}
+
+.pokemon-card__type--psychic {
+  background: #f366b9;
+}
+
+.pokemon-card__type--bug {
+  background: #729f3f;
+}
+
+.pokemon-card__type--rock {
+  background: #a38c21;
+}
+
+.pokemon-card__type--dark {
+  background: #707070;
+}
+
+.pokemon-card__type--steel {
+  background: #9eb7b8;
+}
+
+.pokemon-card__type--fairy {
+  background: #fdb9e9;
+}
+
 .pokemon-card__team-button {
   padding-inline: 16px;
   font-size: 13px;
@@ -935,6 +983,150 @@ button {
 
 .pokemon-list-wrap--catalog {
   gap: 14px;
+}
+
+.live-pokedex-page {
+  width: 100%;
+}
+
+.live-pokedex-heading {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.live-pokedex-heading h1,
+.live-pokedex-heading p {
+  margin: 0;
+}
+
+.live-pokedex-heading h1 {
+  font-size: 30px;
+  line-height: normal;
+}
+
+.live-pokedex-heading p {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 25px;
+}
+
+.api-status {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: #e9fff8;
+  color: #049f78;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.api-status--loading {
+  background: var(--panel-strong);
+  color: #1a5f9f;
+}
+
+.api-status--error {
+  background: #fff0f3;
+  color: #b92f51;
+}
+
+.pokemon-list-wrap--catalog .pokemon-list--api {
+  grid-template-columns: repeat(4, 260px);
+  gap: 20px;
+}
+
+.pokemon-list--api .pokemon-card__name {
+  text-transform: capitalize;
+}
+
+.api-state-panel {
+  display: flex;
+  width: 326px;
+  min-height: 176px;
+  flex-direction: column;
+  align-items: center;
+  align-self: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 28px 24px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel);
+  text-align: center;
+}
+
+.api-state-panel__symbol {
+  display: flex;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: #2a75bb;
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.api-state-panel strong {
+  font-size: 16px;
+}
+
+.api-state-panel p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.api-state-panel--empty .api-state-panel__symbol {
+  background: var(--yellow);
+  color: var(--ink);
+}
+
+.api-state-panel--error {
+  border-color: var(--red);
+  background: #fff0f3;
+}
+
+.api-state-panel--error .api-state-panel__symbol {
+  background: var(--red);
+}
+
+.api-state-panel button {
+  margin-top: 5px;
+  padding: 12px 16px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--red);
+  box-shadow: 0 8px 0 #b92f51;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.pokemon-card--error {
+  border-color: var(--red);
+  background: #fff0f3;
+}
+
+.pokemon-card--error .pokemon-card__name {
+  color: #b92f51;
+}
+
+.pokemon-card__artwork--fallback {
+  color: #2a75bb;
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.pokemon-card--error .pokemon-card__artwork--fallback {
+  color: var(--red);
 }
 
 .pokemon-list-wrap--catalog .pokemon-list {
@@ -1773,6 +1965,25 @@ button {
     gap: 18px;
   }
 
+  .live-pokedex-heading {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .live-pokedex-heading h1 {
+    font-size: 23px;
+  }
+
+  .live-pokedex-heading p {
+    font-size: 13px;
+    line-height: 21px;
+  }
+
+  .live-pokedex-heading .api-status {
+    align-self: flex-end;
+  }
+
   .search-team-heading {
     flex-direction: column;
     align-items: stretch;
@@ -1813,6 +2024,10 @@ button {
   .pokemon-list-wrap--catalog .pokemon-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 14px;
+  }
+
+  .api-state-panel {
+    width: min(100%, 326px);
   }
 
   .search-team-panel,
