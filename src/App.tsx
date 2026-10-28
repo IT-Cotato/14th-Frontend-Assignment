@@ -128,15 +128,13 @@ function App() {
             )}
             {currentPage === "pokedex" && (
                 <PokedexPage
-                    team={team}
+                    teamCount={team.length}
                     maxTeamSize={MAX_TEAM_SIZE}
                     addedPokemonIds={addedPokemonIds}
                     isTeamFull={isTeamFull}
                     isRestoreNoticeOpen={isRestoreNoticeOpen}
                     onNavigate={setCurrentPage}
                     onAddToTeam={handleAddToTeam}
-                    onRemoveFromTeam={handleRemoveFromTeam}
-                    onUpdateTeamMember={handleUpdateTeamMember}
                     onDismissRestoreNotice={() => setIsRestoreNoticeOpen(false)}
                 />
             )}
