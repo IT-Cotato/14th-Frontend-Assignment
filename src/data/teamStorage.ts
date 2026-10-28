@@ -1,4 +1,4 @@
-import { pokemons } from "./pokemons";
+import { pokemonTypes, type Pokemon } from "./pokemons";
 import {
     MAX_TEAM_SIZE,
     getNicknameError,
@@ -10,7 +10,7 @@ import {
 const TEAM_STORAGE_KEY = "pokemate:team";
 
 type StoredTeamMember = {
-    pokemonId: number;
+    pokemon: Pokemon;
     nickname: string;
     role: TeamRole;
 };
@@ -22,10 +22,30 @@ type LoadTeamResult = {
 
 function toStoredTeam(team: TeamMember[]): StoredTeamMember[] {
     return team.map((member) => ({
-        pokemonId: member.pokemon.id,
+        pokemon: {
+            id: member.pokemon.id,
+            name: member.pokemon.name,
+            types: member.pokemon.types,
+            imageUrl: member.pokemon.imageUrl,
+        },
         nickname: member.nickname,
         role: member.role,
     }));
+}
+
+function isStoredPokemon(value: unknown): value is Pokemon {
+    if (typeof value !== "object" || value === null) {
+        return false;
+    }
+    const { id, name, types, imageUrl } = value as Record<string, unknown>;
+    return (
+        Number.isInteger(id) &&
+        typeof name === "string" &&
+        name !== "" &&
+        Array.isArray(types) &&
+        types.every((type) => pokemonTypes.includes(type)) &&
+        typeof imageUrl === "string"
+    );
 }
 
 function parseTeam(raw: string): TeamMember[] | null {
@@ -45,10 +65,9 @@ function parseTeam(raw: string): TeamMember[] | null {
         if (typeof item !== "object" || item === null) {
             return null;
         }
-        const { pokemonId, nickname, role } = item as Record<string, unknown>;
-        const pokemon = pokemons.find((p) => p.id === pokemonId);
+        const { pokemon, nickname, role } = item as Record<string, unknown>;
         const isValid =
-            pokemon !== undefined &&
+            isStoredPokemon(pokemon) &&
             typeof nickname === "string" &&
             getNicknameError(nickname) === null &&
             teamRoles.includes(role as TeamRole) &&

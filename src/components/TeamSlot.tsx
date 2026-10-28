@@ -2,22 +2,14 @@ import { typeLabels } from "../data/pokemons";
 import { getDisplayName, roleLabels, type TeamMember } from "../data/team";
 import "./TeamSlot.css";
 
-type TeamSlotProps = { compact?: boolean } & (
+type TeamSlotProps =
     | { member: TeamMember; onEdit: () => void; onDelete: () => void }
-    | { member: null; onEdit?: never; onDelete?: never }
-);
+    | { member: null; onEdit?: never; onDelete?: never };
 
-function TeamSlot({
-    member,
-    onEdit,
-    onDelete,
-    compact = false,
-}: TeamSlotProps) {
-    const compactModifier = compact ? " team-slot--compact" : "";
-
+function TeamSlot({ member, onEdit, onDelete }: TeamSlotProps) {
     if (member === null) {
         return (
-            <div className={`team-slot team-slot--empty${compactModifier}`}>
+            <div className="team-slot team-slot--empty">
                 <div className="team-slot__info">
                     <p className="team-slot__name">빈 슬롯</p>
                     <p className="team-slot__meta">포켓몬을 추가해 보세요</p>
@@ -35,7 +27,7 @@ function TeamSlot({
     const typeText = pokemon.types.map((type) => typeLabels[type]).join(" · ");
 
     return (
-        <div className={`team-slot${compactModifier}`}>
+        <div className="team-slot">
             <div className="team-slot__artwork">
                 <img
                     className="team-slot__image"

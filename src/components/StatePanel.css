@@ -37,6 +37,11 @@
     color: var(--color-text-inverse);
 }
 
+.state-panel--loading .state-panel__badge {
+    background-color: var(--color-icon-brand);
+    color: var(--color-text-inverse);
+}
+
 .state-panel__title {
     margin: 0;
     font-family: "Noto Sans KR", sans-serif;

@@ -1,26 +1,46 @@
 import type { PokemonType } from "../data/pokemons";
 import "./PokemonCard.css";
 
-type PokemonCardProps = {
-    id: number;
-    name: string;
-    types: PokemonType[];
-    imageUrl: string;
-    isAdded: boolean;
-    isTeamFull: boolean;
-    onAdd: () => void;
-};
+type PokemonCardProps =
+    | {
+          variant?: "default";
+          id: number;
+          name: string;
+          types: PokemonType[];
+          imageUrl: string;
+          isAdded: boolean;
+          isTeamFull: boolean;
+          onAdd: () => void;
+      }
+    | {
+          variant: "error";
+          id: number;
+          onRetry: () => void;
+      };
 
-function PokemonCard({
-    id,
-    name,
-    types,
-    imageUrl,
-    isAdded,
-    isTeamFull,
-    onAdd,
-}: PokemonCardProps) {
-    const number = `#${String(id).padStart(4, "0")}`;
+function formatNumber(id: number) {
+    return `#${String(id).padStart(4, "0")}`;
+}
+
+function PokemonCard(props: PokemonCardProps) {
+    if (props.variant === "error") {
+        return (
+            <article className="pokemon-card pokemon-card--error">
+                <div className="pokemon-card__image-box" />
+                <p className="pokemon-card__number">{formatNumber(props.id)}</p>
+                <h3 className="pokemon-card__name">상세 정보 실패</h3>
+                <button
+                    className="pokemon-card__button"
+                    type="button"
+                    onClick={props.onRetry}
+                >
+                    다시 시도
+                </button>
+            </article>
+        );
+    }
+
+    const { id, name, types, imageUrl, isAdded, isTeamFull, onAdd } = props;
 
     let buttonLabel = "팀에 추가";
     let buttonModifier = "";
@@ -43,7 +63,7 @@ function PokemonCard({
                     alt={name}
                 />
             </div>
-            <p className="pokemon-card__number">{number}</p>
+            <p className="pokemon-card__number">{formatNumber(id)}</p>
             <h3 className="pokemon-card__name">{name}</h3>
             <div className="pokemon-card__types">
                 {types.map((type) => (
