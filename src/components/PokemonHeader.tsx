@@ -58,7 +58,7 @@ function PokemonHeader({
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        {/* <select
+        {<select
           value={selectedType}
           onChange={(e) => setSelectedType(e.target.value)}
         >
@@ -67,7 +67,7 @@ function PokemonHeader({
           <option value="FIRE">불꽃</option>
           <option value="GRASS">풀</option>
           <option value="WATER">물</option>
-        </select> */}
+        </select>}
 
         <button className="red-shadow-button">
           검색
