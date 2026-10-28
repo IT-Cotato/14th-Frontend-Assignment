@@ -754,6 +754,14 @@ button {
   background: #eed535;
 }
 
+.pokemon-card__type--fire {
+  background: #fd7d24;
+}
+
+.pokemon-card__type--grass {
+  background: #62b957;
+}
+
 .pokemon-card__team-button {
   padding-inline: 16px;
   font-size: 13px;
@@ -785,6 +793,285 @@ button {
   width: 100%;
   flex-direction: column;
   gap: 24px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.search-team-page {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.search-team-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.search-team-heading h1,
+.search-team-heading p,
+.search-team-pokedex h2,
+.search-team-panel h2 {
+  margin: 0;
+}
+
+.search-team-heading h1 {
+  font-size: 30px;
+  line-height: normal;
+}
+
+.search-team-heading p {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 25px;
+}
+
+.search-team-heading > span {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: var(--yellow);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.search-team-layout {
+  display: grid;
+  width: 100%;
+  grid-template-columns: minmax(0, 1fr) 366px;
+  align-items: start;
+  gap: 24px;
+}
+
+.search-team-pokedex {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.search-team-pokedex h2,
+.search-team-panel h2 {
+  font-size: 18px;
+  line-height: normal;
+}
+
+.search-team-panel {
+  display: flex;
+  width: 366px;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--panel);
+}
+
+.search-team-panel__heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.search-team-panel__heading button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #1a5f9f;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.search-team-panel .team-slot {
+  width: 326px;
+  gap: 8px;
+  padding: 12px;
+  box-shadow: 0 8px 24px rgb(20 33 61 / 8%);
+}
+
+.search-team-panel .team-slot__actions {
+  gap: 8px;
+}
+
+.search-team-panel .team-slot__actions button {
+  padding: 10px 12px;
+}
+
+.search-team-panel__empty {
+  display: flex;
+  min-height: 140px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.search-team-panel__empty strong {
+  color: var(--ink);
+  font-size: 14px;
+}
+
+.search-team-panel__empty span {
+  font-size: 12px;
+}
+
+.pokemon-list-wrap--catalog {
+  gap: 14px;
+}
+
+.pokemon-list-wrap--catalog .pokemon-list {
+  grid-template-columns: repeat(3, 260px);
+  gap: 14px;
+}
+
+.catalog-toolbar {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.catalog-search {
+  display: flex;
+  width: min(100%, 760px);
+  height: 44px;
+  gap: 12px;
+}
+
+.catalog-search label {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+.catalog-search label:focus-within {
+  border-color: #2a75bb;
+  box-shadow: 0 0 0 3px rgb(42 117 187 / 12%);
+}
+
+.catalog-search img {
+  width: 20px;
+  height: 20px;
+}
+
+.catalog-search input {
+  min-width: 0;
+  flex: 1;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--ink);
+  font-size: 13px;
+}
+
+.catalog-search input::placeholder {
+  color: #8aa0b8;
+}
+
+.catalog-search > button,
+.pokemon-list__empty button {
+  padding: 12px 20px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--red);
+  box-shadow: 0 8px 0 #b92f51;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.catalog-filter-row {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.catalog-type-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.catalog-type-filter,
+.catalog-sort {
+  padding: 8px 11px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--panel);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.catalog-type-filter.is-selected {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: #ffffff;
+}
+
+.catalog-type-filter--electric.is-selected {
+  border-color: #eed535;
+  background: #eed535;
+}
+
+.catalog-type-filter--fire.is-selected {
+  border-color: #fd7d24;
+  background: #fd7d24;
+}
+
+.catalog-type-filter--grass.is-selected {
+  border-color: #62b957;
+  background: #62b957;
+}
+
+.catalog-sort {
+  flex: 0 0 auto;
+  border-color: #c6d8ee;
+  border-radius: 8px;
+  color: var(--ink);
+  box-shadow: 0 8px 12px rgb(20 33 61 / 8%);
+}
+
+.catalog-result-count {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.pokemon-list__empty button {
+  margin-top: 18px;
+  padding: 10px 16px;
+  font-size: 13px;
 }
 
 .catalog-controls {
@@ -1480,6 +1767,65 @@ button {
 
   .catalog-controls {
     grid-template-columns: 1fr;
+  }
+
+  .search-team-page {
+    gap: 18px;
+  }
+
+  .search-team-heading {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .search-team-heading h1 {
+    font-size: 23px;
+  }
+
+  .search-team-heading p {
+    font-size: 13px;
+    line-height: 21px;
+  }
+
+  .search-team-heading > span {
+    align-self: flex-end;
+  }
+
+  .search-team-layout {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .catalog-search {
+    width: 100%;
+  }
+
+  .catalog-search > button {
+    padding-inline: 16px;
+    font-size: 13px;
+  }
+
+  .catalog-filter-row {
+    align-items: flex-end;
+  }
+
+  .pokemon-list-wrap--catalog .pokemon-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .search-team-panel,
+  .search-team-panel .team-slot {
+    width: 100%;
+  }
+
+  .search-team-panel .team-slot__actions {
+    flex-direction: row;
+  }
+
+  .search-team-panel .team-slot__actions button {
+    padding: 10px 12px;
   }
 
   .pokemon-detail,

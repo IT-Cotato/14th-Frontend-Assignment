@@ -22,11 +22,57 @@ interface TeamProfile {
   role: string
 }
 
+interface TeamState {
+  ids: number[]
+  profiles: Record<number, TeamProfile>
+  recovered: boolean
+}
+
 const INITIAL_TEAM_IDS = [25, 6, 1]
 const INITIAL_TEAM_PROFILES: Record<number, TeamProfile> = {
   25: { nickname: '피카츄', role: '스피드' },
   6: { nickname: '리자몽', role: '공격' },
   1: { nickname: '이상해씨', role: '서포트' },
+}
+
+const TEAM_STORAGE_KEY = 'pokemate-team'
+
+const createInitialTeamState = (recovered = false): TeamState => ({
+  ids: [...INITIAL_TEAM_IDS],
+  profiles: { ...INITIAL_TEAM_PROFILES },
+  recovered,
+})
+
+const loadTeamState = (): TeamState => {
+  try {
+    const savedValue = window.localStorage.getItem(TEAM_STORAGE_KEY)
+    if (!savedValue) return createInitialTeamState()
+
+    const parsedValue: unknown = JSON.parse(savedValue)
+    if (!parsedValue || typeof parsedValue !== 'object') throw new Error('Invalid saved team')
+
+    const savedTeam = parsedValue as Partial<TeamState>
+    const ids = savedTeam.ids
+    const profiles = savedTeam.profiles
+    const validIds =
+      Array.isArray(ids) &&
+      ids.length <= 6 &&
+      new Set(ids).size === ids.length &&
+      ids.every((id) => typeof id === 'number' && POKEMON.some((pokemon) => pokemon.id === id))
+    const validProfiles =
+      profiles !== null &&
+      typeof profiles === 'object' &&
+      ids?.every((id) => {
+        const profile = profiles[id]
+        return Boolean(profile) && typeof profile.nickname === 'string' && typeof profile.role === 'string'
+      })
+
+    if (!validIds || !validProfiles) throw new Error('Invalid saved team')
+    return { ids, profiles, recovered: false }
+  } catch {
+    window.localStorage.removeItem(TEAM_STORAGE_KEY)
+    return createInitialTeamState(true)
+  }
 }
 
 const typeLabels = {
@@ -40,9 +86,11 @@ const typeLabels = {
 
 function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname)
-  const [teamIds, setTeamIds] = useState<number[]>(INITIAL_TEAM_IDS)
-  const [teamProfiles, setTeamProfiles] = useState<Record<number, TeamProfile>>(INITIAL_TEAM_PROFILES)
-  const [teamMessage, setTeamMessage] = useState('')
+  const [teamState, setTeamState] = useState<TeamState>(loadTeamState)
+  const { ids: teamIds, profiles: teamProfiles } = teamState
+  const [teamMessage, setTeamMessage] = useState(() =>
+    teamState.recovered ? '저장된 팀 데이터를 읽을 수 없어 기본 팀으로 복구했습니다.' : '',
+  )
   const [editingId, setEditingId] = useState<number | null>(null)
   const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null)
   const [draftNickname, setDraftNickname] = useState('')
@@ -55,6 +103,13 @@ function App() {
     return () => window.removeEventListener('popstate', handlePopState)
   }, [])
 
+  useEffect(() => {
+    window.localStorage.setItem(
+      TEAM_STORAGE_KEY,
+      JSON.stringify({ ids: teamIds, profiles: teamProfiles }),
+    )
+  }, [teamIds, teamProfiles])
+
   const navigate = (path: string) => {
     window.history.pushState({}, '', path)
     setCurrentPath(path)
@@ -63,35 +118,42 @@ function App() {
   }
 
   const addToTeam = (id: number) => {
-    setTeamIds((previousIds) => {
-      if (previousIds.includes(id)) {
-        setTeamMessage('이미 팀에 포함된 포켓몬입니다.')
-        return previousIds
-      }
-      if (previousIds.length >= 6) {
-        setTeamMessage('팀에는 최대 6마리까지 추가할 수 있습니다.')
-        return previousIds
-      }
+    if (teamIds.includes(id)) {
+      setTeamMessage('이미 팀에 포함된 포켓몬입니다.')
+      return
+    }
+    if (teamIds.length >= 6) {
+      setTeamMessage('팀에는 최대 6마리까지 추가할 수 있습니다.')
+      return
+    }
 
-      const pokemon = POKEMON.find((item) => item.id === id)
-      if (pokemon) {
-        setTeamProfiles((previousProfiles) => ({
-          ...previousProfiles,
+    const pokemon = POKEMON.find((item) => item.id === id)
+    if (!pokemon) return
+
+    setTeamState((previousState) => {
+      if (previousState.ids.includes(id) || previousState.ids.length >= 6) return previousState
+      return {
+        ids: [...previousState.ids, id],
+        profiles: {
+          ...previousState.profiles,
           [id]: { nickname: pokemon.name, role: '공격' },
-        }))
+        },
+        recovered: false,
       }
-      setTeamMessage(`${pokemon?.name ?? '포켓몬'}을 팀에 추가했습니다.`)
-      return [...previousIds, id]
     })
+    setTeamMessage(`${pokemon.name}을 팀에 추가했습니다.`)
   }
 
   const removeFromTeam = (id: number) => {
     const pokemon = POKEMON.find((item) => item.id === id)
-    setTeamIds((previousIds) => previousIds.filter((teamId) => teamId !== id))
-    setTeamProfiles((previousProfiles) => {
-      const nextProfiles = { ...previousProfiles }
+    setTeamState((previousState) => {
+      const nextProfiles = { ...previousState.profiles }
       delete nextProfiles[id]
-      return nextProfiles
+      return {
+        ids: previousState.ids.filter((teamId) => teamId !== id),
+        profiles: nextProfiles,
+        recovered: false,
+      }
     })
     setPendingDeleteId(null)
     setTeamMessage(`${pokemon?.name ?? '포켓몬'}을 팀에서 삭제했습니다.`)
@@ -126,9 +188,13 @@ function App() {
       return
     }
 
-    setTeamProfiles((previousProfiles) => ({
-      ...previousProfiles,
-      [editingId]: { nickname, role: draftRole },
+    setTeamState((previousState) => ({
+      ...previousState,
+      profiles: {
+        ...previousState.profiles,
+        [editingId]: { nickname, role: draftRole },
+      },
+      recovered: false,
     }))
     setTeamMessage('포켓몬 정보를 저장했습니다.')
     cancelEditing()
@@ -204,18 +270,56 @@ function App() {
       )}
 
       {currentPath === '/pokemon' && (
-        <section className="route-page" aria-labelledby="pokedex-title">
-          <span className="route-page__label">POKÉDEX</span>
-          <h1 id="pokedex-title">포켓몬 도감</h1>
-          <p>이름과 번호로 검색하고 타입별로 포켓몬을 살펴보세요.</p>
-          {teamMessage && <p className="route-message">{teamMessage}</p>}
-          <PokemonList
-            mode="catalog"
-            teamFull={teamIds.length >= 6}
-            teamIds={teamIds}
-            onAdd={addToTeam}
-            onView={(id) => navigate(`/pokemon/${id}`)}
-          />
+        <section className="search-team-page" aria-labelledby="pokedex-title">
+          <div className="search-team-heading">
+            <div>
+              <h1 id="pokedex-title">포켓몬을 찾고 팀을 완성하세요</h1>
+              <p>도감과 나의 팀을 한 화면에서 관리할 수 있어요.</p>
+            </div>
+            <span>내 팀 {teamIds.length} / 6</span>
+          </div>
+          {teamMessage && <p className="team-feedback" role="status">{teamMessage}</p>}
+          <div className="search-team-layout">
+            <div className="search-team-pokedex">
+              <h2>도감</h2>
+              <PokemonList
+                mode="catalog"
+                teamFull={teamIds.length >= 6}
+                teamIds={teamIds}
+                onAdd={addToTeam}
+                onView={(id) => navigate(`/pokemon/${id}`)}
+              />
+            </div>
+            <aside className="search-team-panel" aria-label={`나의 팀 ${teamIds.length}마리`}>
+              <div className="search-team-panel__heading">
+                <h2>나의 팀</h2>
+                <button type="button" onClick={() => navigate('/my-team')}>전체 보기</button>
+              </div>
+              {teamPokemon.length === 0 ? (
+                <div className="search-team-panel__empty">
+                  <strong>아직 팀이 비어 있어요</strong>
+                  <span>도감에서 포켓몬을 추가해 보세요.</span>
+                </div>
+              ) : (
+                teamPokemon.map((pokemon) => {
+                  const profile = teamProfiles[pokemon.id] ?? { nickname: pokemon.name, role: '공격' }
+                  return (
+                    <article className="team-slot" key={pokemon.id}>
+                      <span className="team-slot__artwork"><img src={pokemon.imageUrl} alt="" /></span>
+                      <div className="team-slot__copy">
+                        <strong>{profile.nickname}</strong>
+                        <span>{typeLabels[pokemon.type]} · {profile.role}</span>
+                      </div>
+                      <div className="team-slot__actions">
+                        <button type="button" onClick={() => startEditing(pokemon.id)}>편집</button>
+                        <button className="is-danger" type="button" onClick={() => setPendingDeleteId(pokemon.id)}>삭제</button>
+                      </div>
+                    </article>
+                  )
+                })
+              )}
+            </aside>
+          </div>
         </section>
       )}
 
@@ -274,8 +378,7 @@ function App() {
                 className="team-action-button"
                 type="button"
                 onClick={() => {
-                  setTeamIds(INITIAL_TEAM_IDS)
-                  setTeamProfiles(INITIAL_TEAM_PROFILES)
+                  setTeamState(createInitialTeamState())
                   setPendingDeleteId(null)
                   cancelEditing()
                   setTeamMessage('변경사항을 취소하고 처음 상태로 되돌렸습니다.')
@@ -317,66 +420,67 @@ function App() {
             ))}
           </div>
 
-          {editingPokemon && (
-            <div className="team-dialog-backdrop" role="presentation">
-              <form className="team-dialog" onSubmit={saveTeamPokemon} aria-labelledby="team-edit-title">
-                <div className="team-dialog__heading">
-                  <div>
-                    <span>팀 슬롯 #{teamIds.indexOf(editingPokemon.id) + 1}</span>
-                    <h2 id="team-edit-title">{editingPokemon.name} 편집</h2>
-                  </div>
-                  <button type="button" aria-label="편집 닫기" onClick={cancelEditing}>×</button>
-                </div>
-                <label className="team-dialog__field">
-                  <span>별명</span>
-                  <input
-                    value={draftNickname}
-                    maxLength={10}
-                    onChange={(event) => {
-                      setDraftNickname(event.target.value)
-                      setEditError('')
-                    }}
-                  />
-                  <small>{draftNickname.length} / 10</small>
-                </label>
-                <fieldset className="team-dialog__roles">
-                  <legend>역할</legend>
-                  <div>
-                    {(['공격', '방어', '서포트'] as TeamRole[]).map((role) => (
-                      <button
-                        className={draftRole === role ? 'is-selected' : ''}
-                        key={role}
-                        type="button"
-                        onClick={() => setDraftRole(role)}
-                      >
-                        {role}
-                      </button>
-                    ))}
-                  </div>
-                </fieldset>
-                {editError && <p className="team-dialog__error" role="alert">{editError}</p>}
-                <div className="team-dialog__actions">
-                  <button type="button" onClick={cancelEditing}>취소</button>
-                  <button className="is-primary" type="submit">저장</button>
-                </div>
-              </form>
-            </div>
-          )}
-
-          {pendingDeletePokemon && (
-            <div className="team-dialog-backdrop" role="presentation">
-              <section className="team-dialog team-delete-dialog" role="alertdialog" aria-labelledby="team-delete-title">
-                <span className="team-delete-dialog__icon">!</span>
-                <h2 id="team-delete-title">{pendingDeletePokemon.name}을 삭제할까요?</h2>
-                <p>팀에서만 삭제되며 도감에서는 계속 확인할 수 있어요.</p>
-                <div className="team-dialog__actions">
-                  <button type="button" onClick={() => setPendingDeleteId(null)}>취소</button>
-                  <button className="is-danger" type="button" onClick={() => removeFromTeam(pendingDeletePokemon.id)}>삭제</button>
-                </div>
-              </section>
-            </div>
-          )}
         </section>
+      )}
+
+      {editingPokemon && (
+        <div className="team-dialog-backdrop" role="presentation">
+          <form className="team-dialog" onSubmit={saveTeamPokemon} aria-labelledby="team-edit-title">
+            <div className="team-dialog__heading">
+              <div>
+                <span>팀 슬롯 #{teamIds.indexOf(editingPokemon.id) + 1}</span>
+                <h2 id="team-edit-title">{editingPokemon.name} 편집</h2>
+              </div>
+              <button type="button" aria-label="편집 닫기" onClick={cancelEditing}>×</button>
+            </div>
+            <label className="team-dialog__field">
+              <span>별명</span>
+              <input
+                value={draftNickname}
+                maxLength={10}
+                onChange={(event) => {
+                  setDraftNickname(event.target.value)
+                  setEditError('')
+                }}
+              />
+              <small>{draftNickname.length} / 10</small>
+            </label>
+            <fieldset className="team-dialog__roles">
+              <legend>역할</legend>
+              <div>
+                {(['공격', '방어', '서포트'] as TeamRole[]).map((role) => (
+                  <button
+                    className={draftRole === role ? 'is-selected' : ''}
+                    key={role}
+                    type="button"
+                    onClick={() => setDraftRole(role)}
+                  >
+                    {role}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+            {editError && <p className="team-dialog__error" role="alert">{editError}</p>}
+            <div className="team-dialog__actions">
+              <button type="button" onClick={cancelEditing}>취소</button>
+              <button className="is-primary" type="submit">저장</button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {pendingDeletePokemon && (
+        <div className="team-dialog-backdrop" role="presentation">
+          <section className="team-dialog team-delete-dialog" role="alertdialog" aria-labelledby="team-delete-title">
+            <span className="team-delete-dialog__icon">!</span>
+            <h2 id="team-delete-title">{pendingDeletePokemon.name}을 삭제할까요?</h2>
+            <p>팀에서만 삭제되며 도감에서는 계속 확인할 수 있어요.</p>
+            <div className="team-dialog__actions">
+              <button type="button" onClick={() => setPendingDeleteId(null)}>취소</button>
+              <button className="is-danger" type="button" onClick={() => removeFromTeam(pendingDeletePokemon.id)}>삭제</button>
+            </div>
+          </section>
+        </div>
       )}
 
       {!isKnownPath && (
