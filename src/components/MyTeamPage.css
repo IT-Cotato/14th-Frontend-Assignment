@@ -88,6 +88,12 @@
     color: var(--color-text-primary);
 }
 
+.my-team__button:disabled {
+    opacity: 0.45;
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
 .my-team__grid {
     display: flex;
     flex-wrap: wrap;

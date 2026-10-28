@@ -11,6 +11,12 @@
     background-color: var(--color-bg-surface);
 }
 
+.state-panel.state-panel--error {
+    height: auto;
+    border-color: var(--color-bg-danger);
+    background-color: var(--color-bg-danger-soft);
+}
+
 .state-panel__badge {
     display: inline-flex;
     align-items: center;
@@ -24,6 +30,11 @@
     font-size: 18px;
     line-height: 22px;
     color: var(--color-text-primary);
+}
+
+.state-panel--error .state-panel__badge {
+    background-color: var(--color-bg-danger);
+    color: var(--color-text-inverse);
 }
 
 .state-panel__title {
@@ -44,4 +55,25 @@
     line-height: 16px;
     text-align: center;
     color: var(--color-text-secondary);
+}
+
+.state-panel__action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 83px;
+    height: 40px;
+    padding: var(--space-3) var(--space-4);
+    gap: var(--space-2);
+    border: none;
+    border-radius: var(--radius-md);
+    background-color: var(--color-bg-danger);
+    box-shadow: 0px 8px 0px 0px rgba(185, 47, 81, 1);
+    font-family: "Noto Sans KR", sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    line-height: 16px;
+    color: var(--color-text-inverse);
+    white-space: nowrap;
+    cursor: pointer;
 }

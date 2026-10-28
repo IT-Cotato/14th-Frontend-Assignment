@@ -65,3 +65,73 @@ export const typeLabels: Record<PokemonType, string> = {
     steel: "강철",
     fairy: "페어리",
 };
+
+export const pokemonTypes = Object.keys(typeLabels) as PokemonType[];
+
+export type SortOrder = "asc" | "desc";
+
+export type PokemonFilters = {
+    types: PokemonType[];
+    sortOrder: SortOrder | null; // null이면 기본(데이터) 순서
+};
+
+export const DEFAULT_FILTERS: PokemonFilters = {
+    types: [],
+    sortOrder: null,
+};
+
+export const sortOrderLabels: Record<SortOrder, string> = {
+    asc: "번호 ↑",
+    desc: "번호 ↓",
+};
+
+export function matchesQuery(pokemon: Pokemon, query: string) {
+    const keyword = query.trim().replace(/^#/, "");
+    if (keyword === "") {
+        return true;
+    }
+    if (/^\d+$/.test(keyword)) {
+        return pokemon.id === Number(keyword);
+    }
+    return pokemon.name.includes(keyword);
+}
+
+export function matchesTypes(pokemon: Pokemon, selectedTypes: PokemonType[]) {
+    return (
+        selectedTypes.length === 0 ||
+        pokemon.types.some((type) => selectedTypes.includes(type))
+    );
+}
+
+export function getAvailableTypes(list: Pokemon[]) {
+    return pokemonTypes.filter((type) =>
+        list.some((pokemon) => pokemon.types.includes(type)),
+    );
+}
+
+export function countByType(list: Pokemon[]) {
+    return Object.fromEntries(
+        pokemonTypes.map((type) => [
+            type,
+            list.filter((pokemon) => pokemon.types.includes(type)).length,
+        ]),
+    ) as Record<PokemonType, number>;
+}
+
+export function getVisiblePokemons(
+    list: Pokemon[],
+    query: string,
+    filters: PokemonFilters,
+) {
+    const filtered = list.filter(
+        (pokemon) =>
+            matchesQuery(pokemon, query) &&
+            matchesTypes(pokemon, filters.types),
+    );
+    if (filters.sortOrder === null) {
+        return filtered;
+    }
+    return [...filtered].sort((a, b) =>
+        filters.sortOrder === "asc" ? a.id - b.id : b.id - a.id,
+    );
+}

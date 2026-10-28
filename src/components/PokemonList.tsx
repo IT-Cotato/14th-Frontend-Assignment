@@ -1,43 +1,39 @@
 import PokemonCard from "./PokemonCard";
-import StatePanel from "./StatePanel";
-import { pokemons, type Pokemon } from "../data/pokemons";
+import type { Pokemon } from "../data/pokemons";
 import "./PokemonList.css";
 
 type PokemonListProps = {
+    pokemons: Pokemon[];
     addedPokemonIds: number[];
     isTeamFull: boolean;
     onAdd: (pokemon: Pokemon) => void;
+    compact?: boolean;
 };
 
-function PokemonList({ addedPokemonIds, isTeamFull, onAdd }: PokemonListProps) {
-    if (pokemons.length === 0) {
-        return (
-            <StatePanel
-                title="검색 결과가 없어요"
-                description="다른 이름이나 번호로 검색해 보세요."
-            />
-        );
-    }
-
+function PokemonList({
+    pokemons,
+    addedPokemonIds,
+    isTeamFull,
+    onAdd,
+    compact = false,
+}: PokemonListProps) {
     return (
-        <ul className="pokemon-list">
-            {pokemons.map((pokemon) => {
-                const isAdded = addedPokemonIds.includes(pokemon.id);
-
-                return (
-                    <li key={pokemon.id}>
-                        <PokemonCard
-                            id={pokemon.id}
-                            name={pokemon.name}
-                            types={pokemon.types}
-                            imageUrl={pokemon.imageUrl}
-                            isAdded={isAdded}
-                            isTeamFull={isTeamFull}
-                            onAdd={() => onAdd(pokemon)}
-                        />
-                    </li>
-                );
-            })}
+        <ul
+            className={`pokemon-list${compact ? " pokemon-list--compact" : ""}`}
+        >
+            {pokemons.map((pokemon) => (
+                <li key={pokemon.id}>
+                    <PokemonCard
+                        id={pokemon.id}
+                        name={pokemon.name}
+                        types={pokemon.types}
+                        imageUrl={pokemon.imageUrl}
+                        isAdded={addedPokemonIds.includes(pokemon.id)}
+                        isTeamFull={isTeamFull}
+                        onAdd={() => onAdd(pokemon)}
+                    />
+                </li>
+            ))}
         </ul>
     );
 }

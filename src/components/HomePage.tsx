@@ -1,9 +1,22 @@
+import { useState } from "react";
 import SiteHeader, { type MenuKey } from "./SiteHeader";
 import PokemonHeader from "./PokemonHeader";
 import SearchBar from "./SearchBar";
+import FilterButton from "./FilterButton";
+import FilterDialog from "./FilterDialog";
 import PokemonList from "./PokemonList";
+import StatePanel from "./StatePanel";
 import Notice from "./Notice";
-import type { Pokemon } from "../data/pokemons";
+import {
+    DEFAULT_FILTERS,
+    countByType,
+    getAvailableTypes,
+    getVisiblePokemons,
+    matchesQuery,
+    pokemons,
+    type Pokemon,
+    type PokemonFilters,
+} from "../data/pokemons";
 import "./HomePage.css";
 
 type HomePageProps = {
@@ -11,8 +24,10 @@ type HomePageProps = {
     maxTeamSize: number;
     addedPokemonIds: number[];
     isTeamFull: boolean;
+    isRestoreNoticeOpen: boolean;
     onNavigate: (menu: MenuKey) => void;
     onAddToTeam: (pokemon: Pokemon) => void;
+    onDismissRestoreNotice: () => void;
 };
 
 function HomePage({
@@ -20,9 +35,27 @@ function HomePage({
     maxTeamSize,
     addedPokemonIds,
     isTeamFull,
+    isRestoreNoticeOpen,
     onNavigate,
     onAddToTeam,
+    onDismissRestoreNotice,
 }: HomePageProps) {
+    const [searchInput, setSearchInput] = useState("");
+    const [searchQuery, setSearchQuery] = useState("");
+    const [filters, setFilters] = useState<PokemonFilters>(DEFAULT_FILTERS);
+    const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+    const availableTypes = getAvailableTypes(pokemons);
+    const visiblePokemons = getVisiblePokemons(pokemons, searchQuery, filters);
+    const typeCounts = countByType(
+        pokemons.filter((pokemon) => matchesQuery(pokemon, searchQuery)),
+    );
+
+    function handleApplyFilters(nextFilters: PokemonFilters) {
+        setFilters(nextFilters);
+        setIsFilterOpen(false);
+    }
+
     return (
         <div className="page">
             <SiteHeader
@@ -36,7 +69,15 @@ function HomePage({
                 title="포켓몬과 함께하는 하루"
                 description="좋아하는 포켓몬을 찾고 나만의 팀을 만들어 보세요."
             />
-            <SearchBar />
+            <div className="home__search-row">
+                <SearchBar
+                    value={searchInput}
+                    placeholder="이름 또는 번호"
+                    onChange={setSearchInput}
+                    onSubmit={() => setSearchQuery(searchInput)}
+                />
+                <FilterButton onClick={() => setIsFilterOpen(true)} />
+            </div>
             {isTeamFull && (
                 <Notice
                     title="팀이 가득 찼어요"
@@ -50,12 +91,38 @@ function HomePage({
                         전체 보기
                     </button>
                 </div>
-                <PokemonList
-                    addedPokemonIds={addedPokemonIds}
-                    isTeamFull={isTeamFull}
-                    onAdd={onAddToTeam}
-                />
+                {isRestoreNoticeOpen && (
+                    <StatePanel
+                        variant="error"
+                        title="저장된 팀을 불러오지 못했어요"
+                        description="저장 데이터를 초기화했어요."
+                        actionLabel="확인"
+                        onAction={onDismissRestoreNotice}
+                    />
+                )}
+                {visiblePokemons.length === 0 ? (
+                    <StatePanel
+                        title="검색 결과가 없어요"
+                        description="다른 이름이나 번호로 검색해 보세요."
+                    />
+                ) : (
+                    <PokemonList
+                        pokemons={visiblePokemons}
+                        addedPokemonIds={addedPokemonIds}
+                        isTeamFull={isTeamFull}
+                        onAdd={onAddToTeam}
+                    />
+                )}
             </section>
+            {isFilterOpen && (
+                <FilterDialog
+                    availableTypes={availableTypes}
+                    typeCounts={typeCounts}
+                    initialFilters={filters}
+                    onApply={handleApplyFilters}
+                    onCancel={() => setIsFilterOpen(false)}
+                />
+            )}
         </div>
     );
 }

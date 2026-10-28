@@ -13,17 +13,23 @@ import "./MyTeamPage.css";
 type MyTeamPageProps = {
     team: TeamMember[];
     maxTeamSize: number;
+    hasUnsavedChanges: boolean;
     onNavigate: (menu: MenuKey) => void;
     onRemoveFromTeam: (pokemonId: number) => void;
     onUpdateTeamMember: (pokemonId: number, changes: TeamMemberChanges) => void;
+    onSaveTeam: () => void;
+    onCancelChanges: () => void;
 };
 
 function MyTeamPage({
     team,
     maxTeamSize,
+    hasUnsavedChanges,
     onNavigate,
     onRemoveFromTeam,
     onUpdateTeamMember,
+    onSaveTeam,
+    onCancelChanges,
 }: MyTeamPageProps) {
     const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
     const [editTargetId, setEditTargetId] = useState<number | null>(null);
@@ -81,12 +87,16 @@ function MyTeamPage({
                         <button
                             type="button"
                             className="my-team__button my-team__button--primary"
+                            disabled={!hasUnsavedChanges}
+                            onClick={onSaveTeam}
                         >
                             팀 저장
                         </button>
                         <button
                             type="button"
                             className="my-team__button my-team__button--secondary my-team__button--cancel"
+                            disabled={!hasUnsavedChanges}
+                            onClick={onCancelChanges}
                         >
                             취소
                         </button>

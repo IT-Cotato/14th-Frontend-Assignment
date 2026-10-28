@@ -49,6 +49,9 @@ function SiteHeader({
                     </button>
                 ))}
                 <span className="site-header__team-count">
+                    <span className="site-header__team-count-label">
+                        내 팀{" "}
+                    </span>
                     {teamCount} / {maxTeamSize}
                 </span>
             </nav>
