@@ -40,6 +40,23 @@ export class PokeApiError extends Error {
     }
 }
 
+export function isNotFoundError(error: unknown) {
+    return error instanceof PokeApiError && error.status === 404;
+}
+
+export function isValidPokemonQuery(query: string) {
+    return /^[a-z0-9-]+$/.test(query);
+}
+
+export function getPokemonUrl(idOrName: string) {
+    return `${API_BASE_URL}/pokemon/${encodeURIComponent(idOrName)}`;
+}
+
+export function getPokemonIdFromUrl(url: string) {
+    const match = url.match(/\/pokemon\/(\d+)\/?$/);
+    return Number(match?.[1]);
+}
+
 async function fetchJson<T>(url: string, signal: AbortSignal): Promise<T> {
     const response = await fetch(url, { signal });
     if (!response.ok) {

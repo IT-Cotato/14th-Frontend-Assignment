@@ -31,6 +31,24 @@
     color: var(--color-text-secondary);
 }
 
+.pokedex__controls {
+    display: contents;
+}
+
+.pokedex__pill {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-full);
+    background-color: var(--color-bg-success-soft);
+    font-family: "Noto Sans KR", sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 14px;
+    color: var(--color-text-success);
+    white-space: nowrap;
+}
+
 @media (max-width: 768px) {
     .pokedex__title-row {
         flex-direction: column;
@@ -48,5 +66,13 @@
     .pokedex__description {
         font-size: 13px;
         line-height: 21px;
+    }
+
+    .pokedex__controls {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        height: 30px;
+        gap: var(--space-2);
     }
 }

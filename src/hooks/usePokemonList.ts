@@ -10,6 +10,7 @@ export function usePokemonList() {
     const [state, setState] = useState<PokemonListState>({
         status: "loading",
     });
+    const [retryCount, setRetryCount] = useState(0);
 
     useEffect(() => {
         const controller = new AbortController();
@@ -23,7 +24,12 @@ export function usePokemonList() {
             });
 
         return () => controller.abort();
-    }, []);
+    }, [retryCount]);
 
-    return state;
+    function retry() {
+        setState({ status: "loading" });
+        setRetryCount((count) => count + 1);
+    }
+
+    return { state, retry };
 }

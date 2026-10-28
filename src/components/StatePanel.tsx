@@ -1,6 +1,6 @@
 import "./StatePanel.css";
 
-type StatePanelVariant = "empty" | "error";
+type StatePanelVariant = "empty" | "loading" | "error";
 
 type StatePanelProps = {
     variant?: StatePanelVariant;
@@ -13,7 +13,14 @@ type StatePanelProps = {
 
 const badgeSymbols: Record<StatePanelVariant, string> = {
     empty: "0",
+    loading: "…",
     error: "!",
+};
+
+const panelRoles: Record<StatePanelVariant, "status" | "alert" | undefined> = {
+    empty: undefined,
+    loading: "status",
+    error: "alert",
 };
 
 function StatePanel({
@@ -26,7 +33,7 @@ function StatePanel({
     return (
         <div
             className={`state-panel state-panel--${variant}`}
-            role={variant === "error" ? "alert" : undefined}
+            role={panelRoles[variant]}
         >
             <span className="state-panel__badge" aria-hidden="true">
                 {badgeSymbols[variant]}

@@ -1,5 +1,6 @@
 import PokemonCard from "./PokemonCard";
 import { usePokemonDetail } from "../hooks/usePokemonDetail";
+import { getPokemonIdFromUrl } from "../data/pokeApi";
 import type { Pokemon } from "../data/pokemons";
 
 type PokemonCardItemProps = {
@@ -15,10 +16,20 @@ function PokemonCardItem({
     isTeamFull,
     onAdd,
 }: PokemonCardItemProps) {
-    const detail = usePokemonDetail(url);
+    const { state: detail, retry } = usePokemonDetail(url);
+
+    if (detail.status === "loading") {
+        return null;
+    }
 
     if (detail.status !== "success") {
-        return null;
+        return (
+            <PokemonCard
+                variant="error"
+                id={getPokemonIdFromUrl(url)}
+                onRetry={retry}
+            />
+        );
     }
 
     const { pokemon } = detail;
