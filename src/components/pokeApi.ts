@@ -132,3 +132,18 @@ export async function loadCards(
     return { status: "failed", id: getIdFromUrl(url), name };
   });
 }
+
+// 실패한 카드 1개만 다시 요청 (id로 상세 요청)
+export async function retryCard(
+  id: number,
+  name: string,
+  signal: AbortSignal,
+): Promise<CardResult> {
+  try {
+    const data = await fetchPokemon(String(id), signal);
+    return { status: "ok", data };
+  } catch (error) {
+    if (isAbortError(error)) throw error;
+    return { status: "failed", id, name };
+  }
+}

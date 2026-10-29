@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react"; // 수정: useRef 추가
 import PokemonHeader from "./PokemonHeader";
 import PokemonCard from "./PokemonCard";
 import TeamNoticePanel from "./TeamNoticePanel";
@@ -8,6 +8,7 @@ import {
   getArtworkUrl,
   isAbortError,
   loadCards,
+  retryCard, // 추가
   type CardResult,
 } from "./pokeApi";
 import type {
@@ -46,10 +47,14 @@ function PokedexPage({
   const [query, setQuery] = useState(""); // 실제로 검색한 값
   const [retryKey, setRetryKey] = useState(0);
   const [view, setView] = useState<ViewState>({ status: "loading" });
+  const [retryingIds, setRetryingIds] = useState<number[]>([]); // 추가: 재시도 중인 카드 id
+  const requestVersionRef = useRef(0); // 추가: 목록이 새로 로드되면 이전 카드 재시도 결과를 버림
 
   // 요청은 Effect에서, 필터링 같은 계산은 렌더링 중에 처리
   useEffect(() => {
     const controller = new AbortController();
+    requestVersionRef.current += 1; // 추가
+    setRetryingIds([]); // 추가
     setView({ status: "loading" });
 
     loadCards(query, controller.signal)
@@ -73,6 +78,38 @@ function PokedexPage({
 
   const handleSearch = () => setQuery(keyword);
   const handleRetry = () => setRetryKey((key) => key + 1);
+
+  // 추가: 실패한 카드 1개만 다시 요청해서 그 자리만 교체
+  const handleRetryCard = async (id: number, name: string) => {
+    if (retryingIds.includes(id)) return; // 중복 클릭 방지
+
+    const version = requestVersionRef.current;
+    setRetryingIds((ids) => [...ids, id]);
+
+    try {
+      const result = await retryCard(id, name, new AbortController().signal);
+
+      // 그 사이 검색어가 바뀌었다면 결과 무시
+      if (version !== requestVersionRef.current) return;
+
+      setView((prev) =>
+        prev.status === "success"
+          ? {
+              status: "success",
+              cards: prev.cards.map((c) =>
+                c.status === "failed" && c.id === id ? result : c,
+              ),
+            }
+          : prev,
+      );
+    } catch (error) {
+      if (!isAbortError(error)) console.error(error);
+    } finally {
+      if (version === requestVersionRef.current) {
+        setRetryingIds((ids) => ids.filter((x) => x !== id));
+      }
+    }
+  };
 
   const apiBadge =
     view.status === "error"
@@ -172,41 +209,53 @@ function PokedexPage({
 
           {view.status === "success" && (
             <div className="pokemon-grid">
-              {view.cards.map((card) =>
-                card.status === "ok" ? (
-                  <PokemonCard
-                    key={card.data.id}
-                    image={card.data.image}
-                    number={`#${String(card.data.id).padStart(4, "0")}`}
-                    name={card.data.name}
-                    type={card.data.type}
-                    types={card.data.types}
-                    team={team}
-                    onAddToTeam={onAddToTeam}
-                  />
-                ) : (
-                <article
-                key={card.id}
-                className="pokemon-card pokemon-card--failed"
-                aria-label={`${card.name} 상세 정보 실패`}
-                >
-                  <div className="artwork">
-                    <img
-                    src={getArtworkUrl(card.id)}
-                    alt=""
-                    onError={(e) => {
-                      e.currentTarget.style.display = "none";
-                    }}
+              {/* 수정: isRetrying을 쓰기 위해 map 콜백을 블록 형태로 변경 */}
+              {view.cards.map((card) => {
+                if (card.status === "ok") {
+                  return (
+                    <PokemonCard
+                      key={card.data.id}
+                      image={card.data.image}
+                      number={`#${String(card.data.id).padStart(4, "0")}`}
+                      name={card.data.name}
+                      type={card.data.type}
+                      types={card.data.types}
+                      team={team}
+                      onAddToTeam={onAddToTeam}
                     />
+                  );
+                }
+
+                const isRetrying = retryingIds.includes(card.id);
+
+                return (
+                  <article
+                    key={card.id}
+                    className="pokemon-card pokemon-card--failed"
+                    aria-label={`${card.name} 상세 정보 실패`}
+                  >
+                    <div className="artwork">
+                      <img
+                        src={getArtworkUrl(card.id)}
+                        alt=""
+                        onError={(e) => {
+                          e.currentTarget.style.display = "none";
+                        }}
+                      />
                     </div>
                     <span className="number">{`#${String(card.id).padStart(4, "0")}`}</span>
                     <h3 className="name">상세 정보 실패</h3>
-                    <button type="button" className="action-btn" onClick={handleRetry}>
-                      다시 시도
-                      </button>
-                      </article>
-                      ),
-              )}
+                    <button
+                      type="button"
+                      className="action-btn"
+                      disabled={isRetrying}
+                      onClick={() => handleRetryCard(card.id, card.name)}
+                    >
+                      {isRetrying ? "불러오는 중…" : "다시 시도"}
+                    </button>
+                  </article>
+                );
+              })}
             </div>
           )}
         </section>
