@@ -1,7 +1,5 @@
 import chuImg from './assets/chu.png' 
-import { pokemons } from './pokemonData';
 import { useState } from 'react';               // 기억해야 하는 값(state)을 만드는 기능
-import { createPortal } from 'react-dom';      // 모달을 body에 그려서 화면 정중앙에 띄우는 기능
 
 type HeaderBoxProps = {
     menu: 'home' | 'dict' | 'myTeam';
@@ -104,25 +102,20 @@ type PokemonTeamProps = {
     teamMax: number;
 };
 
-function PokemonTitle({
-    teamCount,
-    teamMax,
-}: PokemonTeamProps) {
+function PokemonTitle() {
     return (
         <>
             <div className='header2-box'>
 
                 <div className='title-box'>
-                    <header className='titleName'>포켓몬을 찾고 팀을 완성하세요</header>
+                    <header className='titleName'>실시간 포켓몬 도감</header>
                     <div className='disc'>
-                        도감과 나의 팀을 한 화면에서 관리할 수 있어요.
+                        이름이나 도감 번호로 포켓몬을 바로 찾아보세요.
                     </div>
                 </div>
 
-                <div className='myTeam-num-box0'>
-                    <div className='myTeam-num-box'>
-                        내 팀 {teamCount}/{teamMax}
-                    </div>
+                <div className='pokeOnline-box'>
+                    <span className="pokeOnline">PokéAPI 온라인</span>
                 </div>
 
             </div>
@@ -166,58 +159,28 @@ type PokemonSearchProps = {
     search: string;                                  // 검색창에 입력 중인 글자
     onSearchChange: (value: string) => void;         // 입력할 때마다 부를 함수
     onSearch: () => void;                            // 검색 버튼 누를 때 부를 함수
-    sortOrder: 'asc' | 'desc';                       // 칠판: 지금 정렬 방향
-    onSortChange: (order: 'asc' | 'desc') => void;   // 분필: 정렬 방향 바꾸는 함수
-    selectedType: string[];                          // 칠판: 지금 선택된 타입들
-    onTypeChange: (types: string[]) => void;         // 분필: 선택을 바꾸는 함수
 };
 
-// 검색창 + 검색 버튼 + 필터 버튼 + 필터 모달
+// 검색창 + 검색 버튼
 function PokemonSearch({
     search,
     onSearchChange,
     onSearch,
-    sortOrder,
-    onSortChange,
-    selectedType,
-    onTypeChange
 }: PokemonSearchProps) {
-
-    // 포켓몬 데이터에서 타입만 뽑아 중복 없이 모은 목록
-    const typeList = [...new Set(pokemons.flatMap((p) => p.types))];
-
-     // 필터 모달이 열려 있는지 (이 컴포넌트만 알면 되니까 여기서 관리)
-    const [isOpenFilter, setIsOpenFilter] = useState<boolean>(false);
-
-    // chip을 눌렀을 때: 이미 선택된 타입이면 빼고, 아니면 넣기
-    function handleTypeClick(type: string) {
-        if ( selectedType.includes(type) ) {
-            onTypeChange( selectedType.filter((t) => t !== type)); // 하나씩 보면서 조건이 true면 남기고, false면 버려
-        } else {
-            onTypeChange([...selectedType, type]);   // 기존 목록 펼치고 끝에 붙인 새 배열
-        }
-    }
-
-    // 초기화: 선택한 타입 비우고 정렬도 기본(번호 작은 순)으로
-    function handleReset() {
-        onTypeChange([]);
-        onSortChange('asc');
-    }
-
     return(
         <>
             <section className='search-container'>
                 <div className='searchBar-box'>
                     <div className='diagram-box'>
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                            <circle cx="7.5" cy="7.5" r="4.5" stroke="#2A75BB" stroke-width="2"/>
+                            <circle cx="7.5" cy="7.5" r="4.5" stroke="#2A75BB" strokeWidth="2"/>
                             <rect x="11" y="13" width="8" height="2" rx="1" transform="rotate(-45 11 13)" fill="#2A75BB"/>
                         </svg>
                     </div>
                     <input 
                         className='searchBar' 
                         type="text" 
-                        placeholder='피카츄 또는 25'
+                        placeholder='pikachu'
                         value={search}
                         onChange={(e) => onSearchChange(e.target.value)}
                     />
@@ -229,86 +192,6 @@ function PokemonSearch({
                 >
                     검색
                 </button>
-
-                {/* 필터 버튼: 누르면 모달 열고 닫기 */}
-                <button 
-                    className='filterButton-box'
-                    onClick={() => setIsOpenFilter(!isOpenFilter)}
-                >
-                    필터
-                    {/* 선택된 타입이 있으면 개수 배지 표시 (state 아니고 계산값) */}
-                    {selectedType.length > 0 && (
-                        <span className='filter-count'>{selectedType.length}</span>
-                    )}
-                </button>
-                
-                {/* 모달이 열렸을 때만, body 바로 아래에 그림 (화면 정중앙 보장) */}
-                {isOpenFilter && createPortal(
-                    <div 
-                        className='editPanel-overlay'
-                        onClick={() => setIsOpenFilter(!isOpenFilter)}  // 어두운 배경 클릭하면 닫기
-                    >
-                        <div 
-                            className='filterOpen-box'
-                            onClick={(e) => e.stopPropagation()}   // 창 안쪽 클릭이 오버레이까지 올라가서 닫히는 것 방지
-                        >
-                            {/* 모달 제목 */}
-                            <h2 className='filter-title'>필터</h2>
-
-                            {/* 🔧 타입 영역: 라벨 + chip들 */}
-                            <div className='filter-section'>
-                                <div className='filter-label'>타입</div>
-                                <div className='filter-type-box'>
-                                    {typeList.map((type) =>
-                                        <button
-                                            key={type}
-                                            className={`type-chip ${type.toLowerCase()} ${selectedType.includes(type) ? 'active' : ''}`}
-                                            onClick={() => handleTypeClick(type)}
-                                        >
-                                            {type}
-                                        </button>
-                                    )}
-                                </div>
-                            </div>
-                            
-                            {/* 정렬 영역: 라벨 + 번호 버튼 2개 */}
-                            <div className='filter-section'>
-                                <div className='filter-label'>정렬</div>
-                                <div className='filter-sort-box'>
-                                    <button 
-                                        className={`filter-sort-button ${sortOrder === 'asc' ? 'active' : ''}`}
-                                        onClick={() => onSortChange('asc')}
-                                    >
-                                        번호 ↑
-                                    </button>
-                                    <button 
-                                        className={`filter-sort-button ${sortOrder === 'desc' ? 'active' : ''}`}
-                                        onClick={() => onSortChange('desc')}
-                                    >
-                                        번호 ↓
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            {/* 아래 버튼 줄: 왼쪽 초기화, 오른쪽 닫기 */}
-                            <div className='filter-footer'>
-                                <button
-                                    className='filter-reset'
-                                    onClick={handleReset}
-                                >
-                                    초기화
-                                </button>
-                                <button 
-                                    className="editPanel-cancel" 
-                                    onClick={() => setIsOpenFilter(!isOpenFilter)}
-                                >
-                                    닫기
-                                </button>
-                            </div>
-                        </div>
-                    </div>,
-                    document.body
-                )}
                 
             </section>
         </>

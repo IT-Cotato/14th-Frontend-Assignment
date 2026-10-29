@@ -32,11 +32,26 @@ button {
   --color-text-placeholder: #8AA0B8;
   --color-text-brand: #1A5A9F;
   --color-border-strong: #C6D8EE;
-  --color-type-fire: #FD7D24;
+  --color-type-bug: #8CB230;
+  --color-type-dark: #58575F;
+  --color-type-dragon: #0F6AC0;
   --color-type-electric: #EED535;
+  --color-type-fairy: #ED6EC7;
+  --color-type-fighting: #D04164;
+  --color-type-fire: #FD7D24;
+  --color-type-flying: #748FC9;
+  --color-type-ghost: #556AAE;
   --color-type-grass: #62B957;
-  --color-type-water: #4A90DA;
+  --color-type-ground: #DD7748;
+  --color-type-ice: #61CEC0;
   --color-type-normal: #9DA0AA;
+  --color-type-poison: #A552CC;
+  --color-type-psychic: #EA5D60;
+  --color-type-rock: #BAAB82;
+  --color-type-steel: #417D9A;
+  --color-type-water: #4A90DA;
+  --color-text-danger: #B92F51;
+  --color-danger-soft: #FFF0F3;
   --page-padding-x: 80px;
   --page-padding-top: 36px;
   --section-gap: 24px;
@@ -72,14 +87,54 @@ button {
   gap: 12px;
 }
 
-.dict-name {
-  color: var(--ink);
-  font-family: "Noto Sans KR";
+.connection-error-box {
+  display: flex;
+  width: 760px;
+  padding: 28px 24px;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  border-radius: var(--radius-lg);
+  border: var(--stroke-1) solid var(--red);
+  background: var(--color-danger-soft);
+}
+
+.circle-blue-box, .circle-red-box {
+  display: flex;
+  width: 44px;
+  height: 44px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 999px;
+}
+
+.circle-red-box {
+  background: var(--red);
+}
+
+.circle-blue-box {
+  background: var(--blue);
+}
+
+.circle-blue, .circle-red {
+  color: var(--color-text-inverse);
+  font-family: Inter;
   font-size: 18px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: normal;
+}
+
+.retry {
+  color: var(--color-text-inverse);
+  font-family: "Noto Sans KR";
+  font-size: 13px;
   font-style: normal;
   font-weight: 700;
   line-height: normal;
-}
+  }
 
 /* 카드들을 담는 큰 상자: 가로로 나열하다 자리 없으면 다음 줄로 */
 .pokeCard-box {
@@ -92,22 +147,59 @@ button {
 }
 
 /* 카드 하나 (기본 상태) */
-.card-box {
+.card-box, .cardInfo-fail-box {
   display: flex;
   width: 260px;
   padding: 18px;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
   border-radius: var(--radius-lg);
-  border: var(--stroke-1) solid var(--line);
-  background: var(--panel);
 
   /* Elevation/Card */
   box-shadow: 0 8px 24px 0 rgba(20, 33, 61, 0.08);
 
   /* 배경·테두리 색이 바뀔 때 0.2초 동안 부드럽게 */
   transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.card-box {
+  gap: 14px;
+  border: var(--stroke-1) solid var(--line);
+  background: var(--panel);
+}
+
+.cardInfo-fail-box {
+  gap: 10px;
+  height: 351px;
+  border: var(--stroke-1) solid var(--red);
+  background: var(--color-danger-soft);
+}
+
+.img-box2 {
+  display: flex;
+  width: 200px;
+  height: 200px;
+  padding: 10px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 16px;
+  background: var(--panel-strong);
+}
+
+.pokemon-image2 {
+  width: 100%;
+  height:100%;
+  padding: 10px;
+}
+
+.detail-error-title {
+  color: var(--color-text-danger);
+  text-align: center;
+  font-family: "Noto Sans KR";
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
 }
 
 /* 팀에 추가된 카드: 민트 테두리 + 연한 민트 배경 */
@@ -159,16 +251,72 @@ button {
   line-height: normal;
 }
 
+.bug {
+  background: var(--color-type-bug);
+}
+
+.dark {
+  background: var(--color-type-dark);
+}
+
+.dragon {
+  background: var(--color-type-dragon);
+}
+
 .electric {
   background: var(--color-type-electric);
+}
+
+.fairy {
+  background: var(--color-type-fairy);
+}
+
+.fighting {
+  background: var(--color-type-fighting);
 }
 
 .fire {
   background: var(--color-type-fire);
 }
 
+.flying {
+  background: var(--color-type-flying);
+}
+
+.ghost {
+  background: var(--color-type-ghost);
+}
+
 .grass {
   background: var(--color-type-grass);
+}
+
+.ground {
+  background: var(--color-type-ground);
+}
+
+.ice {
+  background: var(--color-type-ice);
+}
+
+.normal {
+  background: var(--color-type-normal);
+}
+
+.poison {
+  background: var(--color-type-poison);
+}
+
+.psychic {
+  background: var(--color-type-psychic);
+}
+
+.rock {
+  background: var(--color-type-rock);
+}
+
+.steel {
+  background: var(--color-type-steel);
 }
 
 .water {
@@ -207,6 +355,15 @@ button {
   box-shadow: 0 8px 0 0 #B92F51;
 }
 
+.retry-text {
+  color: var(--color-text-inverse);
+  font-family: "Noto Sans KR";
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+
 .button-chip {
   color: var(--color-text-inverse);
   font-family: "Noto Sans KR";
@@ -237,8 +394,8 @@ button {
 }
 
 .pokemon-image {
-  width: 120px;
-  height: 120px;
+  width: 140px;
+  height: 140px;
   flex-shrink: 0;
 }
 
@@ -311,12 +468,47 @@ button {
   .pokeCard-box {
     gap: 14px;
   }
-  .card-box {
-    width: 164px;
-    padding: 12px 18px;
-    gap: 10px;
+
+  .pokemonName {
+    font-size: 15px;
   }
+
+  .card-box, .cardInfo-fail-box {
+    width: 164px;
+    height: 304px;
+    padding: 12px 10px;
+    gap: 8px;
+  }
+
+  .cardInfo-fail-box {
+    gap: 15px;
+  }
+
   .empty-box {
     width: 100%;
+  }
+
+  .img-box2 {
+    width: 140px;
+    height: 140px;
+    padding: 10px;
+  }
+
+  .type-chip {               /* ★ type-chip(타입 칩): GRASS, POISON 같은 알약 모양 */
+    padding: 6px 10px;       /* ★ 칩 안쪽 여백을 8px 12px → 6px 10px로 줄여 칩 폭을 좁힘 */
+    font-size: 10px;         /* ★ font-size(글자 크기): 11px → 10px */
+  }
+
+  .type-box {                /* ★ type-box(칩 묶음): 칩들을 담는 상자 */
+    flex-wrap: nowrap;       /* ★ nowrap(줄바꿈 없음): 칩이 아래 줄로 내려가지 않고 한 줄로 나란히 */
+    gap: 4px;                /* gap(간격): 칩과 칩 사이 */
+  }
+
+  .dict-content2-box{
+    width: 100%;
+  }
+
+  .connection-error-box {
+    width: 100%
   }
 }
