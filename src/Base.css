@@ -83,6 +83,41 @@
   flex-grow: 0;
 }
 
+/* PokéAPI 상태 배지 (기본값 = 온라인, Figma 값) */
+.api-badge {
+  box-sizing: border-box;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+
+  padding: 8px 12px;
+  height: 30px;
+
+  background: #E9FFF8;
+  border-radius: 999px;
+
+  font-family: "Noto Sans KR", sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 14px;
+
+  color: #049F78;
+  white-space: nowrap;
+
+  flex: none;
+}
+
+.api-badge--loading {
+  background: #F2F7FF;
+  color: #667085;
+}
+
+.api-badge--error {
+  background: #FFF0F3;
+  color: #B92F51;
+}
+
 /* 인원수 Pill (예: 3 / 6) */
 .team-pill {
   box-sizing: border-box;
@@ -324,7 +359,7 @@
   flex-shrink: 0;
 }
 
-/* Empty State - 에러 (저장된 팀 불러오기 실패) */
+/* Empty State - 에러 (저장된 팀 불러오기 실패 / API 오류) */
 .empty-state--error {
   height: 205px;
 
@@ -334,6 +369,12 @@
 
 .empty-state--error .empty-state__symbol {
   background: #EF476F;
+  color: #FFFFFF;
+}
+
+/* Empty State - 로딩 (파란 원 + …) */
+.empty-state--loading .empty-state__symbol {
+  background: #2A75BB;
   color: #FFFFFF;
 }
 

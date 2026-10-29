@@ -2,7 +2,7 @@ type StatePanelProps = {
   symbol?: string;
   title?: string;
   description?: string;
-  variant?: "empty" | "error";
+  variant?: "empty" | "error" | "loading";
   actionLabel?: string;
   onAction?: () => void;
 };
@@ -15,17 +15,19 @@ function StatePanel({
   actionLabel,
   onAction,
 }: StatePanelProps) {
+  const modifier = variant === "empty" ? "" : ` empty-state--${variant}`;
+
   return (
-    <div className={`empty-state${variant === "error" ? " empty-state--error" : ""}`}>
+    <div
+      className={`empty-state${modifier}`}
+      role={variant === "error" ? "alert" : "status"}
+      aria-busy={variant === "loading"}
+    >
       <div className="empty-state__symbol">{symbol}</div>
 
-      <p className="empty-state__title">
-        {title}
-      </p>
+      <p className="empty-state__title">{title}</p>
 
-      <p className="empty-state__description">
-        {description}
-      </p>
+      <p className="empty-state__description">{description}</p>
 
       {actionLabel && onAction && (
         <button
