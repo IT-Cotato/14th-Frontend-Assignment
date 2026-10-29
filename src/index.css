@@ -140,6 +140,19 @@ body {
   gap: 10px;
 }
 
+.api-box{
+  width: 109px;
+  height: 30px;
+  background-color: #E9FFF8;
+  color: #049F78;
+  font-family: "Noto Sans KR", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+  font-size: 12px;
+  line-height: 100%;
+  letter-spacing: 0%;
+}
+
 .entire{
   margin-left: left;
 }

@@ -12,8 +12,8 @@ function PokemonHeader({
   teamCount,
   search,
   setSearch,
-  selectedType,
-  setSelectedType,
+  // selectedType,
+  // setSelectedType,
 }: PokemonHeaderProps) {
   return (
     <>
@@ -39,9 +39,12 @@ function PokemonHeader({
           </div>
 
           <div className="entire">
-            <span className="yellow-box">
-              전체 151마리
+            <span className="api-box">
+              PokéAPI 온라인
             </span>
+            {/* <span className="yellow-box">
+              전체 151마리
+            </span> */}
           </div>
         </div>
       </section>
@@ -58,7 +61,7 @@ function PokemonHeader({
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        <select
+        {/* <select
           value={selectedType}
           onChange={(e) => setSelectedType(e.target.value)}
         >
@@ -81,7 +84,7 @@ function PokemonHeader({
           <option value="DRAGON">드래곤</option>
           <option value="DARK">악</option>
           <option value="FAIRY">페어리</option>
-        </select>
+        </select> */}
 
         <button className="red-shadow-button">
           검색
