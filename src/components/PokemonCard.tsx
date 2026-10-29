@@ -33,7 +33,8 @@ const addButtonLabels: Record<AddStatus, string> = {
 }
 
 const addHints: Record<AddStatus, string | null> = {
-  added: '이미 팀에 있는 포켓몬이에요',
+  // 시안의 '추가됨' 카드에는 안내 줄이 없다. 버튼 문구가 이유를 알려 준다.
+  added: null,
   full: `최대 ${TEAM_LIMIT}마리까지 추가할 수 있어요`,
   available: null,
 }
@@ -87,7 +88,7 @@ function PokemonCard({
         )}
         <button
           type="button"
-          className="button button--primary button--card"
+          className={`button button--primary button--card${addStatus === 'added' ? ' button--added' : ''}`}
           disabled={addStatus !== 'available'}
           aria-describedby={hint ? hintId : undefined}
           onClick={onAdd}

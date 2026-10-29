@@ -1,11 +1,7 @@
 const brandName = 'PokéMate'
 
-/** 시안에 표시된 도감 전체 수. 화면에 그리는 로컬 예시 데이터 개수와는 별개 값이다. */
-const totalDexCount = 151
-
-const dexTitle = '포켓몬 도감'
-const dexDescription = '다양한 포켓몬을 만나고 팀에 추가해 보세요.'
-const dexBadge = `전체 ${totalDexCount}마리`
+const dexTitle = '포켓몬을 찾고 팀을 완성하세요'
+const dexDescription = '도감과 나의 팀을 한 화면에서 관리할 수 있어요.'
 
 export type AppView = 'dex' | 'team'
 
@@ -49,7 +45,7 @@ function PokemonHeader({
                 <button
                   key={view}
                   type="button"
-                  className={`nav-pill${isActive ? ' nav-pill--active' : ''}`}
+                  className={`nav-pill nav-pill--${view}${isActive ? ' nav-pill--active' : ''}`}
                   aria-current={isActive ? 'page' : undefined}
                   onClick={() => onNavigate(view)}
                 >
@@ -63,6 +59,8 @@ function PokemonHeader({
             className="team-count"
             aria-label={`팀 인원 ${teamCount}명, 최대 ${teamLimit}명`}
           >
+            {/* 모바일 시안에서만 숫자 앞에 '내 팀'을 붙인다 */}
+            <span className="team-count__label">내 팀 </span>
             {teamCount} / {teamLimit}
           </span>
         </div>
@@ -75,7 +73,13 @@ function PokemonHeader({
             <h1 className="dex-intro__title">{dexTitle}</h1>
             <p className="dex-intro__description">{dexDescription}</p>
           </div>
-          <span className="dex-intro__badge">{dexBadge}</span>
+          {/* 배지의 인원은 예시 숫자가 아니라 실제 team.length에서 온 값이다 */}
+          <span
+            className="dex-intro__badge"
+            aria-label={`내 팀 ${teamCount}명, 최대 ${teamLimit}명`}
+          >
+            내 팀 {teamCount} / {teamLimit}
+          </span>
         </div>
       )}
     </header>

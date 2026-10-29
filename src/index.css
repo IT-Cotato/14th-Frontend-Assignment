@@ -229,10 +229,15 @@ button:focus-visible {
 
 .team-count {
   color: var(--color-text);
-  font-family: var(--font-en);
+  font-family: var(--font-base);
   font-size: 12px;
   font-weight: 700;
   line-height: normal;
+  white-space: nowrap;
+}
+
+.team-count__label {
+  display: none;
 }
 
 /* 도감 화면 제목 영역: 제목·설명은 왼쪽, 배지는 오른쪽 끝 */
@@ -285,7 +290,8 @@ button:focus-visible {
   align-items: center;
   gap: 12px;
   width: 100%;
-  max-width: 760px;
+  /* 입력창 682 + 검색 66 + 필터 66 + 간격 12×2 */
+  max-width: 838px;
 }
 
 /* 시안의 입력창 높이 42px. 테두리가 크기를 늘리지 않도록 inset shadow로 그린다 */
@@ -332,11 +338,96 @@ button:focus-visible {
   opacity: 1;
 }
 
-/* 카드 목록: 시안 기준 카드 260px 고정, 1440에서 4열 */
+/* 필터 창 안의 타입 chip·번호 정렬 묶음 */
+.type-filter,
+.sort-control {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 카드의 타입 칩과 같은 색을 쓰는 버튼형 칩. 필터 시안처럼 고르지 않은 칩은 흐리게,
+   고른 칩은 원래 색에 어두운 테두리 고리를 둘러 보여 준다.
+   뒤에 선언된 .type-chip 기본값보다 우선하도록 클래스를 두 개 겹쳐 쓴다 */
+.type-chip.type-chip--filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border: 0;
+  font-family: var(--font-base);
+  font-weight: 700;
+  opacity: 0.45;
+}
+
+.type-chip--filter[aria-pressed='true'] {
+  opacity: 1;
+  box-shadow:
+    0 0 0 2px var(--color-surface),
+    0 0 0 4px var(--color-text);
+}
+
+.type-chip__count {
+  opacity: 0.85;
+}
+
+/* 번호 정렬: 고른 쪽은 일반 버튼 모양, 고르지 않은 쪽은 흐리게 (필터 시안) */
+.button--sort {
+  padding: 12px 20px;
+}
+
+.button--sort[aria-pressed='false'] {
+  color: var(--color-text-muted);
+  box-shadow: inset 0 0 0 1px var(--color-border);
+  opacity: 0.6;
+}
+
+/* 도감 + 팀 패널: PC 시안 기준 왼쪽 카드 3열(260px), 오른쪽 패널 366px (x=994) */
+.dex-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 366px;
+  align-items: start;
+  gap: var(--gap-section);
+}
+
+.dex-results {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+.dex-results__title {
+  color: var(--color-text);
+  font-family: var(--font-ko);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 22px;
+}
+
+/* 검색 제출 후 포커스를 받는 용도라 테두리는 그리지 않는다 */
+.dex-results__title:focus {
+  outline: none;
+}
+
+/* 화면에는 보이지 않고 스크린 리더만 읽는 문구 */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* 카드 목록: 시안 기준 카드 260px 고정, 간격 14px */
 .card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, 260px);
-  gap: 20px;
+  gap: 14px;
 }
 
 /* 포켓몬 카드 */
@@ -427,6 +518,13 @@ button:focus-visible {
   box-shadow: inset 0 0 0 1px var(--color-border);
 }
 
+/* 추가됨: 필터 시안처럼 흰 배경·진한 글자·옅은 테두리로 그린다 */
+.button--card.button--added:disabled {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: inset 0 0 0 1px var(--color-border-strong);
+}
+
 .type-chips {
   display: flex;
   flex-wrap: wrap;
@@ -507,6 +605,10 @@ button:focus-visible {
   line-height: 18px;
 }
 
+.empty-state__action {
+  margin-top: 8px;
+}
+
 .type-chip--electric {
   background-color: var(--color-type-electric);
 }
@@ -529,6 +631,104 @@ button:focus-visible {
 
 .type-chip--poison {
   background-color: var(--color-type-poison);
+}
+
+/* ===== 도감 화면의 팀 패널 ===== */
+.team-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface);
+  box-shadow: inset 0 0 0 1px var(--color-border);
+}
+
+.team-panel__title {
+  color: var(--color-text);
+  font-family: var(--font-ko);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 22px;
+}
+
+/* 삭제 후 포커스를 받는 용도라 테두리는 그리지 않는다 */
+.team-panel__title:focus {
+  outline: none;
+}
+
+.team-panel__list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 패널의 행은 시안에서 버튼이 56×40이다. 편집·삭제 창의 버튼에는 적용하지 않는다 */
+.team-panel__list .button--slot {
+  padding: 12px 16px;
+  font-size: 13px;
+}
+
+.team-panel__empty {
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-muted);
+  color: var(--color-text);
+  font-family: var(--font-ko);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 19px;
+}
+
+/* ===== 저장 데이터 문제 안내 (W04 Error/Recover 패턴: 분홍 배경·붉은 테두리·! 아이콘) ===== */
+.state-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  background-color: #fff0f3;
+  box-shadow: inset 0 0 0 1px var(--color-primary);
+}
+
+.state-banner__icon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  font-family: var(--font-en);
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.state-banner__text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  font-family: var(--font-ko);
+}
+
+.state-banner__title {
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 20px;
+}
+
+.state-banner__description {
+  color: var(--color-text);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 19px;
 }
 
 /* ===== 내 팀 화면 ===== */
@@ -786,6 +986,18 @@ button:focus-visible {
   gap: 8px;
 }
 
+/* 필터 창: 초기화는 왼쪽, 취소·적용은 오른쪽. 시안에서 버튼 줄은 위 영역과 32px 떨어져 있다 */
+.dialog__actions--split {
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+}
+
+/* 필터 시안의 적용 버튼은 검색 버튼처럼 아래 그림자가 두껍다 */
+.dialog--filter .button--slot.button--primary:not(:disabled) {
+  box-shadow: var(--shadow-primary);
+}
+
 /* 입력 필드 */
 .field {
   display: flex;
@@ -968,6 +1180,15 @@ legend.field__label {
   .team-slots {
     grid-template-columns: minmax(0, 560px);
   }
+
+  /* 팀 패널을 도감 아래 한 열로 내린다 */
+  .dex-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .team-panel {
+    max-width: 560px;
+  }
 }
 
 /* 작은 화면: 모바일 시안 기준 (390px에서 카드 164×304 2열) */
@@ -1008,13 +1229,46 @@ legend.field__label {
     font-size: 11px;
   }
 
+  /* 모바일 시안의 도감 메뉴는 선택 중에도 옅은 배경·회색 글자다. 현재 화면은 aria-current로 알린다 */
+  .nav-pill--dex.nav-pill--active {
+    background-color: var(--color-surface-muted);
+    color: var(--color-text-muted);
+  }
+
   .team-count {
     font-size: 11px;
   }
 
-  /* 설명 문구가 한 줄로 들어가도록 배지와의 간격을 좁힌다 */
+  .team-count__label {
+    display: inline;
+  }
+
+  /* 모바일 시안: 배지는 설명 문구 아래 오른쪽 끝에 놓인다 */
   .dex-intro {
-    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 2px 10px;
+  }
+
+  .dex-intro__text {
+    flex-basis: 100%;
+  }
+
+  .state-banner {
+    flex-wrap: wrap;
+  }
+
+  .state-banner__text {
+    flex-basis: calc(100% - 44px);
+  }
+
+  .state-banner .button {
+    margin-left: auto;
+  }
+
+  .team-panel {
+    max-width: none;
+    padding: 12px;
   }
 
   .dex-intro__text {
@@ -1032,11 +1286,12 @@ legend.field__label {
   }
 
   .search {
-    max-width: 326px;
+    max-width: none;
+    gap: 8px;
   }
 
   .search .button {
-    padding: 12px 16px;
+    padding: 12px 14px;
     font-size: 13px;
   }
 

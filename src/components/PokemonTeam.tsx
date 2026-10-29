@@ -1,10 +1,8 @@
-import { useRef, useState } from 'react'
-import { TEAM_LIMIT, getMemberDisplayName } from '../data/team.ts'
+import { useRef } from 'react'
+import { TEAM_LIMIT } from '../data/team.ts'
 import type { TeamMember, TeamMemberChanges } from '../data/team.ts'
-import { withParticle } from '../utils/korean.ts'
-import ConfirmDialog from './ConfirmDialog.tsx'
-import TeamEditDialog from './TeamEditDialog.tsx'
 import TeamSlot, { EmptyTeamSlot } from './TeamSlot.tsx'
+import { useTeamMemberDialogs } from './useTeamMemberDialogs.tsx'
 
 const teamTitle = '나의 팀'
 const teamDescription = `최대 ${TEAM_LIMIT}마리의 포켓몬으로 나만의 팀을 완성하세요.`
@@ -26,35 +24,21 @@ function PokemonTeam({
   onRevertTeam,
   onGoToDex,
 }: PokemonTeamProps) {
-  // 어떤 팀원의 편집·삭제 창이 열려 있는지만 id로 기억한다. 팀원 정보는 team에서 찾는다.
-  const [editingId, setEditingId] = useState<number | null>(null)
-  const [deletingId, setDeletingId] = useState<number | null>(null)
   const titleRef = useRef<HTMLHeadingElement>(null)
-
-  const editingIndex = team.findIndex((m) => m.pokemon.id === editingId)
-  const editingMember = editingIndex === -1 ? null : team[editingIndex]
-  const deletingIndex = team.findIndex((m) => m.pokemon.id === deletingId)
-  const deletingMember = deletingIndex === -1 ? null : team[deletingIndex]
+  // 편집·삭제 창은 도감의 팀 패널과 같은 로직을 쓴다.
+  const { openEdit, openDelete, closeDialogs, dialogs } = useTeamMemberDialogs({
+    team,
+    onEditMember,
+    onRemoveMember,
+    returnFocusFallback: titleRef,
+  })
 
   // 항상 6칸: 앞에서부터 추가한 순서대로 채우고 나머지는 빈 슬롯(null)이다.
   const slots = Array.from({ length: TEAM_LIMIT }, (_, index) => team[index] ?? null)
 
-  function handleSaveEdit(changes: TeamMemberChanges) {
-    if (editingId === null) return
-    onEditMember(editingId, changes)
-    setEditingId(null)
-  }
-
-  function handleConfirmDelete() {
-    if (deletingId === null) return
-    onRemoveMember(deletingId)
-    setDeletingId(null)
-  }
-
   function handleRevertTeam() {
     // 팀 전체 취소: 마지막 저장 상태로 되돌리고 열린 편집·삭제 창과 임시 입력도 정리한다.
-    setEditingId(null)
-    setDeletingId(null)
+    closeDialogs()
     onRevertTeam()
   }
 
@@ -114,8 +98,8 @@ function PokemonTeam({
             <li key={member.pokemon.id}>
               <TeamSlot
                 member={member}
-                onEdit={() => setEditingId(member.pokemon.id)}
-                onDelete={() => setDeletingId(member.pokemon.id)}
+                onEdit={() => openEdit(member.pokemon.id)}
+                onDelete={() => openDelete(member.pokemon.id)}
               />
             </li>
           ) : (
@@ -127,27 +111,7 @@ function PokemonTeam({
         )}
       </ol>
 
-      {editingMember && (
-        <TeamEditDialog
-          key={editingMember.pokemon.id}
-          member={editingMember}
-          slotNumber={editingIndex + 1}
-          returnFocusFallback={titleRef}
-          onSave={handleSaveEdit}
-          onCancel={() => setEditingId(null)}
-        />
-      )}
-
-      {deletingMember && (
-        <ConfirmDialog
-          title={`${withParticle(getMemberDisplayName(deletingMember), '을', '를')} 팀에서 삭제할까요?`}
-          description={`팀 슬롯 #${deletingIndex + 1}에서 빠지고, 남은 팀원은 순서를 유지한 채 앞으로 당겨져요. 취소하면 팀이 바뀌지 않아요.`}
-          confirmLabel="삭제"
-          returnFocusFallback={titleRef}
-          onConfirm={handleConfirmDelete}
-          onCancel={() => setDeletingId(null)}
-        />
-      )}
+      {dialogs}
     </main>
   )
 }
