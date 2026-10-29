@@ -140,6 +140,19 @@ body {
   gap: 10px;
 }
 
+.api-box{
+  width: 109px;
+  height: 30px;
+  background-color: #E9FFF8;
+  color: #049F78;
+  font-family: "Noto Sans KR", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+  font-size: 12px;
+  line-height: 100%;
+  letter-spacing: 0%;
+}
+
 .entire{
   margin-left: left;
 }
@@ -285,6 +298,7 @@ body {
   display: flex;
   justify-content: space-between;
   gap: 24px;
+  padding-top: 12px;
 }
 
 .cardlist {
@@ -536,6 +550,130 @@ body {
   width: 1280px;
 }
 
+.status-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  width: 100%;
+}
+
+.status-card {
+  display: flex;
+  flex: 0 0 326px;
+  width: 326px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 16px;
+  border: 1px solid #D8E4F2;
+  border-radius: 10px;
+  background-color: #fff;
+  color: #14213D;
+  text-align: center;
+}
+
+.status-card-error {
+  border-color: #e85d75;
+  background-color: #fff4f6;
+}
+
+.status-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin-bottom: 3px;
+  border-radius: 50%;
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.status-card:not(.status-card-error):not(.status-card-loading) .status-icon {
+  background-color: #FFD166;
+  color: #14213D;
+}
+
+.status-card-loading .status-icon {
+  background-color: #2A75BB;
+  color: white;
+}
+
+.status-card-error .status-icon {
+  background-color: #EF476F;
+}
+
+.status-card strong {
+  font-size: 13px;
+}
+
+.status-card p,
+.status-card small {
+  margin: 0;
+  color: #7d879a;
+  font-size: 10px;
+}
+
+.status-card small {
+  max-width: 190px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.status-card .red-shadow-button,
+.pokemon-detail-error .red-shadow-button {
+  height: 34px;
+  padding: 8px 14px;
+  font-size: 11px;
+}
+
+.pokemon-detail-error {
+  width: 326px;
+  border-color: #e85d75;
+  background-color: #fff4f6;
+}
+
+.pokemon-detail-error p {
+  margin: 0;
+  color: #b7435c;
+  font-size: 11px;
+}
+
+.pokemon-image-placeholder {
+  color: #7d879a;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.pokemon-image-placeholder span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: #dce4ef;
+}
+
+.list-error {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.list-status p {
+  margin: 0;
+}
+
+.list-warning {
+  padding: 0 0 16px;
+  color: #9a6700;
+}
+
 /* Pokémon Card */
 
 .pokemon-card {
@@ -666,6 +804,68 @@ body {
   background-color: #4A90DA;
 }
 
+.pokemon-types {
+  display: flex;
+  gap: 6px;
+  min-height: 29px;
+}
+
+.type.poison {
+  background-color: #A040A0;
+}
+
+.type.normal {
+  background-color: #A8A878;
+}
+
+.type.fighting {
+  background-color: #C03028;
+}
+
+.type.flying {
+  background-color: #A890F0;
+}
+
+.type.ground {
+  background-color: #E0C068;
+}
+
+.type.rock {
+  background-color: #B8A038;
+}
+
+.type.bug {
+  background-color: #A8B820;
+}
+
+.type.ghost {
+  background-color: #705898;
+}
+
+.type.steel {
+  background-color: #B8B8D0;
+}
+
+.type.psychic {
+  background-color: #F85888;
+}
+
+.type.ice {
+  background-color: #98D8D8;
+}
+
+.type.dragon {
+  background-color: #7038F8;
+}
+
+.type.dark {
+  background-color: #705848;
+}
+
+.type.fairy {
+  background-color: #EE99AC;
+}
+
 .my-team-container{
   width: 100%;
 }
@@ -765,42 +965,7 @@ body {
   cursor: pointer;
 }
 
-/* 화면 너비가 768px 이하(모바일 기기 및 작은 화면)일 때 자동 적용 */
-@media screen and (max-width: 768px) {
-  
-  .container {
-    width: 100% !important;
-    padding: 12px;
-  }
 
-  .header {
-    width: 100%;
-    padding: 10px 12px;
-  }
-
-  .alert{
-    width: 768px;
-    padding: 10px 12px;
-
-  .search_field {
-    width: 100%;
-  }
-  .search_field .search_input {
-    width: 100%;
-  }
-
-  .pokemon-list {
-    width: 100%;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); 
-    gap: 12px;                           
-    justify-content: center;
-  }
-
-  .pokemon-card {
-    width: 100%;
-  }
-}
 
 .empty-result-card {
   width: 100%;
@@ -840,4 +1005,62 @@ body {
   color: #6B7280;
   margin: 0;
 }
+
+/* 화면 너비가 768px 이하(모바일 기기 및 작은 화면)일 때 자동 적용 */
+@media screen and (max-width: 768px) {
+  
+  /* 1. 큰 컨테이너 박스들이 모바일 화면 폭에 꽉 차게 설정 */
+  .app-container {
+    width: 100% !important;
+    padding: 12px;
+    /* background-color: red; */
+  }
+
+  .main-content {
+    width: 100%;
+    flex-direction: column;
+    /* gap: 12px; */
+    /* background-color: blue; */
+  }
+
+  .teamlist{
+    width: 100%;
+  }
+
+  .cardlist{
+    width: 100%;
+  } 
+
+  /* 2. 헤더 크기 및 내부 간격 조절 */
+  .header {
+    width: 100%;
+    padding: 10px 12px;
+  }
+
+  .alert{
+    width: 100%;
+    padding: 10px 12px;
+  }
+
+  /* 3. 검색창 영역이 화면 너비에 맞게 늘어나도록 조절 */
+  .search_field {
+    width: 100%;
+  }
+  .search_field .search_input {
+    width: 100%;
+  }
+
+  /* 4. [핵심] 포켓몬 카드를 모바일 화면처럼 2열(2개씩)로 배치 */
+  .pokemon-list {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 가로로 2개씩 배치 */
+    gap: 12px;                             /* 카드 사이 간격 */
+    justify-content: center;
+  }
+
+  /* 5. 모바일 그리드 칸에 맞게 카드 크기 자동 조절 */
+  .pokemon-card {
+    width: 100%;
+  }
 }

@@ -7,6 +7,7 @@ export interface Pokemon {
   number: string;
   name: string;
   type: string;
+  types?: string[];
   role: string;
   image: string;
   nickname?: string;
@@ -78,7 +79,6 @@ function App() {
 
       <div className="main-content">
         <div className="cardlist">
-          <h3>도감</h3>
 
           <PokemonList
             onAdd={handleAddPokemon}
@@ -104,4 +104,3 @@ function App() {
 }
 
 export default App;
-
