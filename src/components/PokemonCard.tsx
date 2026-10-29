@@ -11,6 +11,7 @@ interface PokemonCardProps {
   number: string;
   name: string;
   type: string;
+  types?: string[];
   team: TeamMember[];
   onAddToTeam: (member: TeamMember) => void;
 }
@@ -20,9 +21,13 @@ function PokemonCard({
   number,
   name,
   type,
+  types,
   team,
   onAddToTeam,
 }: PokemonCardProps) {
+  // 타입이 여러 개면 전부, 아니면 기존처럼 type 하나만 사용
+  const typeList = types && types.length > 0 ? types : [type];
+
   // "#025" 같은 번호 문자열에서 숫자만 뽑아 id로 사용
   const id = Number(number.replace(/\D/g, ""));
   const isAdded = team.some((member) => member.id === id);
@@ -37,7 +42,7 @@ function PokemonCard({
     onAddToTeam({
       id,
       name,
-      type: TYPE_LABEL[type.toLowerCase()] ?? type,
+      type: typeList.map((t) => TYPE_LABEL[t.toLowerCase()] ?? t).join("/"),
       role: DEFAULT_ROLE,
       nickname: "",
       image,
@@ -58,7 +63,12 @@ function PokemonCard({
 
       <span className="number">{number}</span>
       <h3 className="name">{name}</h3>
-      <TypeChip type={type} />
+
+      <div className="types">
+        {typeList.map((t) => (
+          <TypeChip key={t} type={t} />
+        ))}
+      </div>
 
       <button
         className={`action-btn${isAdded ? " is-added" : ""}`}

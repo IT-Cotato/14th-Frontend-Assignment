@@ -57,6 +57,20 @@
  
   flex: none;
 }
+
+
+
+/* 타입 칩 묶음 (1~2개를 가로로 나란히) */
+.pokemon-card .types {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+
+  flex: none;
+}
  
 /* 이름 */
 .pokemon-card .name {
@@ -140,7 +154,23 @@
   cursor: not-allowed;
 }
  
- 
+/* 상세 요청이 실패한 카드 */
+/* 상세 요청이 실패한 카드 (Figma: Error variant) */
+/* 상세 요청이 실패한 카드 (Figma: Error variant) */
+.pokemon-card--failed {
+  background: #FFF0F3;
+  border-color: #EF476F;
+}
+
+.pokemon-card--failed .name {
+  color: #B92F51;
+}
+
+/* 타입 칩이 없어도 버튼이 옆 카드와 같은 높이에 오도록 */
+.pokemon-card--failed .action-btn {
+  margin-top: auto;
+}
+
 /* Search Field (도감) */
 /* Search Field (도감) */
 .search-field {
@@ -763,7 +793,15 @@
     line-height: 18px;
   }
 
+  /* 타입 칩 (모바일: 두 개가 한 줄에 들어오도록) */
+  .pokemon-card .types {
+    gap: 6px;
+  }
 
+  .pokemon-card .types .type-chip {
+    padding: 8px 10px;
+  }
+  
   /* Pokedex Layout */
   .pokedex-layout {
     flex-direction: column;
