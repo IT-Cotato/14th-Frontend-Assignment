@@ -1,40 +1,28 @@
-/* ==========================================================================
-   PokéMate Design Language — Design Tokens
-   Typography · Color · Spacing · Radius · Elevation
-   ========================================================================== */
-
-/* --------------------------------------------------------------------------
-   Fonts
-   -------------------------------------------------------------------------- */
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap");
 
-:root {
-    /* ------------------------------------------------------------------------
-     Typography
-     ------------------------------------------------------------------------ */
+@theme {
+    /* font-size */
     --font-latin: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
     --font-korean:
         "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
 
     /* Font sizes */
-    --font-size-display: 3rem; /* 48px */
-    --font-size-heading-1: 2rem; /* 32px */
-    --font-size-heading-2: 1.5rem; /* 24px */
-    --font-size-title: 1.25rem; /* 20px */
-    --font-size-body: 1rem; /* 16px */
-    --font-size-label: 0.875rem; /* 14px */
-    --font-size-caption: 0.75rem; /* 12px */
+    --text-display: 3rem; /* 48px */
+    --text-heading-1: 2rem; /* 32px */
+    --text-heading-2: 1.5rem; /* 24px */
+    --text-title: 1.25rem; /* 20px */
+    --text-body: 1rem; /* 16px */
+    --text-label: 0.875rem; /* 14px */
+    --text-caption: 0.75rem; /* 12px */
 
-    /* Font weights */
+    /* Font weights  */
     --font-weight-regular: 400;
     --font-weight-medium: 500;
     --font-weight-semibold: 600;
     --font-weight-bold: 700;
     --font-weight-extrabold: 800;
 
-    /* ------------------------------------------------------------------------
-     Core primitives
-     ------------------------------------------------------------------------ */
+    /* color */
     --color-neutral-white: #ffffff;
     --color-neutral-canvas: #f7fbff;
     --color-neutral-surface-strong: #f2f7ff;
@@ -59,9 +47,7 @@
     --color-brand-mint-dark: #049f78;
     --color-brand-mint-soft: #e9fff8;
 
-    /* ------------------------------------------------------------------------
-     Semantic roles
-     ------------------------------------------------------------------------ */
+    /* semantice roles */
     --color-bg-canvas: var(--color-neutral-canvas);
     --color-bg-surface: var(--color-neutral-white);
     --color-bg-subtle: var(--color-neutral-surface-strong);
@@ -83,9 +69,7 @@
     --color-border-brand: var(--color-brand-blue);
     --color-border-danger: var(--color-brand-red);
 
-    /* ------------------------------------------------------------------------
-     Pokémon type colors
-     ------------------------------------------------------------------------ */
+    /* pokemon types */
     --color-type-bug: #8cb230;
     --color-type-dark: #58575f;
     --color-type-dragon: #0f6ac0;
@@ -105,23 +89,19 @@
     --color-type-steel: #417d9a;
     --color-type-water: #4a90da;
 
-    /* ------------------------------------------------------------------------
-     Spacing scale (4px base)
-     ------------------------------------------------------------------------ */
-    --space-1: 0.25rem; /* 4px */
-    --space-2: 0.5rem; /* 8px */
-    --space-3: 0.75rem; /* 12px */
-    --space-4: 1rem; /* 16px */
-    --space-5: 1.25rem; /* 20px */
-    --space-6: 1.5rem; /* 24px */
-    --space-8: 2rem; /* 32px */
-    --space-10: 2.5rem; /* 40px */
-    --space-12: 3rem; /* 48px */
-    --space-16: 4rem; /* 64px */
+    /* spacing scale */
+    --spacing-1: 0.25rem; /* 4px */
+    --spacing-2: 0.5rem; /* 8px */
+    --spacing-3: 0.75rem; /* 12px */
+    --spacing-4: 1rem; /* 16px */
+    --spacing-5: 1.25rem; /* 20px */
+    --spacing-6: 1.5rem; /* 24px */
+    --spacing-8: 2rem; /* 32px */
+    --spacing-10: 2.5rem; /* 40px */
+    --spacing-12: 3rem; /* 48px */
+    --spacing-16: 4rem; /* 64px */
 
-    /* ------------------------------------------------------------------------
-     Radius scale
-     ------------------------------------------------------------------------ */
+    /*Radius scale*/
     --radius-1: 0.25rem; /* 4px */
     --radius-2: 0.5rem; /* 8px */
     --radius-3: 0.75rem; /* 12px */
@@ -129,23 +109,19 @@
     --radius-5: 1.25rem; /* 20px */
     --radius-full: 9999px;
 
-    /* ------------------------------------------------------------------------
-     Elevation
-     ------------------------------------------------------------------------ */
-    --elevation-card:
+    /* Elevation */
+    --shadow-card:
         0 1px 2px rgba(15, 23, 41, 0.06), 0 2px 8px rgba(15, 23, 41, 0.06);
-    --elevation-panel:
+    --shadow-panel:
         0 1px 3px rgba(15, 23, 41, 0.08), 0 4px 12px rgba(15, 23, 41, 0.06);
-    --elevation-hard-yellow: 0 8px 0 0 var(--color-brand-yellow-dark);
-    --elevation-hard-red: 0 8px 0 0 var(--color-brand-red-dark);
+    --shadow-hard-yellow: 0 8px 0 0 var(--color-brand-yellow-dark);
+    --shadow-hard-red: 0 8px 0 0 var(--color-brand-red-dark);
 }
 
-/* --------------------------------------------------------------------------
-   Typography utility classes
-   -------------------------------------------------------------------------- */
+/* Typography utility classes */
 .text-display {
     font-family: var(--font-latin);
-    font-size: var(--font-size-display);
+    font-size: var(--text-display);
     font-weight: var(--font-weight-extrabold);
 }
 .text-display[lang="ko"] {
@@ -155,7 +131,7 @@
 
 .text-heading-1 {
     font-family: var(--font-latin);
-    font-size: var(--font-size-heading-1);
+    font-size: var(--text-heading-1);
     font-weight: var(--font-weight-extrabold);
 }
 .text-heading-1[lang="ko"] {
@@ -165,7 +141,7 @@
 
 .text-heading-2 {
     font-family: var(--font-latin);
-    font-size: var(--font-size-heading-2);
+    font-size: var(--text-heading-2);
     font-weight: var(--font-weight-bold);
 }
 .text-heading-2[lang="ko"] {
@@ -175,7 +151,7 @@
 
 .text-title {
     font-family: var(--font-latin);
-    font-size: var(--font-size-title);
+    font-size: var(--text-title);
     font-weight: var(--font-weight-bold);
 }
 .text-title[lang="ko"] {
@@ -185,7 +161,7 @@
 
 .text-body {
     font-family: var(--font-latin);
-    font-size: var(--font-size-body);
+    font-size: var(--text-body);
     font-weight: var(--font-weight-regular);
 }
 .text-body[lang="ko"] {
@@ -195,7 +171,7 @@
 
 .text-label {
     font-family: var(--font-latin);
-    font-size: var(--font-size-label);
+    font-size: var(--text-label);
     font-weight: var(--font-weight-semibold);
 }
 .text-label[lang="ko"] {
@@ -205,7 +181,7 @@
 
 .text-caption {
     font-family: var(--font-latin);
-    font-size: var(--font-size-caption);
+    font-size: var(--text-caption);
     font-weight: var(--font-weight-semibold);
 }
 .text-caption[lang="ko"] {
