@@ -4,6 +4,8 @@ import PokemonHeader from './components/PokemonHeader';
 import PokedexTitle from './components/PokedexTitle';
 import SearchBar from './components/SearchBar';
 import PokemonList from './components/PokemonList';
+import PokedexList from './components/PokedexList';
+import PokedexSearchResult from './components/PokedexSearchResult';
 import TeamTitle from './components/TeamTitle';
 import TeamSlotList from './components/TeamSlotList';
 import EditDialog from './components/EditDialog';
@@ -13,16 +15,13 @@ import StatePanel from './components/StatePanel';
 import { POKEMONS } from './data/pokemons';
 import { TEAM_SIZE } from './data/team';
 import { withObjectParticle } from './utils/josa';
-import { matchesKeyword } from './utils/searchPokemons';
 import { loadTeam, saveTeam } from './utils/teamStorage';
-import type { Pokemon, PokemonType, SortOrder, TeamMember, TeamRole } from './types/pokemon';
+import { usePokemonSearch } from './hooks/usePokemonSearch';
+import type { Pokemon, TeamMember, TeamRole } from './types/pokemon';
 import pikachu from './assets/Pikachu.png';
-import TeamPanel from './components/TeamPanel';
-import FilterDialog from './components/FilterDialog';
 
 
 const RECOMMENDED_POKEMONS = POKEMONS.slice(0, 4);
-const POKEDEX_TYPES: readonly PokemonType[] = [...new Set(POKEMONS.flatMap((pokemon) => pokemon.types))];
 const INITIAL_LOAD = loadTeam();
 const TOAST_DURATION = 2000;
 const NOTICE_DURATION = 3000;
@@ -30,10 +29,7 @@ const NOTICE_DURATION = 3000;
 function App() {
   const [page, setPage] = useState<NavItem>('홈');
   const [searchInput, setSearchInput] = useState('');
-  const [searchKeyword, setSearchKeyword] = useState('');
-  const [selectedTypes, setSelectedTypes] = useState<readonly PokemonType[]>([]);
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [sortOrder, setSortOrder] = useState<SortOrder | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
   const [team, setTeam] = useState<readonly TeamMember[]>(INITIAL_LOAD.team);
   const [savedTeam, setSavedTeam] = useState<readonly TeamMember[]>(INITIAL_LOAD.team);
   const [showRecoverNotice, setShowRecoverNotice] = useState(INITIAL_LOAD.recovered);
@@ -42,16 +38,8 @@ function App() {
   const [toast, setToast] = useState<{ id: number; message: string } | null>(null);
   const [duplicateNotice, setDuplicateNotice] = useState<{ id: number; name: string } | null>(null);
 
+  const search = usePokemonSearch(searchQuery);
   const teamIds = team.map((member) => member.pokemon.id);
-  const filteredPokemons = POKEMONS.filter(
-    (pokemon) =>
-      matchesKeyword(pokemon, searchKeyword) &&
-      (selectedTypes.length === 0 || pokemon.types.some((type) => selectedTypes.includes(type))),
-  );
-  const visiblePokemons =
-    sortOrder === null
-      ? filteredPokemons
-      : [...filteredPokemons].sort((a, b) => (sortOrder === 'asc' ? a.id - b.id : b.id - a.id));
   const editingIndex = team.findIndex((member) => member.pokemon.id === editingId);
   const deletingMember = team.find((member) => member.pokemon.id === deletingId);
 
@@ -64,35 +52,18 @@ function App() {
     setDuplicateNotice(null);
   }
 
-  
   function handleSearch() {
-    setSearchKeyword(searchInput);
+    const nextQuery = searchInput.trim().toLowerCase();
+    if (nextQuery === searchQuery) {
+      search.retry();
+      return;
+    }
+    setSearchQuery(nextQuery);
   }
 
   function handleHomeSearch() {
-    setSelectedTypes([]);
-    setSortOrder(null);
     handleSearch();
     navigate('도감');
-  }
-
-  // 칩을 누르면 고른 목록에 넣고, 이미 있으면 뺌 (기존 배열을 바꾸지 않고 새 배열로 교체)
-  function handleToggleType(type: PokemonType) {
-    setSelectedTypes((prev) =>
-      prev.includes(type) ? prev.filter((item) => item !== type) : [...prev, type],
-    );
-  }
-
-  function handleToggleSort(order: SortOrder) {
-    setSortOrder((prev) => (prev === order ? null : order));
-  }
-
-  
-  function handleResetConditions() {
-    setSearchInput('');
-    setSearchKeyword('');
-    setSelectedTypes([]);
-    setSortOrder(null);
   }
 
   function showDuplicateNotice(name: string) {
@@ -204,37 +175,39 @@ function App() {
         {page === '도감' && (
           <>
             <PokedexTitle
-              title="포켓몬을 찾고 팀을 완성하세요"
-              description="도감과 나의 팀을 한 화면에서 관리할 수 있어요."
-              teamCount={team.length}
-              teamLimit={TEAM_SIZE}
+              title="실시간 포켓몬 도감"
+              description="이름이나 도감 번호로 포켓몬을 바로 찾아보세요."
+              badge="PokéAPI 온라인"
             />
             <SearchBar
-              placeholder="피카츄 또는 25"
+              placeholder="pikachu"
               value={searchInput}
               onChange={setSearchInput}
               onSearch={handleSearch}
-              onFilterClick={() => setIsFilterOpen(true)}
+              status={
+                search.status === 'loading' || search.status === 'error'
+                  ? search.status
+                  : 'default'
+              }
             />
-            <div className="pokedex-layout">
-              <section className="pokedex-layout__list">
-                <h2 className="pokedex-layout__heading">도감</h2>
-                <PokemonList
-                  pokemons={visiblePokemons}
-                  teamIds={teamIds}
-                  teamLimit={TEAM_SIZE}
-                  duplicateName={duplicateNotice?.name ?? null}
-                  onAdd={handleAdd}
-                  onReset={handleResetConditions}
-                />
-              </section>
-              <TeamPanel
-                team={team}
-                editingId={editingId}
-                onEdit={setEditingId}
-                onDelete={setDeletingId}
+            {searchQuery === '' ? (
+              <PokedexList
+                teamIds={teamIds}
+                teamLimit={TEAM_SIZE}
+                duplicateName={duplicateNotice?.name ?? null}
+                onAdd={handleAdd}
               />
-            </div>
+            ) : (
+              <PokedexSearchResult
+                status={search.status}
+                pokemon={search.pokemon}
+                onRetry={search.retry}
+                teamIds={teamIds}
+                teamLimit={TEAM_SIZE}
+                duplicateName={duplicateNotice?.name ?? null}
+                onAdd={handleAdd}
+              />
+            )}
           </>
         )}
 
@@ -274,16 +247,6 @@ function App() {
           confirmLabel="삭제"
           onCancel={() => setDeletingId(null)}
           onConfirm={handleDeleteConfirm}
-        />
-      )}
-      {isFilterOpen && (
-        <FilterDialog
-          types={POKEDEX_TYPES}
-          selectedTypes={selectedTypes}
-          onToggleType={handleToggleType}
-          sortOrder={sortOrder}
-          onToggleSort={handleToggleSort}
-          onClose={() => setIsFilterOpen(false)}
         />
       )}
 

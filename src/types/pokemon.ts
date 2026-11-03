@@ -24,10 +24,13 @@ export interface Pokemon {
   types: readonly PokemonType[];
   imageUrl: string;
 }
+export interface FailedPokemon {
+  id: number;
+  failed: true;
+}
 
 export type TeamRole = '공격' | '방어' | '서포트';
 
-// 팀 슬롯 한 칸에 들어가는 정보: 도감 포켓몬 + 팀에서만 쓰는 별명·역할
 export interface TeamMember {
   pokemon: Pokemon;
   nickname: string;

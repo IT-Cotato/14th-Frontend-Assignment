@@ -38,6 +38,11 @@
   margin-top: 12px;
 }
 
+.state-panel--loading .state-panel__icon {
+  background-color: #2a75bb;
+  color: #ffffff;
+}
+
 .state-panel--error {
   background-color: #fff0f3;
   border-color: var(--color-primary);

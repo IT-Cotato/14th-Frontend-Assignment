@@ -63,9 +63,6 @@
   font-weight: 700;
 }
 
-.header__count-label {
-  display: none;
-}
 @media (max-width: 767px) {
   .header {
     padding: 0 16px;
@@ -87,9 +84,5 @@
 
   .header__nav-item--pc-only {
     display: none;
-  }
-
-  .header--pokedex .header__count-label {
-    display: inline;
   }
 }

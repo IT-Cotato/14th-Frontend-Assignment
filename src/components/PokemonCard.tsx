@@ -1,6 +1,7 @@
 import Button from './Button';
 import TypeChip from './TypeChip';
 import type { Pokemon } from '../types/pokemon';
+import pikachu from '../assets/Pikachu.png';
 import './PokemonCard.css';
 
 // 카드 버튼이 보여줄 추가 가능 여부
@@ -17,8 +18,12 @@ const ADD_LABELS: Record<AddStatus, string> = {
   full: '팀이 가득 찼어요',
 };
 
+function formatNumber(id: number) {
+  return `#${String(id).padStart(4, '0')}`;
+}
+
 function PokemonCard({ id, name, types, imageUrl, addStatus, onAdd }: PokemonCardProps) {
-  const displayNumber = `#${String(id).padStart(4, '0')}`;
+  const displayNumber = formatNumber(id);
 
   return (
     <article className={`pokemon-card${addStatus === 'added' ? ' pokemon-card--added' : ''}`}>
@@ -46,6 +51,30 @@ function PokemonCard({ id, name, types, imageUrl, addStatus, onAdd }: PokemonCar
           onClick={onAdd}
         >
           {ADD_LABELS[addStatus]}
+        </Button>
+      </div>
+    </article>
+  );
+}
+
+interface PokemonCardErrorProps {
+  id: number;
+  onRetry: () => void;
+}
+
+export function PokemonCardError({ id, onRetry }: PokemonCardErrorProps) {
+  return (
+    <article className="pokemon-card pokemon-card--error">
+      <div className="pokemon-card__artwork">
+        <img src={pikachu} alt="" />
+      </div>
+
+      <p className="pokemon-card__number">{formatNumber(id)}</p>
+      <h3 className="pokemon-card__name">상세 정보 실패</h3>
+
+      <div className="pokemon-card__action">
+        <Button variant="primary" size="sm" onClick={onRetry}>
+          다시 시도
         </Button>
       </div>
     </article>

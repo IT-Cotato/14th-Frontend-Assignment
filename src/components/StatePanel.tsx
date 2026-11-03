@@ -2,7 +2,7 @@ import Button from './Button';
 import './StatePanel.css';
 
 interface StatePanelProps {
-  tone?: 'default' | 'error';
+  tone?: 'default' | 'loading' | 'error';
   icon: string;
   title: string;
   description: string;
@@ -14,7 +14,7 @@ interface StatePanelProps {
 
 function StatePanel({ tone = 'default', icon, title, description, action }: StatePanelProps) {
   return (
-    <div className={`state-panel${tone === 'error' ? ' state-panel--error' : ''}`}>
+      <div className={`state-panel${tone === 'default' ? '' : ` state-panel--${tone}`}`}>
       <span className="state-panel__icon" aria-hidden="true">
         {icon}
       </span>
