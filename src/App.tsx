@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import PokemonHeader from './components/PokemonHeader'
 import PokemonList from './components/PokemonList'
-import { POKEMON } from './pokemon'
+import { POKEMON, type Pokemon } from './pokemon'
 
 const navigationItems = [
   { label: '홈', path: '/' },
@@ -20,6 +20,7 @@ type TeamRole = '공격' | '방어' | '서포트'
 interface TeamProfile {
   nickname: string
   role: string
+  pokemon?: Pokemon
 }
 
 interface TeamState {
@@ -82,6 +83,18 @@ const typeLabels = {
   DRAGON: '드래곤',
   GHOST: '고스트',
   NORMAL: '노말',
+  WATER: '물',
+  ICE: '얼음',
+  FIGHTING: '격투',
+  POISON: '독',
+  GROUND: '땅',
+  FLYING: '비행',
+  PSYCHIC: '에스퍼',
+  BUG: '벌레',
+  ROCK: '바위',
+  DARK: '악',
+  STEEL: '강철',
+  FAIRY: '페어리',
 } as const
 
 function App() {
@@ -117,7 +130,8 @@ function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  const addToTeam = (id: number) => {
+  const addToTeam = (pokemon: Pokemon) => {
+    const { id } = pokemon
     if (teamIds.includes(id)) {
       setTeamMessage('이미 팀에 포함된 포켓몬입니다.')
       return
@@ -127,16 +141,13 @@ function App() {
       return
     }
 
-    const pokemon = POKEMON.find((item) => item.id === id)
-    if (!pokemon) return
-
     setTeamState((previousState) => {
       if (previousState.ids.includes(id) || previousState.ids.length >= 6) return previousState
       return {
         ids: [...previousState.ids, id],
         profiles: {
           ...previousState.profiles,
-          [id]: { nickname: pokemon.name, role: '공격' },
+          [id]: { nickname: pokemon.name, role: '공격', pokemon },
         },
         recovered: false,
       }
@@ -201,8 +212,12 @@ function App() {
   }
 
   const teamPokemon = useMemo(
-    () => teamIds.flatMap((id) => POKEMON.filter((pokemon) => pokemon.id === id)),
-    [teamIds],
+    () => teamIds.flatMap((id) => {
+      const savedPokemon = teamProfiles[id]?.pokemon
+      if (savedPokemon) return [savedPokemon]
+      return POKEMON.filter((pokemon) => pokemon.id === id)
+    }),
+    [teamIds, teamProfiles],
   )
 
   const detailMatch = currentPath.match(/^\/pokemon\/(\d+)$/)
@@ -270,56 +285,15 @@ function App() {
       )}
 
       {currentPath === '/pokemon' && (
-        <section className="search-team-page" aria-labelledby="pokedex-title">
-          <div className="search-team-heading">
-            <div>
-              <h1 id="pokedex-title">포켓몬을 찾고 팀을 완성하세요</h1>
-              <p>도감과 나의 팀을 한 화면에서 관리할 수 있어요.</p>
-            </div>
-            <span>내 팀 {teamIds.length} / 6</span>
-          </div>
+        <section className="live-pokedex-page" aria-label="실시간 포켓몬 도감">
           {teamMessage && <p className="team-feedback" role="status">{teamMessage}</p>}
-          <div className="search-team-layout">
-            <div className="search-team-pokedex">
-              <h2>도감</h2>
-              <PokemonList
-                mode="catalog"
-                teamFull={teamIds.length >= 6}
-                teamIds={teamIds}
-                onAdd={addToTeam}
-                onView={(id) => navigate(`/pokemon/${id}`)}
-              />
-            </div>
-            <aside className="search-team-panel" aria-label={`나의 팀 ${teamIds.length}마리`}>
-              <div className="search-team-panel__heading">
-                <h2>나의 팀</h2>
-                <button type="button" onClick={() => navigate('/my-team')}>전체 보기</button>
-              </div>
-              {teamPokemon.length === 0 ? (
-                <div className="search-team-panel__empty">
-                  <strong>아직 팀이 비어 있어요</strong>
-                  <span>도감에서 포켓몬을 추가해 보세요.</span>
-                </div>
-              ) : (
-                teamPokemon.map((pokemon) => {
-                  const profile = teamProfiles[pokemon.id] ?? { nickname: pokemon.name, role: '공격' }
-                  return (
-                    <article className="team-slot" key={pokemon.id}>
-                      <span className="team-slot__artwork"><img src={pokemon.imageUrl} alt="" /></span>
-                      <div className="team-slot__copy">
-                        <strong>{profile.nickname}</strong>
-                        <span>{typeLabels[pokemon.type]} · {profile.role}</span>
-                      </div>
-                      <div className="team-slot__actions">
-                        <button type="button" onClick={() => startEditing(pokemon.id)}>편집</button>
-                        <button className="is-danger" type="button" onClick={() => setPendingDeleteId(pokemon.id)}>삭제</button>
-                      </div>
-                    </article>
-                  )
-                })
-              )}
-            </aside>
-          </div>
+          <PokemonList
+            mode="catalog"
+            teamFull={teamIds.length >= 6}
+            teamIds={teamIds}
+            onAdd={addToTeam}
+            onView={(id) => navigate(`/pokemon/${id}`)}
+          />
         </section>
       )}
 
@@ -337,7 +311,7 @@ function App() {
                 className="primary-button"
                 type="button"
                 disabled={teamIds.includes(detailPokemon.id) || teamIds.length >= 6}
-                onClick={() => addToTeam(detailPokemon.id)}
+                onClick={() => addToTeam(detailPokemon)}
               >
                 {teamIds.includes(detailPokemon.id) ? '추가됨' : teamIds.length >= 6 ? '팀 가득 참' : '팀에 추가'}
               </button>

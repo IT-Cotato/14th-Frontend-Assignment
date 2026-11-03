@@ -5,7 +5,25 @@ import eeveeArtwork from './assets/eevee.png'
 import gengarArtwork from './assets/gengar.png'
 import pikachuArtwork from './assets/pikachu.png'
 
-export type PokemonType = 'DRAGON' | 'GHOST' | 'NORMAL' | 'ELECTRIC' | 'FIRE' | 'GRASS'
+export type PokemonType =
+  | 'NORMAL'
+  | 'FIRE'
+  | 'WATER'
+  | 'ELECTRIC'
+  | 'GRASS'
+  | 'ICE'
+  | 'FIGHTING'
+  | 'POISON'
+  | 'GROUND'
+  | 'FLYING'
+  | 'PSYCHIC'
+  | 'BUG'
+  | 'ROCK'
+  | 'GHOST'
+  | 'DRAGON'
+  | 'DARK'
+  | 'STEEL'
+  | 'FAIRY'
 
 export interface Pokemon {
   id: number
