@@ -87,12 +87,48 @@ async function toPokemon(detail: PokemonDetailResponse, signal?: AbortSignal): P
   };
 }
 
-export async function fetchPokemonList(signal?: AbortSignal): Promise<PokemonListItem[]> {
+export const POKEDEX_PAGE_SIZE = 20;
+
+export interface PokemonListParams {
+  limit: number;
+  offset: number;
+}
+
+export interface PokemonListEntry {
+  id: number;
+  url: string;
+}
+
+export interface PokemonListPage {
+  count: number;
+  items: PokemonListEntry[];
+  next: PokemonListParams | null;
+  previous: PokemonListParams | null;
+}
+
+function toListParams(url: string | null): PokemonListParams | null {
+  if (url === null) return null;
+  const { searchParams } = new URL(url);
+  return {
+    limit: Number(searchParams.get('limit')),
+    offset: Number(searchParams.get('offset')),
+  };
+}
+
+export async function fetchPokemonList(
+  { limit, offset }: PokemonListParams,
+  signal?: AbortSignal,
+): Promise<PokemonListPage> {
   const data = await fetchJson<PokemonListResponse>(
-    `${BASE_URL}/pokemon?limit=20&offset=0`,
+    `${BASE_URL}/pokemon?limit=${limit}&offset=${offset}`,
     signal,
   );
-  return data.results;
+  return {
+    count: data.count,
+    items: data.results.map(({ url }) => ({ id: getIdFromUrl(url), url })),
+    next: toListParams(data.next),
+    previous: toListParams(data.previous),
+  };
 }
 
 export async function fetchPokemonByUrl(url: string, signal?: AbortSignal): Promise<Pokemon> {

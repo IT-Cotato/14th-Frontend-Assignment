@@ -17,6 +17,7 @@ import { TEAM_SIZE } from './data/team';
 import { withObjectParticle } from './utils/josa';
 import { loadTeam, saveTeam } from './utils/teamStorage';
 import { usePokemonSearch } from './hooks/usePokemonSearch';
+import { usePokedexPage } from './hooks/usePokedexPage';
 import type { Pokemon, TeamMember, TeamRole } from './types/pokemon';
 import pikachu from './assets/Pikachu.png';
 
@@ -30,6 +31,7 @@ function App() {
   const [page, setPage] = useState<NavItem>('홈');
   const [searchInput, setSearchInput] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [pokedexOffset, setPokedexOffset] = useState(0);
   const [team, setTeam] = useState<readonly TeamMember[]>(INITIAL_LOAD.team);
   const [savedTeam, setSavedTeam] = useState<readonly TeamMember[]>(INITIAL_LOAD.team);
   const [showRecoverNotice, setShowRecoverNotice] = useState(INITIAL_LOAD.recovered);
@@ -39,6 +41,7 @@ function App() {
   const [duplicateNotice, setDuplicateNotice] = useState<{ id: number; name: string } | null>(null);
 
   const search = usePokemonSearch(searchQuery);
+  const pokedex = usePokedexPage(pokedexOffset, page === '도감' && searchQuery === '');
   const teamIds = team.map((member) => member.pokemon.id);
   const editingIndex = team.findIndex((member) => member.pokemon.id === editingId);
   const deletingMember = team.find((member) => member.pokemon.id === deletingId);
@@ -175,12 +178,12 @@ function App() {
         {page === '도감' && (
           <>
             <PokedexTitle
-              title="실시간 포켓몬 도감"
-              description="이름이나 도감 번호로 포켓몬을 바로 찾아보세요."
-              badge="PokéAPI 온라인"
+              title="포켓몬 도감"
+              description="페이지를 이동해도 이전 포켓몬을 빠르게 다시 볼 수 있어요."
+              badge={pokedex.isBackgroundFetching ? '갱신 중' : '최신 목록'}
             />
             <SearchBar
-              placeholder="pikachu"
+              placeholder="이름 또는 번호"
               value={searchInput}
               onChange={setSearchInput}
               onSearch={handleSearch}
@@ -192,6 +195,9 @@ function App() {
             />
             {searchQuery === '' ? (
               <PokedexList
+                pokedex={pokedex}
+                offset={pokedexOffset}
+                onOffsetChange={setPokedexOffset}
                 teamIds={teamIds}
                 teamLimit={TEAM_SIZE}
                 duplicateName={duplicateNotice?.name ?? null}
