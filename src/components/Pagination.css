@@ -28,6 +28,11 @@
     color: var(--color-text-inverse);
 }
 
+.pagination__button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
 @media (max-width: 768px) {
     .pagination__button--number:not(.pagination__button--current) {
         display: none;

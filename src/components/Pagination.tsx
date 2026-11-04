@@ -5,6 +5,8 @@ const PAGE_GROUP_SIZE = 4;
 type PaginationProps = {
     currentPage: number;
     totalPages: number;
+    hasPrevious: boolean;
+    hasNext: boolean;
     onPrevious: () => void;
     onNext: () => void;
     onPageChange: (page: number) => void;
@@ -20,6 +22,8 @@ function getPageGroup(currentPage: number, totalPages: number) {
 function Pagination({
     currentPage,
     totalPages,
+    hasPrevious,
+    hasNext,
     onPrevious,
     onNext,
     onPageChange,
@@ -32,6 +36,7 @@ function Pagination({
                 type="button"
                 className="pagination__button"
                 aria-label="이전 페이지"
+                disabled={!hasPrevious}
                 onClick={onPrevious}
             >
                 ‹
@@ -55,6 +60,7 @@ function Pagination({
                 type="button"
                 className="pagination__button"
                 aria-label="다음 페이지"
+                disabled={!hasNext}
                 onClick={onNext}
             >
                 ›

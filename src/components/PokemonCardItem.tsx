@@ -16,23 +16,23 @@ function PokemonCardItem({
     isTeamFull,
     onAdd,
 }: PokemonCardItemProps) {
-    const { state: detail, retry } = usePokemonDetail(url);
+    const detail = usePokemonDetail(url);
 
-    if (detail.status === "loading") {
+    if (detail.isPending) {
         return <PokemonCard variant="loading" />;
     }
 
-    if (detail.status !== "success") {
+    if (detail.isLoadingError) {
         return (
             <PokemonCard
                 variant="error"
                 id={getPokemonIdFromUrl(url)}
-                onRetry={retry}
+                onRetry={() => detail.refetch()}
             />
         );
     }
 
-    const { pokemon } = detail;
+    const pokemon = detail.data;
 
     return (
         <PokemonCard

@@ -40,6 +40,8 @@ function PokedexPage({
     const [searchQuery, setSearchQuery] = useState("");
     const [offset, setOffset] = useState(0);
     const pokemonList = usePokemonList({ limit: POKEMON_LIST_LIMIT, offset });
+    const isBackgroundFetching =
+        pokemonList.isFetching && !pokemonList.isPending;
 
     function handleSearch() {
         setSearchQuery(searchInput.trim().toLowerCase());
@@ -89,7 +91,7 @@ function PokedexPage({
                 description="잠시만 기다려 주세요."
             />
         );
-    } else if (pokemonList.isError) {
+    } else if (pokemonList.isLoadingError) {
         content = (
             <StatePanel
                 variant="error"
@@ -119,6 +121,8 @@ function PokedexPage({
                     totalPages={Math.ceil(
                         pokemonList.data.count / POKEMON_LIST_LIMIT,
                     )}
+                    hasPrevious={pokemonList.data.previous !== null}
+                    hasNext={pokemonList.data.next !== null}
                     onPrevious={handlePreviousPage}
                     onNext={handleNextPage}
                     onPageChange={handlePageChange}
@@ -144,7 +148,9 @@ function PokedexPage({
                     </p>
                 </div>
                 <div className="pokedex__controls">
-                    <span className="pokedex__pill">최신 목록</span>
+                    <span className="pokedex__pill" role="status">
+                        {isBackgroundFetching ? "갱신 중" : "최신 목록"}
+                    </span>
                 </div>
             </div>
             <SearchBar
