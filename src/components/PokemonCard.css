@@ -168,6 +168,16 @@
     color: var(--color-text-inverse);
 }
 
+.pokemon-card.pokemon-card--error {
+    height: auto;
+    border-color: var(--color-bg-danger);
+    background: var(--color-bg-danger-soft);
+}
+
+.pokemon-card--error .pokemon-card__name {
+    color: var(--color-text-danger);
+}
+
 @media (max-width: 768px) {
     .pokemon-card {
         width: 164px;

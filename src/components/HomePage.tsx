@@ -5,6 +5,7 @@ import SearchBar from "./SearchBar";
 import FilterButton from "./FilterButton";
 import FilterDialog from "./FilterDialog";
 import PokemonList from "./PokemonList";
+import PokemonCard from "./PokemonCard";
 import StatePanel from "./StatePanel";
 import Notice from "./Notice";
 import {
@@ -106,12 +107,23 @@ function HomePage({
                         description="다른 이름이나 번호로 검색해 보세요."
                     />
                 ) : (
-                    <PokemonList
-                        pokemons={visiblePokemons}
-                        addedPokemonIds={addedPokemonIds}
-                        isTeamFull={isTeamFull}
-                        onAdd={onAddToTeam}
-                    />
+                    <PokemonList>
+                        {visiblePokemons.map((pokemon) => (
+                            <li key={pokemon.id}>
+                                <PokemonCard
+                                    id={pokemon.id}
+                                    name={pokemon.name}
+                                    types={pokemon.types}
+                                    imageUrl={pokemon.imageUrl}
+                                    isAdded={addedPokemonIds.includes(
+                                        pokemon.id,
+                                    )}
+                                    isTeamFull={isTeamFull}
+                                    onAdd={() => onAddToTeam(pokemon)}
+                                />
+                            </li>
+                        ))}
+                    </PokemonList>
                 )}
             </section>
             {isFilterOpen && (
