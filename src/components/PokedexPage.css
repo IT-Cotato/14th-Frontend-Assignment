@@ -40,12 +40,12 @@
     align-items: center;
     padding: var(--space-2) var(--space-3);
     border-radius: var(--radius-full);
-    background-color: var(--color-bg-success-soft);
+    background-color: var(--color-bg-warning);
     font-family: "Noto Sans KR", sans-serif;
     font-weight: 700;
     font-size: 12px;
     line-height: 14px;
-    color: var(--color-text-success);
+    color: var(--color-text-primary);
     white-space: nowrap;
 }
 

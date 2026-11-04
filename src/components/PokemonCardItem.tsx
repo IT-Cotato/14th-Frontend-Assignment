@@ -1,38 +1,38 @@
 import PokemonCard from "./PokemonCard";
 import { usePokemonDetail } from "../hooks/usePokemonDetail";
-import { getPokemonIdFromUrl } from "../data/pokeApi";
+import type { PokemonListItem } from "../data/pokeApi";
 import type { Pokemon } from "../data/pokemons";
 
 type PokemonCardItemProps = {
-    url: string;
+    item: PokemonListItem;
     addedPokemonIds: number[];
     isTeamFull: boolean;
     onAdd: (pokemon: Pokemon) => void;
 };
 
 function PokemonCardItem({
-    url,
+    item,
     addedPokemonIds,
     isTeamFull,
     onAdd,
 }: PokemonCardItemProps) {
-    const { state: detail, retry } = usePokemonDetail(url);
+    const detail = usePokemonDetail(item.url);
 
-    if (detail.status === "loading") {
-        return null;
+    if (detail.isPending) {
+        return <PokemonCard variant="loading" />;
     }
 
-    if (detail.status !== "success") {
+    if (detail.isLoadingError) {
         return (
             <PokemonCard
                 variant="error"
-                id={getPokemonIdFromUrl(url)}
-                onRetry={retry}
+                id={item.id}
+                onRetry={() => detail.refetch()}
             />
         );
     }
 
-    const { pokemon } = detail;
+    const pokemon = detail.data;
 
     return (
         <PokemonCard

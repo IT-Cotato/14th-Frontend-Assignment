@@ -2,7 +2,7 @@ import PokemonList from "./PokemonList";
 import PokemonCard from "./PokemonCard";
 import StatePanel from "./StatePanel";
 import { usePokemonDetail } from "../hooks/usePokemonDetail";
-import { getPokemonUrl } from "../data/pokeApi";
+import { getPokemonUrl, isNotFoundError } from "../data/pokeApi";
 import type { Pokemon } from "../data/pokemons";
 
 type PokemonSearchResultProps = {
@@ -18,9 +18,9 @@ function PokemonSearchResult({
     isTeamFull,
     onAdd,
 }: PokemonSearchResultProps) {
-    const { state: result, retry } = usePokemonDetail(getPokemonUrl(query));
+    const result = usePokemonDetail(getPokemonUrl(query));
 
-    if (result.status === "loading") {
+    if (result.isPending) {
         return (
             <StatePanel
                 variant="loading"
@@ -30,7 +30,7 @@ function PokemonSearchResult({
         );
     }
 
-    if (result.status === "not-found") {
+    if (result.isLoadingError && isNotFoundError(result.error)) {
         return (
             <StatePanel
                 title="검색 결과가 없어요"
@@ -39,19 +39,19 @@ function PokemonSearchResult({
         );
     }
 
-    if (result.status === "error") {
+    if (result.isLoadingError) {
         return (
             <StatePanel
                 variant="error"
                 title="연결이 원활하지 않아요"
                 description="네트워크를 확인하고 다시 시도해 주세요."
                 actionLabel="다시 시도"
-                onAction={retry}
+                onAction={() => result.refetch()}
             />
         );
     }
 
-    const { pokemon } = result;
+    const pokemon = result.data;
 
     return (
         <PokemonList>

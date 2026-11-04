@@ -168,6 +168,11 @@
     color: var(--color-text-inverse);
 }
 
+.pokemon-card.pokemon-card--added {
+    border-color: var(--color-bg-success);
+    background: var(--color-bg-success-soft);
+}
+
 .pokemon-card.pokemon-card--error {
     height: auto;
     border-color: var(--color-bg-danger);
@@ -176,6 +181,19 @@
 
 .pokemon-card--error .pokemon-card__name {
     color: var(--color-text-danger);
+}
+
+.pokemon-card.pokemon-card--loading {
+    height: auto;
+}
+
+.pokemon-card--loading .pokemon-card__image-box {
+    opacity: 0.16;
+}
+
+.pokemon-card--loading .pokemon-card__button {
+    opacity: 0.45;
+    box-shadow: none;
 }
 
 @media (max-width: 768px) {

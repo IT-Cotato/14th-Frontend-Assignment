@@ -1,42 +1,13 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { fetchPokemon, isNotFoundError } from "../data/pokeApi";
-import type { Pokemon } from "../data/pokemons";
 
-type PokemonDetailState =
-    | { status: "loading" }
-    | { status: "success"; pokemon: Pokemon }
-    | { status: "not-found" }
-    | { status: "error" };
+const MAX_RETRY_COUNT = 3;
 
 export function usePokemonDetail(url: string) {
-    const [state, setState] = useState<PokemonDetailState>({
-        status: "loading",
+    return useQuery({
+        queryKey: ["pokemon", "detail", url],
+        queryFn: ({ signal }) => fetchPokemon(url, signal),
+        retry: (failureCount, error) =>
+            !isNotFoundError(error) && failureCount < MAX_RETRY_COUNT,
     });
-    const [retryCount, setRetryCount] = useState(0);
-
-    useEffect(() => {
-        const controller = new AbortController();
-
-        fetchPokemon(url, controller.signal)
-            .then((pokemon) => setState({ status: "success", pokemon }))
-            .catch((error: unknown) => {
-                if (controller.signal.aborted) {
-                    return;
-                }
-                setState(
-                    isNotFoundError(error)
-                        ? { status: "not-found" }
-                        : { status: "error" },
-                );
-            });
-
-        return () => controller.abort();
-    }, [url, retryCount]);
-
-    function retry() {
-        setState({ status: "loading" });
-        setRetryCount((count) => count + 1);
-    }
-
-    return { state, retry };
 }
