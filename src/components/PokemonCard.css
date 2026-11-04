@@ -168,6 +168,11 @@
     color: var(--color-text-inverse);
 }
 
+.pokemon-card.pokemon-card--added {
+    border-color: var(--color-bg-success);
+    background: var(--color-bg-success-soft);
+}
+
 .pokemon-card.pokemon-card--error {
     height: auto;
     border-color: var(--color-bg-danger);
