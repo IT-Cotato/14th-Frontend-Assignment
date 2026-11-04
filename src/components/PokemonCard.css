@@ -178,6 +178,19 @@
     color: var(--color-text-danger);
 }
 
+.pokemon-card.pokemon-card--loading {
+    height: auto;
+}
+
+.pokemon-card--loading .pokemon-card__image-box {
+    opacity: 0.16;
+}
+
+.pokemon-card--loading .pokemon-card__button {
+    opacity: 0.45;
+    box-shadow: none;
+}
+
 @media (max-width: 768px) {
     .pokemon-card {
         width: 164px;

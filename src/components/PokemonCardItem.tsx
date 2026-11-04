@@ -19,7 +19,7 @@ function PokemonCardItem({
     const { state: detail, retry } = usePokemonDetail(url);
 
     if (detail.status === "loading") {
-        return null;
+        return <PokemonCard variant="loading" />;
     }
 
     if (detail.status !== "success") {
