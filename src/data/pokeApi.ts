@@ -1,14 +1,17 @@
 import { pokemonTypes, type Pokemon, type PokemonType } from "./pokemons";
 
 const API_BASE_URL = "https://pokeapi.co/api/v2";
-const POKEMON_LIST_LIMIT = 20;
+export const POKEMON_LIST_LIMIT = 20;
 
 export type PokemonListItem = {
     name: string;
     url: string;
 };
 
-type PokemonListResponse = {
+export type PokemonListResponse = {
+    count: number;
+    next: string | null;
+    previous: string | null;
     results: PokemonListItem[];
 };
 
@@ -57,6 +60,10 @@ export function getPokemonIdFromUrl(url: string) {
     return Number(match?.[1]);
 }
 
+export function getOffsetFromUrl(url: string) {
+    return Number(new URL(url).searchParams.get("offset"));
+}
+
 async function fetchJson<T>(url: string, signal: AbortSignal): Promise<T> {
     const response = await fetch(url, { signal });
     if (!response.ok) {
@@ -86,12 +93,15 @@ function toPokemon(
     };
 }
 
-export async function fetchPokemonList(signal: AbortSignal) {
-    const data = await fetchJson<PokemonListResponse>(
-        `${API_BASE_URL}/pokemon?limit=${POKEMON_LIST_LIMIT}&offset=0`,
+export async function fetchPokemonList(
+    limit: number,
+    offset: number,
+    signal: AbortSignal,
+) {
+    return fetchJson<PokemonListResponse>(
+        `${API_BASE_URL}/pokemon?limit=${limit}&offset=${offset}`,
         signal,
     );
-    return data.results;
 }
 
 export async function fetchPokemon(url: string, signal: AbortSignal) {

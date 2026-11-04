@@ -5,8 +5,13 @@ import PokemonList from "./PokemonList";
 import PokemonCardItem from "./PokemonCardItem";
 import PokemonSearchResult from "./PokemonSearchResult";
 import StatePanel from "./StatePanel";
+import Pagination from "./Pagination";
 import { usePokemonList } from "../hooks/usePokemonList";
-import { isValidPokemonQuery } from "../data/pokeApi";
+import {
+    getOffsetFromUrl,
+    isValidPokemonQuery,
+    POKEMON_LIST_LIMIT,
+} from "../data/pokeApi";
 import type { Pokemon } from "../data/pokemons";
 import "./PokedexPage.css";
 
@@ -33,10 +38,29 @@ function PokedexPage({
 }: PokedexPageProps) {
     const [searchInput, setSearchInput] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
-    const { state: pokemonList, retry: retryPokemonList } = usePokemonList();
+    const [offset, setOffset] = useState(0);
+    const pokemonList = usePokemonList({ limit: POKEMON_LIST_LIMIT, offset });
 
     function handleSearch() {
         setSearchQuery(searchInput.trim().toLowerCase());
+    }
+
+    function handlePreviousPage() {
+        const previousUrl = pokemonList.data?.previous;
+        if (previousUrl) {
+            setOffset(getOffsetFromUrl(previousUrl));
+        }
+    }
+
+    function handleNextPage() {
+        const nextUrl = pokemonList.data?.next;
+        if (nextUrl) {
+            setOffset(getOffsetFromUrl(nextUrl));
+        }
+    }
+
+    function handlePageChange(page: number) {
+        setOffset((page - 1) * POKEMON_LIST_LIMIT);
     }
 
     let content: ReactNode;
@@ -57,7 +81,7 @@ function PokedexPage({
                 onAdd={onAddToTeam}
             />
         );
-    } else if (pokemonList.status === "loading") {
+    } else if (pokemonList.isPending) {
         content = (
             <StatePanel
                 variant="loading"
@@ -65,30 +89,41 @@ function PokedexPage({
                 description="잠시만 기다려 주세요."
             />
         );
-    } else if (pokemonList.status === "error") {
+    } else if (pokemonList.isError) {
         content = (
             <StatePanel
                 variant="error"
                 title="연결이 원활하지 않아요"
                 description="네트워크를 확인하고 다시 시도해 주세요."
                 actionLabel="다시 시도"
-                onAction={retryPokemonList}
+                onAction={() => pokemonList.refetch()}
             />
         );
     } else {
         content = (
-            <PokemonList>
-                {pokemonList.items.map((item) => (
-                    <li key={item.name}>
-                        <PokemonCardItem
-                            url={item.url}
-                            addedPokemonIds={addedPokemonIds}
-                            isTeamFull={isTeamFull}
-                            onAdd={onAddToTeam}
-                        />
-                    </li>
-                ))}
-            </PokemonList>
+            <>
+                <PokemonList>
+                    {pokemonList.data.results.map((item) => (
+                        <li key={item.name}>
+                            <PokemonCardItem
+                                url={item.url}
+                                addedPokemonIds={addedPokemonIds}
+                                isTeamFull={isTeamFull}
+                                onAdd={onAddToTeam}
+                            />
+                        </li>
+                    ))}
+                </PokemonList>
+                <Pagination
+                    currentPage={offset / POKEMON_LIST_LIMIT + 1}
+                    totalPages={Math.ceil(
+                        pokemonList.data.count / POKEMON_LIST_LIMIT,
+                    )}
+                    onPrevious={handlePreviousPage}
+                    onNext={handleNextPage}
+                    onPageChange={handlePageChange}
+                />
+            </>
         );
     }
 
@@ -102,18 +137,19 @@ function PokedexPage({
             />
             <div className="pokedex__title-row">
                 <div className="pokedex__title-copy">
-                    <h1 className="pokedex__title">실시간 포켓몬 도감</h1>
+                    <h1 className="pokedex__title">포켓몬 도감</h1>
                     <p className="pokedex__description">
-                        이름이나 도감 번호로 포켓몬을 바로 찾아보세요.
+                        페이지를 이동해도 이전 포켓몬을 빠르게 다시 볼 수
+                        있어요.
                     </p>
                 </div>
                 <div className="pokedex__controls">
-                    <span className="pokedex__pill">PokéAPI 온라인</span>
+                    <span className="pokedex__pill">최신 목록</span>
                 </div>
             </div>
             <SearchBar
                 value={searchInput}
-                placeholder="pikachu"
+                placeholder="이름 또는 번호 검색"
                 onChange={setSearchInput}
                 onSubmit={handleSearch}
             />
