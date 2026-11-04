@@ -7,11 +7,7 @@ import PokemonSearchResult from "./PokemonSearchResult";
 import StatePanel from "./StatePanel";
 import Pagination from "./Pagination";
 import { usePokemonList } from "../hooks/usePokemonList";
-import {
-    getOffsetFromUrl,
-    isValidPokemonQuery,
-    POKEMON_LIST_LIMIT,
-} from "../data/pokeApi";
+import { isValidPokemonQuery, POKEMON_LIST_LIMIT } from "../data/pokeApi";
 import type { Pokemon } from "../data/pokemons";
 import "./PokedexPage.css";
 
@@ -48,16 +44,16 @@ function PokedexPage({
     }
 
     function handlePreviousPage() {
-        const previousUrl = pokemonList.data?.previous;
-        if (previousUrl) {
-            setOffset(getOffsetFromUrl(previousUrl));
+        const previousOffset = pokemonList.data?.previousOffset ?? null;
+        if (previousOffset !== null) {
+            setOffset(previousOffset);
         }
     }
 
     function handleNextPage() {
-        const nextUrl = pokemonList.data?.next;
-        if (nextUrl) {
-            setOffset(getOffsetFromUrl(nextUrl));
+        const nextOffset = pokemonList.data?.nextOffset ?? null;
+        if (nextOffset !== null) {
+            setOffset(nextOffset);
         }
     }
 
@@ -102,13 +98,14 @@ function PokedexPage({
             />
         );
     } else {
+        const listPage = pokemonList.data;
         content = (
             <>
                 <PokemonList>
-                    {pokemonList.data.results.map((item) => (
+                    {listPage.items.map((item) => (
                         <li key={item.name}>
                             <PokemonCardItem
-                                url={item.url}
+                                item={item}
                                 addedPokemonIds={addedPokemonIds}
                                 isTeamFull={isTeamFull}
                                 onAdd={onAddToTeam}
@@ -117,12 +114,10 @@ function PokedexPage({
                     ))}
                 </PokemonList>
                 <Pagination
-                    currentPage={offset / POKEMON_LIST_LIMIT + 1}
-                    totalPages={Math.ceil(
-                        pokemonList.data.count / POKEMON_LIST_LIMIT,
-                    )}
-                    hasPrevious={pokemonList.data.previous !== null}
-                    hasNext={pokemonList.data.next !== null}
+                    currentPage={listPage.currentPage}
+                    totalPages={listPage.totalPages}
+                    hasPrevious={listPage.previousOffset !== null}
+                    hasNext={listPage.nextOffset !== null}
                     onPrevious={handlePreviousPage}
                     onNext={handleNextPage}
                     onPageChange={handlePageChange}

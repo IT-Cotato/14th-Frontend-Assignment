@@ -4,15 +4,24 @@ const API_BASE_URL = "https://pokeapi.co/api/v2";
 export const POKEMON_LIST_LIMIT = 20;
 
 export type PokemonListItem = {
+    id: number;
     name: string;
     url: string;
 };
 
-export type PokemonListResponse = {
+export type PokemonListPage = {
+    items: PokemonListItem[];
+    currentPage: number;
+    totalPages: number;
+    previousOffset: number | null;
+    nextOffset: number | null;
+};
+
+type PokemonListResponse = {
     count: number;
     next: string | null;
     previous: string | null;
-    results: PokemonListItem[];
+    results: { name: string; url: string }[];
 };
 
 type PokemonDetailResponse = {
@@ -60,7 +69,10 @@ export function getPokemonIdFromUrl(url: string) {
     return Number(match?.[1]);
 }
 
-export function getOffsetFromUrl(url: string) {
+function getOffsetFromUrl(url: string | null) {
+    if (url === null) {
+        return null;
+    }
     return Number(new URL(url).searchParams.get("offset"));
 }
 
@@ -93,15 +105,34 @@ function toPokemon(
     };
 }
 
+function toPokemonListPage(
+    response: PokemonListResponse,
+    limit: number,
+    offset: number,
+): PokemonListPage {
+    return {
+        items: response.results.map((result) => ({
+            id: getPokemonIdFromUrl(result.url),
+            name: result.name,
+            url: result.url,
+        })),
+        currentPage: Math.floor(offset / limit) + 1,
+        totalPages: Math.ceil(response.count / limit),
+        previousOffset: getOffsetFromUrl(response.previous),
+        nextOffset: getOffsetFromUrl(response.next),
+    };
+}
+
 export async function fetchPokemonList(
     limit: number,
     offset: number,
     signal: AbortSignal,
 ) {
-    return fetchJson<PokemonListResponse>(
+    const response = await fetchJson<PokemonListResponse>(
         `${API_BASE_URL}/pokemon?limit=${limit}&offset=${offset}`,
         signal,
     );
+    return toPokemonListPage(response, limit, offset);
 }
 
 export async function fetchPokemon(url: string, signal: AbortSignal) {
