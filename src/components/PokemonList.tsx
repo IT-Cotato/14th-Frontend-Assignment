@@ -3,9 +3,10 @@ import type { FormEvent, MouseEvent, ReactNode } from 'react'
 import searchIcon from '../assets/pokemon/search.svg'
 import { PokeApiHttpError, PokeApiNetworkError } from '../api/pokeapi.ts'
 import { pokemonCatalog } from '../data/pokemons.ts'
-import type { DexEntry, PokemonDexState } from '../hooks/usePokemonDex.ts'
+import type { DexEntry, DexPagination, PokemonDexState } from '../hooks/usePokemonDex.ts'
 import type { PokemonSearchState } from '../hooks/usePokemonSearch.ts'
 import FilterDialog from './FilterDialog.tsx'
+import Pagination from './Pagination.tsx'
 import PokemonCard, { PokemonCardError, PokemonCardLoading } from './PokemonCard.tsx'
 import type { Pokemon, PokemonType } from './PokemonCard.tsx'
 import StatePanel from './StatePanel.tsx'
@@ -17,8 +18,8 @@ import type { TeamMember } from '../data/team.ts'
 /** ?preview 로컬 화면: 한글 이름 일부·번호로 입력하는 즉시 거른다 (W04) */
 const localSearchPlaceholder = '피카츄 또는 25'
 const localSearchLabel = '포켓몬 이름 또는 번호로 검색'
-/** PokéAPI 화면: 제출할 때 도감 번호·영문 이름으로 상세 검색한다 (W05 시안) */
-const apiSearchPlaceholder = 'pikachu'
+/** PokéAPI 화면: 제출할 때 도감 번호·영문 이름으로 상세 검색한다 (W06 시안 placeholder) */
+const apiSearchPlaceholder = '이름 또는 번호'
 const apiSearchLabel = '도감 번호 또는 영문 이름으로 검색'
 const emptyTitle = '검색 결과가 없어요'
 const emptyDescription = '다른 이름이나 번호로 검색해 보세요.'
@@ -46,7 +47,10 @@ type PokemonListProps = {
   api?: {
     dex: {
       state: PokemonDexState
-      /** 목록 전체 다시 시도 */
+      pagination: DexPagination
+      /** 페이지 이동. 범위 밖 페이지는 무시한다. */
+      goToPage: (page: number) => void
+      /** 지금 페이지 목록 다시 시도 */
       retry: () => void
       /** 실패한 카드 한 장만 다시 시도 */
       retryEntry: (url: string) => void
@@ -160,7 +164,7 @@ function PokemonList({
         imageUrl={pokemon.imageUrl}
         addStatus={getAddStatus(team, pokemon.id)}
         onAdd={() => onAdd(pokemon)}
-        // W05 시안의 PokéAPI 카드는 대표 타입(첫 번째) 하나만 보인다. 데이터의 types는 그대로다.
+        // W05·W06 시안의 PokéAPI 카드는 대표 타입(첫 번째) 하나만 보인다. 데이터의 types는 그대로다.
         visibleTypeCount={api ? 1 : undefined}
       />
     )
@@ -177,7 +181,10 @@ function PokemonList({
     if (searchState.status === 'success') return `‘${searchState.keyword}’ 검색 결과 1마리`
     if (searchState.status === 'not-found') return `‘${searchState.keyword}’ 검색 결과 없음`
     if (searchState.status === 'idle' && api.dex.state.status === 'success') {
-      return `포켓몬 ${api.dex.state.entries.length}마리`
+      const { page, totalPages } = api.dex.pagination
+      // 고른 페이지를 받는 동안 이전 카드가 남아 있다는 것은 화면에 그리지 않고 여기서만 알린다.
+      if (api.dex.state.isPlaceholder) return `${page}페이지를 불러오는 중`
+      return `${totalPages}페이지 중 ${page}페이지, 포켓몬 ${api.dex.state.entries.length}마리`
     }
     return null
   }
@@ -233,7 +240,8 @@ function PokemonList({
       )
     }
     return (
-      <ul className="card-grid" aria-label="포켓몬 목록">
+      // 새 페이지를 받는 동안에도 지금 카드(출처 페이지의 데이터)를 그대로 두고, 요청 중임은 aria-busy로만 알린다.
+      <ul className="card-grid" aria-label="포켓몬 목록" aria-busy={dex.state.isPlaceholder}>
         {dex.state.entries.map((entry) => (
           // 상세가 오기 전에도 바뀌지 않는 목록 url을 key로 쓴다.
           // tabIndex: 카드 다시 시도 후 포커스를 받을 수 있게 한다. (Tab 순서에는 넣지 않는다)
@@ -322,7 +330,7 @@ function PokemonList({
         <button type="submit" className="button button--primary">
           검색
         </button>
-        {/* W05 시안의 API 도감에는 타입 필터·정렬이 없다. 로컬 preview 화면에서만 연다. */}
+        {/* W05·W06 시안의 API 도감에는 타입 필터·정렬이 없다. 로컬 preview 화면에서만 연다. */}
         {!api && (
           <button
             type="button"
@@ -342,7 +350,7 @@ function PokemonList({
 
       <div className="dex-layout">
         <section className="dex-results" aria-label="도감">
-          {/* W05 시안에는 ‘도감’ 소제목이 없다. 검색·다시 시도 후 포커스를 받는 자리로는 남겨 두고 화면에서만 숨긴다. */}
+          {/* W05·W06 시안에는 ‘도감’ 소제목이 없다. 검색·다시 시도 후 포커스를 받는 자리로는 남겨 두고 화면에서만 숨긴다. */}
           <h2
             ref={titleRef}
             className={`dex-results__title${api ? ' visually-hidden' : ''}`}
@@ -359,6 +367,18 @@ function PokemonList({
           )}
 
           {api ? renderApiResults(api.dex, api.search.state) : renderLocalResults()}
+
+          {/* W06 시안: 카드 목록 아래 왼쪽. 페이지는 기본 목록에만 있으므로 검색 화면에서는 그리지 않는다.
+              페이지 범위가 1~4로 고정이라 응답을 기다리지 않고 그린다. */}
+          {api && api.search.state.status === 'idle' && (
+            <Pagination
+              currentPage={api.dex.pagination.page}
+              totalPages={api.dex.pagination.totalPages}
+              hasPrevious={api.dex.pagination.hasPrevious}
+              hasNext={api.dex.pagination.hasNext}
+              onPageChange={api.dex.goToPage}
+            />
+          )}
         </section>
 
         {teamPanel}

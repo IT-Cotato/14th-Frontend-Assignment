@@ -45,10 +45,8 @@
   --color-error: #c2264b;
   /* 편집 창의 선택된 역할 pill (W03 시안) */
   --color-role-active: #2c6fb7;
-  /* W05 시안에서 추출한 색: Loading 원(검색 아이콘과 같은 파랑), PokéAPI 온라인 배지 */
+  /* W05 시안에서 추출한 색: Loading 원(검색 아이콘과 같은 파랑). W06 현재 페이지 버튼도 같은 색이다 */
   --color-info: #2a75bb;
-  --color-online: #049f78;
-  --color-online-bg: #e9fff8;
 
   --font-en: 'Inter', sans-serif;
   --font-ko: 'Noto Sans KR', sans-serif;
@@ -1306,44 +1304,32 @@ legend.field__label {
   background-color: var(--color-highlight);
 }
 
-/* ===== W05 PokéAPI 도감 (.page--api-dex 안에서만 적용) =====
+/* ===== W05·W06 PokéAPI 도감 (.page--api-dex 안에서만 적용) =====
    내 팀 화면·편집 모달·?preview 로컬 도감은 위의 W04 스타일을 그대로 쓴다.
-   PC 시안 1440×1024 기준: 콘텐츠 1280(좌 80·상 36), 제목 32/설명 14, 검색 폼 760, 카드 260×336 4열·간격 20 */
-.page--api-dex .dex-intro__title {
-  font-size: 32px;
-  line-height: 38px;
+   PC 시안 1440×1024 기준: 콘텐츠 1280(좌 80·상 36), 검색 폼 760, 카드 260×336 4열·간격 20.
+   제목·설명은 위의 기본값(PC 30/15, 모바일 23/13)을 그대로 쓴다. 시안 글자를 같은 글꼴로 그려 겹쳐 본 결과
+   제목 30px·설명 15px(모바일 23px·13px)일 때 글자 폭·높이가 시안과 일치한다.
+   W06 시안은 W05와 같은 틀에 노란 ‘최신 목록’ 배지(.dex-intro__badge)와 카드 아래 페이지 이동이 더해진다 */
+
+/* 시안 픽셀 기준: 브랜드 마크는 헤더 바깥 테두리에서 24px(x=104). Figma의 안쪽 테두리는 레이아웃에 영향을 주지 않아
+   테두리 1px + padding 24px인 기존 헤더보다 1px 바깥쪽에 있다. 오른쪽 메뉴는 기존 값이 시안과 일치한다 */
+.page--api-dex .top-bar {
+  padding-left: 23px;
+}
+
+/* 시안 픽셀 기준 글자 위치: 제목 y=136, 설명 y=180, 검색창 y=224. 소개 영역 높이 68은 그대로 둔다 */
+.page--api-dex .dex-intro__text {
+  gap: 6px;
 }
 
 .page--api-dex .dex-intro__description {
-  font-size: 14px;
-  line-height: 20px;
+  line-height: 27px;
 }
 
-/* 지금 보이는 목록·검색 요청에서 계산한 연결 상태 배지. 시안: 연한 초록 배경·초록 글자 pill(29px) */
-.api-badge {
-  flex-shrink: 0;
-  padding: 8px 12px;
-  border-radius: var(--radius-pill);
-  font-family: var(--font-base);
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 13px;
+/* 시안 배지 높이 30px. 갱신 표시로 문구가 바뀌어도 줄바꿈되지 않게 한다 */
+.page--api-dex .dex-intro__badge {
+  line-height: 14px;
   white-space: nowrap;
-}
-
-.api-badge--online {
-  background-color: var(--color-online-bg);
-  color: var(--color-online);
-}
-
-.api-badge--checking {
-  background-color: var(--color-surface-muted);
-  color: var(--color-text-muted);
-}
-
-.api-badge--error {
-  background-color: #fff0f3;
-  color: var(--color-primary-shadow);
 }
 
 /* 입력창 682 + 간격 12 + 검색 66 (시안에는 필터 버튼이 없다) */
@@ -1356,17 +1342,52 @@ legend.field__label {
   gap: 25px;
 }
 
-/* 팀 패널이 없으므로 한 열. 카드 영역은 260×4 + 20×3 = 1100에서 멈추고 왼쪽 정렬한다 */
+/* 팀 패널이 없으므로 한 열. 카드 영역은 260×4 + 20×3 = 1100에서 멈추고 왼쪽 정렬한다.
+   W06 시안 픽셀 기준: 카드 아래(y=627) → 페이지 버튼 위(y=651) 24px */
 .page--api-dex .dex-layout {
   grid-template-columns: minmax(0, 1fr);
 }
 
 .page--api-dex .dex-results {
+  gap: 24px;
   max-width: 1100px;
 }
 
 .page--api-dex .card-grid {
   gap: 20px;
+}
+
+/* 페이지 이동 (W06 시안): 카드 아래 왼쪽, 38×38 버튼 간격 8, 흰 바탕·옅은 테두리, 현재 페이지는 파란 바탕.
+   시안의 비활성 이전·다음은 활성일 때와 모양이 같아, disabled는 동작만 막고 커서로만 구분한다 */
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pagination__button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+  color: var(--color-text-muted);
+  box-shadow: inset 0 0 0 1px var(--color-border);
+  font-family: var(--font-en);
+  /* 시안(0.5배)과 같은 배율로 겹쳐 비교해 가장 가까운 값 */
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.pagination__button--current {
+  background-color: var(--color-info);
+  color: var(--color-white);
+  box-shadow: none;
 }
 
 /* 중간 폭: 슬롯 두 열이 너무 좁아지면 한 열로 바꾼다 */
@@ -1606,7 +1627,7 @@ legend.field__label {
     line-height: 28px;
   }
 
-  /* ===== W05 PokéAPI 도감 모바일 (390×844 시안): 여백 24/20, 헤더 342×72, 검색 폼 326, 카드 164 2열·간격 14 ===== */
+  /* ===== W05·W06 PokéAPI 도감 모바일 (390×844 시안): 여백 24/20, 헤더 342×72, 검색 폼 326, 카드 164 2열·간격 14 ===== */
   /* 시안 픽셀 기준: 배지 아래 → 검색창 위(y=214) 19px, 검색창 아래 → 카드 위(y=275) 19px */
   .page--api-dex {
     gap: 19px;
@@ -1628,13 +1649,22 @@ legend.field__label {
     display: none;
   }
 
-  .page--api-dex .dex-intro__title {
-    font-size: 24px;
-    line-height: 28px;
+  /* 시안 픽셀 기준: 헤더 내용은 바깥 테두리에서 좌우 16px (브랜드 마크 x=40, 내 팀 메뉴 끝 x=315) */
+  .page--api-dex .top-bar {
+    padding-right: 15px;
+    padding-left: 15px;
+  }
+
+  /* 시안: 설명 아래(y=164) 바로 밑에 높이 30 배지(y=165), 그 아래 19px 뒤 검색창(y=214) */
+  .page--api-dex .dex-intro {
+    row-gap: 1px;
+  }
+
+  .page--api-dex .dex-intro__text {
+    gap: 8px;
   }
 
   .page--api-dex .dex-intro__description {
-    font-size: 13px;
     line-height: 18px;
   }
 
@@ -1650,5 +1680,10 @@ legend.field__label {
 
   .page--api-dex .card-grid {
     gap: 14px;
+  }
+
+  /* 모바일 시안은 카드 둘째 줄에서 잘려 페이지 이동이 보이지 않는다. 같은 버튼을 모바일 세로 간격(19)으로 둔다 */
+  .page--api-dex .dex-results {
+    gap: 19px;
   }
 }
