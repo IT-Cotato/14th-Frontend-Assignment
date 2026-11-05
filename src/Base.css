@@ -46,6 +46,12 @@
   color: #14213D;
 }
 
+/* 갱신 중 상태 (최신 목록과 구분) */
+.pill--refreshing {
+  background: #EAF3FF;
+  color: #2A75BB;
+}
+
 /* 전체 151마리 */
 .pokedex-count {
   box-sizing: border-box;
@@ -81,41 +87,6 @@
 
   flex: none;
   flex-grow: 0;
-}
-
-/* PokéAPI 상태 배지 (기본값 = 온라인, Figma 값) */
-.api-badge {
-  box-sizing: border-box;
-  display: inline-flex;
-  flex-direction: row;
-  align-items: center;
-
-  padding: 8px 12px;
-  height: 30px;
-
-  background: #E9FFF8;
-  border-radius: 999px;
-
-  font-family: "Noto Sans KR", sans-serif;
-  font-style: normal;
-  font-weight: 700;
-  font-size: 12px;
-  line-height: 14px;
-
-  color: #049F78;
-  white-space: nowrap;
-
-  flex: none;
-}
-
-.api-badge--loading {
-  background: #F2F7FF;
-  color: #667085;
-}
-
-.api-badge--error {
-  background: #FFF0F3;
-  color: #B92F51;
 }
 
 /* 인원수 Pill (예: 3 / 6) */

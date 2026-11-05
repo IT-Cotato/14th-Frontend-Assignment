@@ -1,21 +1,12 @@
-import { useEffect, useRef, useState } from "react"; // 수정: useRef 추가
+import { useState } from "react";
 import PokemonHeader from "./PokemonHeader";
 import PokemonCard from "./PokemonCard";
 import TeamNoticePanel from "./TeamNoticePanel";
 import StatePanel from "./StatePanel";
-import {
-  HttpError,
-  getArtworkUrl,
-  isAbortError,
-  loadCards,
-  retryCard, // 추가
-  type CardResult,
-} from "./pokeApi";
-import type {
-  ActivePage,
-  TeamMember,
-  TeamMemberChanges,
-} from "./teamTypes";
+import Pagination from "./Pagination";
+import { usePokedexPage } from "./usePokedexPage";
+import { getArtworkUrl } from "./pokeApi";
+import type { ActivePage, TeamMember, TeamMemberChanges } from "./teamTypes";
 
 type PokedexPageProps = {
   team: TeamMember[];
@@ -28,11 +19,7 @@ type PokedexPageProps = {
   onDismissLoadError: () => void;
 };
 
-type ViewState =
-  | { status: "loading" }
-  | { status: "success"; cards: CardResult[] }
-  | { status: "empty" }
-  | { status: "error" };
+const formatNumber = (id: number) => `#${String(id).padStart(4, "0")}`;
 
 function PokedexPage({
   team,
@@ -43,80 +30,16 @@ function PokedexPage({
   onDismissLoadError,
 }: PokedexPageProps) {
   const [iconFailed, setIconFailed] = useState(false);
-  const [keyword, setKeyword] = useState(""); // 입력 중인 값 (오류가 나도 유지)
-  const [query, setQuery] = useState(""); // 실제로 검색한 값
-  const [retryKey, setRetryKey] = useState(0);
-  const [view, setView] = useState<ViewState>({ status: "loading" });
-  const [retryingIds, setRetryingIds] = useState<number[]>([]); // 추가: 재시도 중인 카드 id
-  const requestVersionRef = useRef(0); // 추가: 목록이 새로 로드되면 이전 카드 재시도 결과를 버림
+  const { keyword, setKeyword, search, retry, view, isRefreshing, pagination } =
+    usePokedexPage();
 
-  // 요청은 Effect에서, 필터링 같은 계산은 렌더링 중에 처리
-  useEffect(() => {
-    const controller = new AbortController();
-    requestVersionRef.current += 1; // 추가
-    setRetryingIds([]); // 추가
-    setView({ status: "loading" });
-
-    loadCards(query, controller.signal)
-      .then((cards) => {
-        if (controller.signal.aborted) return;
-        setView({ status: "success", cards });
-      })
-      .catch((error: unknown) => {
-        if (controller.signal.aborted || isAbortError(error)) return;
-
-        if (error instanceof HttpError && error.status === 404) {
-          setView({ status: "empty" });
-          return;
-        }
-        setView({ status: "error" });
-      });
-
-    // 검색어가 바뀌거나 페이지를 떠나면 이전 요청 취소
-    return () => controller.abort();
-  }, [query, retryKey]);
-
-  const handleSearch = () => setQuery(keyword);
-  const handleRetry = () => setRetryKey((key) => key + 1);
-
-  // 추가: 실패한 카드 1개만 다시 요청해서 그 자리만 교체
-  const handleRetryCard = async (id: number, name: string) => {
-    if (retryingIds.includes(id)) return; // 중복 클릭 방지
-
-    const version = requestVersionRef.current;
-    setRetryingIds((ids) => [...ids, id]);
-
-    try {
-      const result = await retryCard(id, name, new AbortController().signal);
-
-      // 그 사이 검색어가 바뀌었다면 결과 무시
-      if (version !== requestVersionRef.current) return;
-
-      setView((prev) =>
-        prev.status === "success"
-          ? {
-              status: "success",
-              cards: prev.cards.map((c) =>
-                c.status === "failed" && c.id === id ? result : c,
-              ),
-            }
-          : prev,
-      );
-    } catch (error) {
-      if (!isAbortError(error)) console.error(error);
-    } finally {
-      if (version === requestVersionRef.current) {
-        setRetryingIds((ids) => ids.filter((x) => x !== id));
-      }
-    }
-  };
-
-  const apiBadge =
-    view.status === "error"
-      ? { label: "PokéAPI 연결 실패", mod: "error" }
-      : view.status === "loading"
-        ? { label: "PokéAPI 연결 중", mod: "loading" }
-        : { label: "PokéAPI 온라인", mod: "online" };
+  // 시안: "최신 목록" 배지. 캐시를 보여주며 뒤에서 갱신 중이면 "갱신 중"
+  const badge =
+    view.status === "success"
+      ? isRefreshing
+        ? { label: "갱신 중", mod: " pill--refreshing" }
+        : { label: "최신 목록", mod: "" }
+      : null;
 
   return (
     <>
@@ -128,13 +51,15 @@ function PokedexPage({
 
       <div className="pokedex-title">
         <div className="pokedex-title__text">
-          <h2>실시간 포켓몬 도감</h2>
-          <p>이름이나 도감 번호로 포켓몬을 바로 찾아보세요.</p>
+          <h2>포켓몬 도감</h2>
+          <p>페이지를 이동해도 이전 포켓몬을 빠르게 다시 볼 수 있어요.</p>
         </div>
 
-        <span className={`api-badge api-badge--${apiBadge.mod}`}>
-          {apiBadge.label}
-        </span>
+        {badge && (
+          <span className={`pill${badge.mod}`} role="status">
+            {badge.label}
+          </span>
+        )}
       </div>
 
       <div className="search-field">
@@ -151,15 +76,15 @@ function PokedexPage({
           <input
             className="query"
             value={keyword}
-            placeholder="pikachu"
+            placeholder="이름 또는 번호"
             onChange={(e) => setKeyword(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === "Enter") handleSearch();
+              if (e.key === "Enter") search();
             }}
           />
         </div>
 
-        <button type="button" className="action" onClick={handleSearch}>
+        <button type="button" className="action" onClick={search}>
           <span className="label">검색</span>
         </button>
       </div>
@@ -181,12 +106,12 @@ function PokedexPage({
 
           {view.status === "loading" && (
             <StatePanel
-            variant="loading"
-            symbol="…"
-            title="포켓몬을 불러오는 중"
-            description="잠시만 기다려 주세요."
+              variant="loading"
+              symbol="…"
+              title="포켓몬을 불러오는 중"
+              description="잠시만 기다려 주세요."
             />
-            )}
+          )}
 
           {view.status === "empty" && (
             <StatePanel
@@ -203,20 +128,20 @@ function PokedexPage({
               title="연결이 원할하지 않아요"
               description="잠시 후 다시 시도해 주세요."
               actionLabel="다시 시도"
-              onAction={handleRetry}
+              onAction={retry}
             />
           )}
 
           {view.status === "success" && (
             <div className="pokemon-grid">
-              {/* 수정: isRetrying을 쓰기 위해 map 콜백을 블록 형태로 변경 */}
               {view.cards.map((card) => {
                 if (card.status === "ok") {
                   return (
                     <PokemonCard
                       key={card.data.id}
+                      id={card.data.id}
                       image={card.data.image}
-                      number={`#${String(card.data.id).padStart(4, "0")}`}
+                      number={formatNumber(card.data.id)}
                       name={card.data.name}
                       type={card.data.type}
                       types={card.data.types}
@@ -226,13 +151,18 @@ function PokedexPage({
                   );
                 }
 
-                const isRetrying = retryingIds.includes(card.id);
+                const isFailed = card.status === "failed";
 
                 return (
                   <article
                     key={card.id}
-                    className="pokemon-card pokemon-card--failed"
-                    aria-label={`${card.name} 상세 정보 실패`}
+                    className={`pokemon-card ${
+                      isFailed
+                        ? "pokemon-card--failed"
+                        : "pokemon-card--pending"
+                    }`}
+                    aria-label={`${card.name} ${isFailed ? "상세 정보 실패" : "불러오는 중"}`}
+                    aria-busy={!isFailed}
                   >
                     <div className="artwork">
                       <img
@@ -243,20 +173,36 @@ function PokedexPage({
                         }}
                       />
                     </div>
-                    <span className="number">{`#${String(card.id).padStart(4, "0")}`}</span>
-                    <h3 className="name">상세 정보 실패</h3>
-                    <button
-                      type="button"
-                      className="action-btn"
-                      disabled={isRetrying}
-                      onClick={() => handleRetryCard(card.id, card.name)}
-                    >
-                      {isRetrying ? "불러오는 중…" : "다시 시도"}
-                    </button>
+                    <span className="number">{formatNumber(card.id)}</span>
+                    <h3 className="name">
+                      {isFailed ? "상세 정보 실패" : "불러오는 중…"}
+                    </h3>
+                    {isFailed && (
+                      <button
+                        type="button"
+                        className="action-btn"
+                        disabled={card.isRetrying}
+                        onClick={card.retry}
+                      >
+                        {card.isRetrying ? "불러오는 중…" : "다시 시도"}
+                      </button>
+                    )}
                   </article>
                 );
               })}
             </div>
+          )}
+
+          {view.status === "success" && pagination && (
+            <Pagination
+              currentPage={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              hasPrevious={pagination.hasPrevious}
+              hasNext={pagination.hasNext}
+              onPrevious={pagination.goPrevious}
+              onNext={pagination.goNext}
+              onSelectPage={pagination.goToPage}
+            />
           )}
         </section>
       </div>
