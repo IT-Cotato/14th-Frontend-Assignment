@@ -213,6 +213,8 @@
 
 .pokedex-count-badge {
   position: absolute;
+  color: var(--color-text-success);
+  background: var(--color-success-soft);
   top: 18.5px;
   right: 0;
 }

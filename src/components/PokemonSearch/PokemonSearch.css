@@ -56,15 +56,9 @@
   border: 0;
 }
 
-.pokemon-search__type-filter {
-  height: 42px;
-  padding: 0 12px;
-  border: var(--stroke-1) solid var(--line);
-  border-radius: var(--radius-md);
-  background: var(--panel);
-  color: var(--ink);
-  font-family: 'Noto Sans KR', sans-serif;
-  font-size: 13px;
-  cursor: pointer;
+.pokemon-search__types {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
 }
-

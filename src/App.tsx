@@ -3,7 +3,7 @@ import Button from './components/Button/Button'
 import PokemonList from './components/PokemonList/PokemonList'
 import PokemonSearch from './components/PokemonSearch/PokemonSearch'
 import TeamPage from './components/TeamPage/TeamPage'
-import PokedexTeam from './components/PokedexTeam/PokedexTeam'
+import PokedexPage from './components/PokedexPage/PokedexPage'
 import TeamEditor from './components/TeamEditor/TeamEditor'
 import { restoreTeam, TEAM_STORAGE_KEY, updateTeamMember } from './utils/teamStorage'
 import { pokemonList } from './data/pokemon'
@@ -29,9 +29,14 @@ function App() {
   const editingPokemon = team.find((pokemon) => pokemon.number === editingNumber)
   const [teamMessage, setTeamMessage] = useState('')
   const [query, setQuery] = useState('')
+  const [selectedType, setSelectedType] = useState('')
+  const availableTypes = [...new Set(pokemonList.flatMap((pokemon) => pokemon.types))]
   const filteredPokemon = filterPokemon(pokemonList, query, '')
   const searchProps = {
     query,
+    types: availableTypes,
+    selectedType,
+    onTypeChange: setSelectedType,
     onQueryChange: setQuery,
   }
 
@@ -102,24 +107,7 @@ function App() {
         </nav>
       </header>
       {activeNavigation === '도감' && (
-        <>
-          <div className="pokedex-heading">
-            <div>
-              <h1 className="pokedex-title">포켓몬을 찾고 팀을 완성하세요</h1>
-              <p className="pokedex-description">도감과 나의 팀을 한 화면에서 관리할 수 있어요</p>
-            </div>
-            <span className="pokedex-count-badge">내 팀 {team.length} / 6</span>
-          </div>
-          <PokemonSearch {...searchProps} />
-          <div className="pokedex-layout">
-            <section className="pokedex-results" aria-labelledby="pokedex-results-title">
-              <h2 id="pokedex-results-title" className="pokedex-results__title">도감</h2>
-              <PokemonList pokemon={filteredPokemon.slice(0, 3)} onAdd={addToTeam} />
-            </section>
-            <PokedexTeam team={team} onDelete={removeFromTeam} onEdit={setEditingNumber}
-              message={teamMessage} />
-          </div>
-        </>
+        <PokedexPage onAdd={addToTeam} />
       )}
       {activeNavigation === '내 팀' && (
         <TeamPage
