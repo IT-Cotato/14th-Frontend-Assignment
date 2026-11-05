@@ -1,6 +1,6 @@
 import { useEffect, useReducer, useRef, useState } from 'react'
 import PokemonHeader from './components/PokemonHeader.tsx'
-import type { ApiStatus, AppView } from './components/PokemonHeader.tsx'
+import type { AppView } from './components/PokemonHeader.tsx'
 import PokemonList from './components/PokemonList.tsx'
 import PokemonTeam from './components/PokemonTeam.tsx'
 import type { Pokemon, PokemonType } from './components/PokemonCard.tsx'
@@ -27,7 +27,7 @@ import {
 import type { TeamMember, TeamMemberChanges } from './data/team.ts'
 import { teamReducer } from './data/teamReducer.ts'
 import { usePokemonDex } from './hooks/usePokemonDex.ts'
-import type { PokemonDexState } from './hooks/usePokemonDex.ts'
+import type { DexFetchStatus } from './hooks/usePokemonDex.ts'
 import { usePokemonSearch } from './hooks/usePokemonSearch.ts'
 import type { PokemonSearchState } from './hooks/usePokemonSearch.ts'
 import { withParticle } from './utils/korean.ts'
@@ -49,18 +49,17 @@ function selectPreviewPokemons(search: string) {
 }
 
 /**
- * 도감 배지에 쓸 PokéAPI 연결 상태. 별도 확인 요청 없이 지금 보이는 목록·검색 요청 상태에서 계산한다.
- * - 검색 결과·검색 404는 서버가 응답한 것이므로 온라인이다.
- * - 검색 요청 중이거나 검색 중이 아니면 기본 목록 요청 상태를 따른다. (카드 하나의 상세 실패는 반영하지 않는다)
+ * 도감 배지(갱신 표시)에 쓸 요청 상태. 지금 화면에 보이는 쪽의 요청을 따른다.
+ * - 검색 중이면 검색 요청 상태를, 아니면 지금 페이지의 목록 요청 상태를 쓴다.
+ * - 검색 404는 서버가 응답한 결과이므로 실패로 보지 않는다.
  */
-function getApiStatus(
-  dexState: PokemonDexState,
+function getFetchStatus(
+  dexFetchStatus: DexFetchStatus,
   searchState: PokemonSearchState,
-): ApiStatus {
-  if (searchState.status === 'success' || searchState.status === 'not-found') return 'online'
-  if (searchState.status === 'error') return 'error'
-  if (dexState.status === 'loading') return 'checking'
-  return dexState.status === 'error' ? 'error' : 'online'
+): DexFetchStatus {
+  if (searchState.status === 'idle') return dexFetchStatus
+  if (searchState.status === 'loading') return 'loading'
+  return searchState.status === 'error' ? 'failed' : 'fresh'
 }
 
 function App() {
@@ -89,7 +88,7 @@ function App() {
   const noticeIdRef = useRef(0)
   // preview 화면은 로컬 데이터만 쓰고 API를 요청하지 않는다.
   const previewPokemons = selectPreviewPokemons(window.location.search)
-  // 도감 ↔ 내 팀을 오가도 다시 요청하지 않도록 App에서 요청한다.
+  // 도감 ↔ 내 팀을 오가도 페이지·캐시가 유지되도록 App에서 요청한다.
   const dex = usePokemonDex({ enabled: previewPokemons === null })
   // 제출한 검색어의 상세 검색. 입력창의 원본 값(query)과 따로 관리한다.
   const search = usePokemonSearch({ enabled: previewPokemons === null })
@@ -199,7 +198,7 @@ function App() {
     setSelectedTypes([])
   }
 
-  // W05 시안은 PokéAPI 도감 화면에만 적용한다. 내 팀 화면·로컬 preview는 기존 스타일을 유지한다.
+  // W05·W06 시안은 PokéAPI 도감 화면에만 적용한다. 내 팀 화면·로컬 preview는 기존 스타일을 유지한다.
   const isApiDex = previewPokemons === null && view === 'dex'
 
   return (
@@ -209,7 +208,7 @@ function App() {
         onNavigate={handleNavigate}
         teamCount={team.length}
         teamLimit={TEAM_LIMIT}
-        apiStatus={isApiDex ? getApiStatus(dex.state, search.state) : undefined}
+        fetchStatus={isApiDex ? getFetchStatus(dex.fetchStatus, search.state) : undefined}
       />
       {storageIssue && (
         <StorageNotice
@@ -229,7 +228,7 @@ function App() {
           onQueryChange={setQuery}
           onApplyFilter={handleApplyFilter}
           onResetFilters={handleResetFilters}
-          // W05 시안의 PokéAPI 도감에는 팀 패널이 없다. 팀은 ‘내 팀’ 화면에서 관리한다.
+          // W05·W06 시안의 PokéAPI 도감에는 팀 패널이 없다. 팀은 ‘내 팀’ 화면에서 관리한다.
           teamPanel={
             previewPokemons === null ? null : (
               <TeamPanel
