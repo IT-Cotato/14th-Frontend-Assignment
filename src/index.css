@@ -1034,6 +1034,21 @@ button {
   color: #b92f51;
 }
 
+.cache-status {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: var(--yellow);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.cache-status.is-fetching {
+  background: #e9fff8;
+  color: #049f78;
+}
+
 .pokemon-list-wrap--catalog .pokemon-list--api {
   grid-template-columns: repeat(4, 260px);
   gap: 20px;
@@ -1127,6 +1142,69 @@ button {
 
 .pokemon-card--error .pokemon-card__artwork--fallback {
   color: var(--red);
+}
+
+.api-pagination {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.api-pagination button,
+.api-pagination span {
+  display: inline-flex;
+  width: 38px;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.api-pagination button {
+  cursor: pointer;
+}
+
+.api-pagination span {
+  border-color: #2a75bb;
+  background: #2a75bb;
+  color: #ffffff;
+}
+
+.api-pagination button:disabled {
+  cursor: not-allowed;
+  opacity: 0.38;
+}
+
+.background-fetch-error {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0;
+  padding: 10px 14px;
+  border: 1px solid #ffd0da;
+  border-radius: 8px;
+  background: #fff0f3;
+  color: #b92f51;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.background-fetch-error button {
+  flex: 0 0 auto;
+  padding: 6px 10px;
+  border: 1px solid #f2a4b6;
+  border-radius: 7px;
+  background: #ffffff;
+  color: #b92f51;
+  font-weight: 700;
+  cursor: pointer;
 }
 
 .pokemon-list-wrap--catalog .pokemon-list {
@@ -1980,7 +2058,8 @@ button {
     line-height: 21px;
   }
 
-  .live-pokedex-heading .api-status {
+  .live-pokedex-heading .api-status,
+  .live-pokedex-heading .cache-status {
     align-self: flex-end;
   }
 
