@@ -8,7 +8,8 @@ import {
   type FailedPokemon,
 } from '../hooks/usePokemonList';
 
-const PAGE_SIZE = 4;
+const LIST_PAGE_SIZE = 20;
+const SEARCH_PAGE_SIZE = 4;
 
 interface PokemonListProps {
   onAdd: (pokemon: Pokemon) => void;
@@ -33,7 +34,7 @@ function PokemonList({
     isPending,
     refetch,
     retryPokemonDetail: retryDetail,
-  } = usePokemonList(PAGE_SIZE, offset);
+  } = usePokemonList(LIST_PAGE_SIZE, offset);
   const pokemonSearch = usePokemonSearch(search);
   const normalizedSearch = search.trim().toLowerCase();
   const pokemons = data?.pokemons ?? [];
@@ -91,7 +92,9 @@ function PokemonList({
       pokemon.types?.includes(selectedType) ||
       pokemon.type === selectedType
   );
-  const searchTotalPages = Math.ceil(searchPokemons.length / PAGE_SIZE);
+  const searchTotalPages = Math.ceil(
+    searchPokemons.length / SEARCH_PAGE_SIZE
+  );
   const currentSearchPage = Math.min(
     searchPage,
     Math.max(searchTotalPages, 1)
@@ -105,8 +108,8 @@ function PokemonList({
     (_, index) => visibleSearchPageStart + index
   );
   const visibleSearchPokemons = searchPokemons.slice(
-    (currentSearchPage - 1) * PAGE_SIZE,
-    currentSearchPage * PAGE_SIZE
+    (currentSearchPage - 1) * SEARCH_PAGE_SIZE,
+    currentSearchPage * SEARCH_PAGE_SIZE
   );
 
   useEffect(() => {
@@ -252,8 +255,8 @@ function PokemonList({
 
   const previousPage = getPageParams(data.previous);
   const nextPage = getPageParams(data.next);
-  const currentPage = offset / PAGE_SIZE + 1;
-  const totalPages = Math.ceil(data.count / PAGE_SIZE);
+  const currentPage = offset / LIST_PAGE_SIZE + 1;
+  const totalPages = Math.ceil(data.count / LIST_PAGE_SIZE);
   const visiblePageStart = Math.min(
     Math.max(currentPage - 1, 1),
     Math.max(totalPages - 3, 1)
@@ -328,7 +331,7 @@ function PokemonList({
             }`}
             type="button"
             key={page}
-            onClick={() => setOffset((page - 1) * PAGE_SIZE)}
+            onClick={() => setOffset((page - 1) * LIST_PAGE_SIZE)}
             disabled={page === currentPage || isFetching}
           >
             {page}
