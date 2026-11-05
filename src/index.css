@@ -20,6 +20,20 @@
   /* 복수 타입 표시를 위해 추가한 색. Foundation 토큰 목록에는 없어 포켓몬 공식 타입 색을 사용한다 */
   --color-type-flying: #a890f0;
   --color-type-poison: #a040a0;
+  /* W05 PokéAPI 18개 타입. NORMAL(회색)·DRAGON(진한 파랑)은 W05 시안 색이고,
+     나머지는 위 타입 색과 같은 계열의 도감 타입 색을 쓴다 */
+  --color-type-normal: #9da0aa;
+  --color-type-dragon: #0f6ac0;
+  --color-type-ice: #61cec0;
+  --color-type-fighting: #d04164;
+  --color-type-ground: #dd7748;
+  --color-type-psychic: #ea5d60;
+  --color-type-bug: #8cb230;
+  --color-type-rock: #baab82;
+  --color-type-ghost: #556aae;
+  --color-type-dark: #58575f;
+  --color-type-steel: #417d9a;
+  --color-type-fairy: #ed6ec7;
 
   --shadow-surface: 0 8px 24px rgba(20, 33, 61, 0.08);
   --shadow-primary: 0 8px 0 var(--color-primary-shadow);
@@ -31,6 +45,10 @@
   --color-error: #c2264b;
   /* 편집 창의 선택된 역할 pill (W03 시안) */
   --color-role-active: #2c6fb7;
+  /* W05 시안에서 추출한 색: Loading 원(검색 아이콘과 같은 파랑), PokéAPI 온라인 배지 */
+  --color-info: #2a75bb;
+  --color-online: #049f78;
+  --color-online-bg: #e9fff8;
 
   --font-en: 'Inter', sans-serif;
   --font-ko: 'Noto Sans KR', sans-serif;
@@ -560,8 +578,8 @@ button:focus-visible {
   line-height: 13px;
 }
 
-/* 포켓몬 데이터가 없을 때 카드 목록 대신 보여 주는 영역 */
-.empty-state {
+/* 카드 목록 대신 보여 주는 Loading·Empty·Error 영역 (W05 상태 시안). 기본값은 Empty 모양이다 */
+.state-panel {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -574,7 +592,7 @@ button:focus-visible {
   text-align: center;
 }
 
-.empty-state__count {
+.state-panel__icon {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -589,7 +607,7 @@ button:focus-visible {
   line-height: 22px;
 }
 
-.empty-state__title {
+.state-panel__title {
   color: var(--color-text);
   font-family: var(--font-ko);
   font-size: 16px;
@@ -597,7 +615,7 @@ button:focus-visible {
   line-height: 22px;
 }
 
-.empty-state__description {
+.state-panel__description {
   color: var(--color-text-muted);
   font-family: var(--font-ko);
   font-size: 13px;
@@ -605,8 +623,73 @@ button:focus-visible {
   line-height: 18px;
 }
 
-.empty-state__action {
+.state-panel__action {
   margin-top: 8px;
+}
+
+/* Loading: 파란 원 '…' */
+.state-panel--loading .state-panel__icon {
+  background-color: var(--color-info);
+  color: var(--color-white);
+}
+
+/* Error: 분홍 배경·테두리, 분홍 원 '!' (W04 state-banner와 같은 색) */
+.state-panel--error {
+  background-color: #fff0f3;
+  box-shadow: inset 0 0 0 1px var(--color-primary);
+}
+
+.state-panel--error .state-panel__icon {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+}
+
+/* 목록을 받은 뒤 상세를 받는 중이거나 실패한 카드 자리 */
+.pokemon-card__placeholder-icon {
+  color: var(--color-placeholder);
+  font-family: var(--font-en);
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.pokemon-card__status {
+  margin-top: auto;
+  color: var(--color-text-muted);
+  font-family: var(--font-ko);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 18px;
+}
+
+.pokemon-card--loading .pokemon-card__name {
+  color: var(--color-text-muted);
+}
+
+.pokemon-card--error {
+  background-color: #fff0f3;
+  box-shadow:
+    inset 0 0 0 1px var(--color-primary),
+    var(--shadow-surface);
+}
+
+/* 시안의 실패 카드: 번호 아래 ‘상세 정보 실패’(붉은 굵은 글씨), 맨 아래 분홍 ‘다시 시도’ 버튼 */
+.pokemon-card__status--error {
+  margin-top: 0;
+  color: var(--color-primary-shadow);
+  font-size: 15px;
+  line-height: 20px;
+}
+
+/* 카드 다시 시도 후 포커스를 받는 칸. 키보드로 조작했을 때만 테두리를 보인다 */
+.card-grid > li:focus {
+  outline: none;
+}
+
+.card-grid > li:focus-visible {
+  border-radius: var(--radius-md);
+  outline: 2px solid var(--color-link);
+  outline-offset: 2px;
 }
 
 .type-chip--electric {
@@ -631,6 +714,54 @@ button:focus-visible {
 
 .type-chip--poison {
   background-color: var(--color-type-poison);
+}
+
+.type-chip--normal {
+  background-color: var(--color-type-normal);
+}
+
+.type-chip--dragon {
+  background-color: var(--color-type-dragon);
+}
+
+.type-chip--ice {
+  background-color: var(--color-type-ice);
+}
+
+.type-chip--fighting {
+  background-color: var(--color-type-fighting);
+}
+
+.type-chip--ground {
+  background-color: var(--color-type-ground);
+}
+
+.type-chip--psychic {
+  background-color: var(--color-type-psychic);
+}
+
+.type-chip--bug {
+  background-color: var(--color-type-bug);
+}
+
+.type-chip--rock {
+  background-color: var(--color-type-rock);
+}
+
+.type-chip--ghost {
+  background-color: var(--color-type-ghost);
+}
+
+.type-chip--dark {
+  background-color: var(--color-type-dark);
+}
+
+.type-chip--steel {
+  background-color: var(--color-type-steel);
+}
+
+.type-chip--fairy {
+  background-color: var(--color-type-fairy);
 }
 
 /* ===== 도감 화면의 팀 패널 ===== */
@@ -1175,10 +1306,79 @@ legend.field__label {
   background-color: var(--color-highlight);
 }
 
+/* ===== W05 PokéAPI 도감 (.page--api-dex 안에서만 적용) =====
+   내 팀 화면·편집 모달·?preview 로컬 도감은 위의 W04 스타일을 그대로 쓴다.
+   PC 시안 1440×1024 기준: 콘텐츠 1280(좌 80·상 36), 제목 32/설명 14, 검색 폼 760, 카드 260×336 4열·간격 20 */
+.page--api-dex .dex-intro__title {
+  font-size: 32px;
+  line-height: 38px;
+}
+
+.page--api-dex .dex-intro__description {
+  font-size: 14px;
+  line-height: 20px;
+}
+
+/* 지금 보이는 목록·검색 요청에서 계산한 연결 상태 배지. 시안: 연한 초록 배경·초록 글자 pill(29px) */
+.api-badge {
+  flex-shrink: 0;
+  padding: 8px 12px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-base);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 13px;
+  white-space: nowrap;
+}
+
+.api-badge--online {
+  background-color: var(--color-online-bg);
+  color: var(--color-online);
+}
+
+.api-badge--checking {
+  background-color: var(--color-surface-muted);
+  color: var(--color-text-muted);
+}
+
+.api-badge--error {
+  background-color: #fff0f3;
+  color: var(--color-primary-shadow);
+}
+
+/* 입력창 682 + 간격 12 + 검색 66 (시안에는 필터 버튼이 없다) */
+.page--api-dex .search {
+  max-width: 760px;
+}
+
+/* 시안 픽셀 기준: 검색창 아래(y=266) → 카드 위(y=291) 25px */
+.page--api-dex .pokemon-list {
+  gap: 25px;
+}
+
+/* 팀 패널이 없으므로 한 열. 카드 영역은 260×4 + 20×3 = 1100에서 멈추고 왼쪽 정렬한다 */
+.page--api-dex .dex-layout {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.page--api-dex .dex-results {
+  max-width: 1100px;
+}
+
+.page--api-dex .card-grid {
+  gap: 20px;
+}
+
 /* 중간 폭: 슬롯 두 열이 너무 좁아지면 한 열로 바꾼다 */
 @media (max-width: 1100px) {
   .team-slots {
     grid-template-columns: minmax(0, 560px);
+  }
+
+  /* PokéAPI 도감: 좌우 여백 80을 줄여 카드 열이 너무 빨리 줄지 않게 한다 */
+  .page--api-dex {
+    padding-right: 40px;
+    padding-left: 40px;
   }
 
   /* 팀 패널을 도감 아래 한 열로 내린다 */
@@ -1404,5 +1604,51 @@ legend.field__label {
   .dialog__title {
     font-size: 21px;
     line-height: 28px;
+  }
+
+  /* ===== W05 PokéAPI 도감 모바일 (390×844 시안): 여백 24/20, 헤더 342×72, 검색 폼 326, 카드 164 2열·간격 14 ===== */
+  /* 시안 픽셀 기준: 배지 아래 → 검색창 위(y=214) 19px, 검색창 아래 → 카드 위(y=275) 19px */
+  .page--api-dex {
+    gap: 19px;
+    padding: 20px 24px;
+  }
+
+  .page--api-dex .pokemon-list {
+    gap: 19px;
+  }
+
+  /* W04 모바일 시안의 회색 도감 메뉴 대신 W05 시안처럼 분홍 활성 메뉴 */
+  .page--api-dex .nav-pill--dex.nav-pill--active {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+  }
+
+  /* W05 시안의 인원 표시는 숫자만(3 / 6). 화면 읽기 프로그램용 aria-label은 그대로다 */
+  .page--api-dex .team-count__label {
+    display: none;
+  }
+
+  .page--api-dex .dex-intro__title {
+    font-size: 24px;
+    line-height: 28px;
+  }
+
+  .page--api-dex .dex-intro__description {
+    font-size: 13px;
+    line-height: 18px;
+  }
+
+  /* 입력창 258 + 간격 12 + 검색 56 */
+  .page--api-dex .search {
+    max-width: 326px;
+    gap: 12px;
+  }
+
+  .page--api-dex .search .button {
+    padding: 12px 16px;
+  }
+
+  .page--api-dex .card-grid {
+    gap: 14px;
   }
 }

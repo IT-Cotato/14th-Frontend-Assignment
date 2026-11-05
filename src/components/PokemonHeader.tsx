@@ -1,9 +1,22 @@
 const brandName = 'PokéMate'
 
+/** ?preview 로컬 도감 (W04 시안) */
 const dexTitle = '포켓몬을 찾고 팀을 완성하세요'
 const dexDescription = '도감과 나의 팀을 한 화면에서 관리할 수 있어요.'
+/** PokéAPI 도감 (W05 시안) */
+const apiDexTitle = '실시간 포켓몬 도감'
+const apiDexDescription = '이름이나 도감 번호로 포켓몬을 바로 찾아보세요.'
 
 export type AppView = 'dex' | 'team'
+
+/** 지금 화면에 보이는 목록·검색 요청에서 계산한 PokéAPI 연결 상태 */
+export type ApiStatus = 'checking' | 'online' | 'error'
+
+const apiStatusLabels: Record<ApiStatus, string> = {
+  checking: 'PokéAPI 연결 중',
+  online: 'PokéAPI 온라인',
+  error: 'PokéAPI 연결 확인',
+}
 
 type PokemonHeaderProps = {
   currentView: AppView
@@ -11,6 +24,8 @@ type PokemonHeaderProps = {
   /** 실제 팀 state의 team.length에서 계산한 값 */
   teamCount: number
   teamLimit: number
+  /** PokéAPI 도감 화면일 때만 넘긴다. 있으면 W05 제목과 연결 상태 배지를 그린다. */
+  apiStatus?: ApiStatus
 }
 
 const navItems: { view: AppView; label: string }[] = [
@@ -23,6 +38,7 @@ function PokemonHeader({
   onNavigate,
   teamCount,
   teamLimit,
+  apiStatus,
 }: PokemonHeaderProps) {
   return (
     <header className="pokemon-header">
@@ -67,7 +83,18 @@ function PokemonHeader({
       </div>
 
       {/* 도감 소개는 도감 화면에서만 보인다. 내 팀 화면의 제목은 PokemonTeam이 그린다. */}
-      {currentView === 'dex' && (
+      {currentView === 'dex' && apiStatus && (
+        <div className="dex-intro">
+          <div className="dex-intro__text">
+            <h1 className="dex-intro__title">{apiDexTitle}</h1>
+            <p className="dex-intro__description">{apiDexDescription}</p>
+          </div>
+          <span className={`api-badge api-badge--${apiStatus}`}>
+            {apiStatusLabels[apiStatus]}
+          </span>
+        </div>
+      )}
+      {currentView === 'dex' && !apiStatus && (
         <div className="dex-intro">
           <div className="dex-intro__text">
             <h1 className="dex-intro__title">{dexTitle}</h1>
