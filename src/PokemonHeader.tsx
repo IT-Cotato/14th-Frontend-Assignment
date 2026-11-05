@@ -1,5 +1,4 @@
 import chuImg from './assets/chu.png' 
-import { useState } from 'react';               // 기억해야 하는 값(state)을 만드는 기능
 
 type HeaderBoxProps = {
     menu: 'home' | 'dict' | 'myTeam';
@@ -108,14 +107,14 @@ function PokemonTitle() {
             <div className='header2-box'>
 
                 <div className='title-box'>
-                    <header className='titleName'>실시간 포켓몬 도감</header>
+                    <header className='titleName'>포켓몬 도감</header>
                     <div className='disc'>
-                        이름이나 도감 번호로 포켓몬을 바로 찾아보세요.
+                        페이지를 이동해도 이전 포켓몬을 빠르게 다시 볼 수 있어요.
                     </div>
                 </div>
 
-                <div className='pokeOnline-box'>
-                    <span className="pokeOnline">PokéAPI 온라인</span>
+                <div className='latestlist-box'>
+                    <span className="latestlist-text">최신 목록</span>
                 </div>
 
             </div>
@@ -180,7 +179,7 @@ function PokemonSearch({
                     <input 
                         className='searchBar' 
                         type="text" 
-                        placeholder='pikachu'
+                        placeholder='이름 또는 번호'
                         value={search}
                         onChange={(e) => onSearchChange(e.target.value)}
                     />
