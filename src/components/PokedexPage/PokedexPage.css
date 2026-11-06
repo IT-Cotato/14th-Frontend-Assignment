@@ -1,0 +1,19 @@
+.pokedex-card-area {
+  position: relative;
+  width: 100%;
+  min-height: 350px;
+}
+
+/* 이전 카드의 높이는 유지하고, 로딩 중에는 상태 메시지만  */
+.pokedex-card-area__placeholder {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.pokedex-card-area .state-panel {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
