@@ -4,7 +4,6 @@ import type { PokemonCardResult, PokemonDetailResponse, PokemonListResponse, Pok
 const POKEMON_URL = 'https://pokeapi.co/api/v2/pokemon/'
 const detailCache = new Map<string, PokemonDetailResponse>()
 const speciesCache = new Map<string, PokemonSpeciesResponse>()
-let listCache: PokemonResource[] | undefined
 
 export class PokemonApiError extends Error {
   status: number
@@ -25,30 +24,23 @@ async function requestJson<T>(url: string, signal?: AbortSignal): Promise<T> {
   return response.json() as Promise<T>
 }
 
-// 전체 수를 먼저 확인하므로 151마리 등 고정된 개수에 의존하지 않습니다.
-// API 내부의 페이지 처리는 화면의 페이지네이션과 별개입니다.
-export async function fetchPokemonList(signal?: AbortSignal): Promise<PokemonResource[]> {
-  signal?.throwIfAborted()
-  if (listCache) return [...listCache]
-
-  const first = await requestJson<PokemonListResponse>(`${POKEMON_URL}?limit=1`, signal)
-  if (!first.next) {
-    listCache = first.results
-    return [...listCache]
-  }
-
-  const results: PokemonResource[] = []
-  let next: string | null = `${POKEMON_URL}?limit=${first.count}&offset=0`
-  while (next) {
-    const page: PokemonListResponse = await requestJson<PokemonListResponse>(next, signal)
-    results.push(...page.results)
-    next = page.next
-  }
-  listCache = results
-  return [...results]
+// 목록 캐시는 TanStack Query - limit/offset별로 관리
+export function fetchPokemonList(limit: number, offset: number, signal?: AbortSignal): Promise<PokemonListResponse> {
+  return requestJson<PokemonListResponse>(`${POKEMON_URL}?limit=${limit}&offset=${offset}`, signal)
 }
 
-// 목록 응답의 url을 그대로 전달합니다.
+// next/previous 응답 URL에서 다음 요청과 query key에 필요한 값을 구함
+export function getPokemonPageParams(url: string): { limit: number; offset: number } {
+  const params = new URL(url).searchParams
+  const limit = Number(params.get('limit'))
+  const offset = Number(params.get('offset') ?? 0)
+  if (!Number.isInteger(limit) || limit <= 0 || !Number.isInteger(offset) || offset < 0) {
+    throw new Error('올바르지 않은 포켓몬 목록 페이지 URL입니다.')
+  }
+  return { limit, offset }
+}
+
+// 목록 응답의 url을 그대로 전달
 export async function fetchPokemonDetail(url: string, signal?: AbortSignal): Promise<PokemonDetailResponse> {
   signal?.throwIfAborted()
   const cached = detailCache.get(url)
@@ -80,7 +72,7 @@ export async function fetchPokemonSpecies(url: string, signal?: AbortSignal): Pr
   return species
 }
 
-// 목록, 검색, 개별 재시도에 같은 한국어 이름 변환을 적용합니다.
+// 목록, 검색, 개별 재시도에 같은 한국어 이름으로
 export async function fetchPokemonCard(url: string, signal?: AbortSignal): Promise<Pokemon> {
   const detail = await fetchPokemonDetail(url, signal)
   const pokemon = toPokemon(detail)
@@ -96,8 +88,8 @@ export async function fetchPokemonCard(url: string, signal?: AbortSignal): Promi
   }
 }
 
-// 번호(25, 0025, #0025) 또는 정확한 영문 이름(pikachu)으로 상세 검색합니다.
-// 404만 빈 결과로 처리하고 네트워크/서버 오류는 호출한 화면에서 처리합니다.
+// 번호(25, 0025, #0025) 또는 정확한 영문 이름(pikachu)으로 상세 검색
+// 404만 빈 결과로 처리, 네트워크/서버 오류는 호출한 화면에서 처리
 export async function searchPokemon(query: string, signal?: AbortSignal): Promise<Pokemon | null> {
   const normalized = query.trim().toLowerCase()
   if (!normalized) return null
@@ -112,8 +104,7 @@ export async function searchPokemon(query: string, signal?: AbortSignal): Promis
   }
 }
 
-// 스크롤에서 필요한 목록 구간을 전달할 수 있습니다.
-// 전체 목록을 전달해도 상세 요청은 최대 6개씩만 동시에 실행합니다.
+// 전체 목록을 전달해도 상세 요청은 최대 6개씩만 동시에 실행됨
 export async function fetchPokemonCards(
   resources: PokemonResource[],
   signal?: AbortSignal,

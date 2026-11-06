@@ -1,6 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
-import { fetchPokemonCardResults, fetchPokemonCard, fetchPokemonList, searchPokemon } from '../../api/pokemon'
-import type { PokemonCardResult } from '../../api/pokemon.types'
+import { usePokemonPage } from '../../hooks/usePokemonPage'
+import { usePokemonSearch } from '../../hooks/usePokemonSearch'
 import PokemonCard from '../PokemonCard/PokemonCard'
 import PokemonErrorCard from '../PokemonCard/PokemonErrorCard'
 import type { Pokemon } from '../../types/pokemon'
@@ -8,140 +7,35 @@ import { filterPokemon } from '../../utils/filterPokemon'
 import PokemonSearch from '../PokemonSearch/PokemonSearch'
 import PokemonList from '../PokemonList/PokemonList'
 import StatePanel from '../StatePanel/StatePanel'
+import Pagination from '../Pagination/Pagination'
+import Button from '../Button/Button'
+import './PokedexPage.css'
 
 type PokedexPageProps = {
   onAdd: (pokemon: Pokemon) => void
 }
 
-type SearchState = {
-  query: string
-  status: 'loading' | 'success' | 'empty' | 'error'
-  pokemon: Pokemon | null
-}
-
 function PokedexPage({ onAdd }: PokedexPageProps) {
-  const [cards, setCards] = useState<PokemonCardResult[]>([])
-  const [retryingUrls, setRetryingUrls] = useState<string[]>([])
-  const retryControllers = useRef(new Map<string, AbortController>())
-  const [query, setQuery] = useState('')
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-  const [search, setSearch] = useState<SearchState | null>(null)
-  const searchController = useRef<AbortController | null>(null)
-  const listController = useRef<AbortController | null>(null)
-  const [listRequest, setListRequest] = useState(0)
+  const listQuery = usePokemonPage()
+  const { cards, retryCard, retryingUrls } = listQuery
+  const { query, search, changeQuery, submitSearch } = usePokemonSearch()
 
-  function retryList() {
-    listController.current?.abort()
-    retryControllers.current.forEach((request) => request.abort())
-    retryControllers.current.clear()
-    setRetryingUrls([])
-    setCards([])
-    setError('')
-    setLoading(true)
-    setListRequest((current) => current + 1)
-  }
-
-  async function retryCard(card: PokemonCardResult) {
-    if (retryControllers.current.has(card.url)) return
-    const controller = new AbortController()
-    retryControllers.current.set(card.url, controller)
-    setRetryingUrls((current) => [...current, card.url])
-    try {
-      const pokemon = await fetchPokemonCard(card.url, controller.signal)
-      if (controller.signal.aborted) return
-      setCards((current) => current.map((item) => item.url === card.url
-        ? { url: card.url, failed: false, pokemon } : item))
-    } catch {
-      // 재시도 실패 시 해당 오류 카드를 유지하고 다른 카드는 변경하지 않습니다.
-    } finally {
-      retryControllers.current.delete(card.url)
-      if (!controller.signal.aborted) setRetryingUrls((current) => current.filter((url) => url !== card.url))
-    }
-  }
-
-  function changeQuery(value: string) {
-    searchController.current?.abort()
-    setQuery(value)
-    setSearch(null)
-  }
-
-  async function submitSearch(value: string) {
-    searchController.current?.abort()
-    const term = value.trim()
-    setQuery(term)
-    if (!term) {
-      setSearch(null)
-      return
-    }
-    const controller = new AbortController()
-    searchController.current = controller
-    setSearch({ query: term, status: 'loading', pokemon: null })
-    try {
-      const result = await searchPokemon(term, controller.signal)
-      if (controller.signal.aborted || searchController.current !== controller) return
-      setSearch({ query: term, status: result ? 'success' : 'empty', pokemon: result })
-    } catch {
-      if (controller.signal.aborted || searchController.current !== controller) return
-      setSearch({ query: term, status: 'error', pokemon: null })
-    }
-  }
-
-  useEffect(() => {
-    const controller = new AbortController()
-    listController.current = controller
-    let active = true
-
-    async function load() {
-      try {
-        const resources = await fetchPokemonList(controller.signal)
-        if (!active || controller.signal.aborted) return
-        // 전체 상세 응답을 기다리지 않고 준비된 카드부터 표시합니다.
-        for (let offset = 0; offset < resources.length; offset += 24) {
-          const batch = await fetchPokemonCardResults(resources.slice(offset, offset + 24), controller.signal)
-          if (!active || controller.signal.aborted) return
-          setCards((current) => [...current, ...batch])
-        }
-      } catch (cause) {
-        if (!active || controller.signal.aborted) return
-        setError(cause instanceof Error ? cause.message : '포켓몬을 불러오지 못했어요.')
-      } finally {
-        if (active && !controller.signal.aborted) setLoading(false)
-      }
-    }
-
-    void load()
-    return () => {
-      active = false
-      controller.abort()
-    }
-  }, [listRequest])
-
-  useEffect(() => {
-    const pendingRetries = retryControllers.current
-    return () => {
-      searchController.current?.abort()
-      pendingRetries.forEach((request) => request.abort())
-      pendingRetries.clear()
-    }
-  }, [])
-
-  // 검색 결과는 파생 값이므로 별도 state나 Effect가 필요하지 않습니다.
   const filteredCards = cards.filter((card) => filterPokemon([card.pokemon], query, '').length > 0)
 
   return (
     <>
       <div className="pokedex-heading">
         <div>
-          <h1 className="pokedex-title">실시간 포켓몬 도감</h1>
-          <p className="pokedex-description">이름이나 도감 번호로 포켓몬을 바로 찾아보세요.</p>
+          <h1 className="pokedex-title">포켓몬 도감</h1>
+          <p className="pokedex-description">페이지를 이동해도 이전 포켓몬을 빠르게 다시 볼 수 있어요.</p>
         </div>
         <span className="pokedex-count-badge">
-          {error ? 'PokéAPI 요청 실패' : loading ? 'PokéAPI 불러오는 중' : 'PokéAPI 온라인'}
+          {listQuery.isError ? 'PokéAPI 요청 실패' : listQuery.isFetching ? 'PokéAPI 불러오는 중' : '최신 목록'}
         </span>
       </div>
       <PokemonSearch query={query} onQueryChange={changeQuery} onSearch={submitSearch}
         types={[]} selectedType="" onTypeChange={() => {}} />
+      <div className="pokedex-card-area">
       {search ? (
         <>
           {search.status === 'loading' && <StatePanel variant="loading" />}
@@ -156,7 +50,8 @@ function PokedexPage({ onAdd }: PokedexPageProps) {
       ) : (
         <>
           {filteredCards.length > 0 && (
-            <div className="pokemon-card-list">
+            <div className={`pokemon-card-list${listQuery.isPlaceholderData ? ' pokedex-card-area__placeholder' : ''}`}
+              aria-hidden={listQuery.isPlaceholderData || undefined} inert={listQuery.isPlaceholderData}>
               {filteredCards.map((card) => card.failed ? (
                 <PokemonErrorCard key={card.pokemon.number} pokemon={card.pokemon}
                   retrying={retryingUrls.includes(card.url)} onRetry={() => void retryCard(card)} />
@@ -165,10 +60,29 @@ function PokedexPage({ onAdd }: PokedexPageProps) {
               ))}
             </div>
           )}
-          {filteredCards.length === 0 && !loading && !error && <StatePanel variant="empty" />}
-          {loading && filteredCards.length === 0 && <StatePanel variant="loading" />}
-          {error && <StatePanel variant="error" onRetry={retryList} />}
+          {filteredCards.length === 0 && listQuery.isSuccess && !listQuery.isPlaceholderData && <StatePanel variant="empty" />}
+          {(listQuery.isPending || listQuery.isPlaceholderData) && <StatePanel variant="loading" />}
+          {listQuery.isError && cards.length === 0 && <StatePanel variant="error" onRetry={() => void listQuery.refetch()} />}
         </>
+      )}
+      </div>
+          {!search && listQuery.hasData && (
+            <Pagination
+              currentPage={listQuery.currentPage}
+              totalPages={listQuery.totalPages}
+              disabled={listQuery.isPlaceholderData}
+              hasPrevious={listQuery.hasPrevious}
+              hasNext={listQuery.hasNext}
+              onPrevious={listQuery.previousPage}
+              onNext={listQuery.nextPage}
+              onPageChange={listQuery.changePage}
+            />
+          )}
+      {!search && listQuery.isError && cards.length > 0 && (
+        <div role="alert">
+          <p className="pokedex-description">목록을 갱신하지 못했어요. 이전에 불러온 목록을 표시합니다.</p>
+          <Button onClick={() => void listQuery.refetch()} disabled={listQuery.isFetching}>다시 시도</Button>
+        </div>
       )}
     </>
   )
