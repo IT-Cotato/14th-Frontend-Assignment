@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { Link } from 'react-router';
 import './Button.css';
 
 interface ButtonProps {
@@ -7,16 +8,22 @@ interface ButtonProps {
   size?: 'md' | 'sm';
   disabled?: boolean;
   onClick?: () => void;
+  to?: string;
 }
 
-function Button({ children, variant = 'primary', size = 'md', disabled = false, onClick }: ButtonProps) {
+function Button({ children, variant = 'primary', size = 'md', disabled = false, onClick, to }: ButtonProps) {
+  const className = `button button--${variant} button--${size}`;
+
+  if (to !== undefined && !disabled) {
+    return (
+      <Link to={to} className={className}>
+        {children}
+      </Link>
+    );
+  }
+
   return (
-    <button
-      type="button"
-      className={`button button--${variant} button--${size}`}
-      disabled={disabled}
-      onClick={onClick}
-    >
+    <button type="button" className={className} disabled={disabled} onClick={onClick}>
       {children}
     </button>
   );

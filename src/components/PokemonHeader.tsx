@@ -7,8 +7,6 @@ interface PokemonHeaderProps {
   description: string;
   heroImageUrl: string;
   heroImageName: string;
-  onPokedexClick: () => void;
-  onTeamClick: () => void;
 }
 
 function PokemonHeader({
@@ -17,8 +15,6 @@ function PokemonHeader({
   description,
   heroImageUrl,
   heroImageName,
-  onPokedexClick,
-  onTeamClick,
 }: PokemonHeaderProps) {
   return (
     <section className="pokemon-header">
@@ -27,10 +23,10 @@ function PokemonHeader({
         <h1 className="pokemon-header__title">{title}</h1>
         <p className="pokemon-header__description">{description}</p>
         <div className="pokemon-header__actions">
-          <Button variant="primary" onClick={onPokedexClick}>
+          <Button variant="primary" to="/pokemon">
             도감 보기
           </Button>
-          <Button variant="secondary" onClick={onTeamClick}>
+          <Button variant="secondary" to="/my-team">
             내 팀
           </Button>
         </div>

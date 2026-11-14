@@ -1,7 +1,7 @@
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { POKEDEX_PAGE_SIZE, fetchPokemonByUrl, fetchPokemonList } from '../api/pokeapi';
 import { pokemonKeys } from '../api/queryKeys';
-import type { FailedPokemon, Pokemon } from '../types/pokemon';
+import type { FailedPokemon, LoadingPokemon, Pokemon } from '../types/pokemon';
 
 export type PokedexPageStatus = 'loading' | 'error' | 'success';
 
@@ -27,17 +27,18 @@ export function usePokedexPage(offset: number, enabled: boolean) {
   let status: PokedexPageStatus = 'success';
   if (listQuery.data === undefined) {
     status = listQuery.isError && !listQuery.isFetching ? 'error' : 'loading';
-  } else if (detailQueries.some((query) => !query.isFetched)) {
-    status = 'loading';
   }
 
   const isBackgroundFetching =
-    status === 'success' &&
-    (listQuery.isFetching || detailQueries.some((query) => query.isFetching));
+    listQuery.data !== undefined &&
+    (listQuery.isFetching || detailQueries.some((query) => query.isFetched && query.isFetching));
 
-  const pokemons: (Pokemon | FailedPokemon)[] = items.map(
-    (item, index) => detailQueries[index]?.data ?? { id: item.id, failed: true },
-  );
+  const pokemons: (Pokemon | LoadingPokemon | FailedPokemon)[] = items.map((item, index) => {
+    const query = detailQueries[index];
+    if (query?.data) return query.data;
+    if (query?.isFetched) return { id: item.id, failed: true };
+    return { id: item.id, loading: true };
+  });
 
   function retry() {
     void listQuery.refetch();

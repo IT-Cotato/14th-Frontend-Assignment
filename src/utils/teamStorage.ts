@@ -1,14 +1,17 @@
+import { isPokemonType } from '../api/pokeapi';
 import { POKEMONS } from '../data/pokemons';
-import { INITIAL_TEAM, TEAM_ROLES, TEAM_SIZE } from '../data/team';
-import type { TeamMember, TeamRole } from '../types/pokemon';
+import { INITIAL_TEAM, TEAM_ROLES, TEAM_SIZE, createTeamPokemonId } from '../data/team';
+import type { Pokemon, TeamMember, TeamRole } from '../types/pokemon';
 
 const STORAGE_KEY = 'pokemate-team';
-
+const TEAM_POKEMON_ID_PATTERN = /^tp_\d+$/;
 
 interface StoredMember {
-  id: number;
+  teamPokemonId: string;
+  pokemon: Pokemon;
   nickname: string;
   role?: TeamRole;
+  memo: string;
 }
 
 export interface LoadedTeam {
@@ -16,17 +19,41 @@ export interface LoadedTeam {
   recovered: boolean;
 }
 
-function toMember(item: unknown): TeamMember | null {
-  if (typeof item !== 'object' || item === null) return null;
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
+}
 
-  const { id, nickname, role } = item as Record<string, unknown>;
+function toPokemon(value: unknown): Pokemon | null {
+  if (!isRecord(value)) return null;
+
+  const { id, name, types, imageUrl } = value;
+  const localPokemon = POKEMONS.find((pokemon) => pokemon.id === id);
+  if (localPokemon) return localPokemon;
+
+  if (typeof id !== 'number' || typeof name !== 'string' || typeof imageUrl !== 'string') return null;
+  if (!Array.isArray(types) || !types.every((type) => typeof type === 'string' && isPokemonType(type))) {
+    return null;
+  }
+  return { id, name, types, imageUrl };
+}
+
+function toMember(item: unknown): (Omit<TeamMember, 'teamPokemonId'> & { teamPokemonId?: string }) | null {
+  if (!isRecord(item)) return null;
+
+  const { teamPokemonId, nickname, role, memo } = item;
   if (typeof nickname !== 'string') return null;
   if (role !== undefined && !TEAM_ROLES.includes(role as TeamRole)) return null;
 
-  const pokemon = POKEMONS.find((entry) => entry.id === id);
-  if (!pokemon) return null;
+  if (teamPokemonId === undefined) {
+    const pokemon = POKEMONS.find((entry) => entry.id === item.id);
+    return pokemon ? { pokemon, nickname, role: role as TeamRole | undefined, memo: '' } : null;
+  }
 
-  return { pokemon, nickname, role: role as TeamRole | undefined };
+  if (typeof teamPokemonId !== 'string' || !TEAM_POKEMON_ID_PATTERN.test(teamPokemonId)) return null;
+  if (typeof memo !== 'string') return null;
+
+  const pokemon = toPokemon(item.pokemon);
+  return pokemon ? { teamPokemonId, pokemon, nickname, role: role as TeamRole | undefined, memo } : null;
 }
 
 export function loadTeam(): LoadedTeam {
@@ -34,7 +61,6 @@ export function loadTeam(): LoadedTeam {
   try {
     raw = localStorage.getItem(STORAGE_KEY);
   } catch {
-    // 브라우저가 저장소 접근을 막은 경우: 손상이 아니므로 안내 없이 초기 팀
     return { team: INITIAL_TEAM, recovered: false };
   }
 
@@ -46,7 +72,7 @@ export function loadTeam(): LoadedTeam {
   try {
     data = JSON.parse(raw);
   } catch {
-    return recoveredResult; 
+    return recoveredResult;
   }
 
   if (!Array.isArray(data) || data.length > TEAM_SIZE) return recoveredResult;
@@ -54,25 +80,33 @@ export function loadTeam(): LoadedTeam {
   const team: TeamMember[] = [];
   for (const item of data) {
     const member = toMember(item);
-    if (!member || team.some((current) => current.pokemon.id === member.pokemon.id)) {
-      return recoveredResult;
-    }
-    team.push(member);
+    if (!member) return recoveredResult;
+
+    const isDuplicate = team.some(
+      (current) =>
+        current.pokemon.id === member.pokemon.id || current.teamPokemonId === member.teamPokemonId,
+    );
+    if (isDuplicate) return recoveredResult;
+
+    team.push({ ...member, teamPokemonId: member.teamPokemonId ?? createTeamPokemonId(team) });
   }
 
   return { team, recovered: false };
 }
 
-export function saveTeam(team: readonly TeamMember[]): void {
-  const data: StoredMember[] = team.map(({ pokemon, nickname, role }) => ({
-    id: pokemon.id,
+export function saveTeam(team: readonly TeamMember[]): boolean {
+  const data: StoredMember[] = team.map(({ teamPokemonId, pokemon, nickname, role, memo }) => ({
+    teamPokemonId,
+    pokemon: { id: pokemon.id, name: pokemon.name, types: pokemon.types, imageUrl: pokemon.imageUrl },
     nickname,
     role,
+    memo,
   }));
 
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    return true;
   } catch {
-    // 저장소를 쓸 수 없는 환경이면 저장만 건너뜀 
+    return false;
   }
 }

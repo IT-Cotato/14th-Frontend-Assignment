@@ -1,18 +1,19 @@
-import PokemonCard, { PokemonCardError } from './PokemonCard';
+import PokemonCard, { PokemonCardError, PokemonCardLoading } from './PokemonCard';
 import StatePanel from './StatePanel';
 import { withTopicParticle } from '../utils/josa';
-import type { FailedPokemon, Pokemon } from '../types/pokemon';
+import type { FailedPokemon, LoadingPokemon, Pokemon } from '../types/pokemon';
 import './PokemonList.css';
+import { Link } from 'react-router';
 
 interface PokemonListProps {
   title?: string;
   moreLabel?: string;
-  pokemons: readonly (Pokemon | FailedPokemon)[];
+  pokemons: readonly (Pokemon | LoadingPokemon | FailedPokemon)[];
   teamIds: readonly number[];
   teamLimit: number;
   duplicateName?: string | null;
   onAdd: (pokemon: Pokemon) => void;
-  onMoreClick?: () => void;
+  moreTo?: string;
   onReset?: () => void;
   onRetryCard?: (id: number) => void;
 }
@@ -25,7 +26,7 @@ function PokemonList({
   teamLimit,
   duplicateName = null,
   onAdd,
-  onMoreClick,
+  moreTo,
   onReset,
   onRetryCard,
 }: PokemonListProps) {
@@ -36,10 +37,10 @@ function PokemonList({
       {title && (
         <div className="pokemon-list__head">
           <h2 className="pokemon-list__title">{title}</h2>
-          {moreLabel && (
-            <button type="button" className="pokemon-list__more" onClick={onMoreClick}>
+          {moreLabel && moreTo && (
+            <Link to={moreTo} className="pokemon-list__more">
               {moreLabel}
-            </button>
+            </Link>
           )}
         </div>
       )}
@@ -76,6 +77,9 @@ function PokemonList({
       ) : (
         <div className="pokemon-list__grid">
           {pokemons.map((pokemon) => {
+            if ('loading' in pokemon) {
+              return <PokemonCardLoading key={pokemon.id} />;
+            }
             if ('failed' in pokemon) {
               return (
                 <PokemonCardError
