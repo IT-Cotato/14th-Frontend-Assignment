@@ -78,7 +78,7 @@ function App() {
     saveTeam(team);
   }, [team]);
 
-    function getSearchWith(key: string, value: string | null) {
+  function getSearchWith(key: string, value: string | null) {
     const next = new URLSearchParams(searchParams);
     if (value === null) next.delete(key);
     else next.set(key, value);
@@ -281,8 +281,7 @@ function App() {
             element={<TeamEditPage team={team} onSave={handleMemberSave} />}
           />
 
-        
-        <Route path="*" element={<NotFoundPage />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </div>
 
