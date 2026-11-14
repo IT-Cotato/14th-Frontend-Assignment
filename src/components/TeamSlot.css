@@ -10,11 +10,6 @@
   box-shadow: var(--shadow-card);
 }
 
-.team-slot--editing {
-  padding: 0 11px 0 10px;
-  border: 2px solid #2a75bb;
-}
-
 .team-slot--empty {
   padding-left: 13px;
 }

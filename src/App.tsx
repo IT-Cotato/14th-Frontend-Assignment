@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import Header, { type NavItem } from './components/Header';
+import { Navigate, Route, Routes, useLocation, useMatch, useNavigate, useSearchParams } from 'react-router';
+import Header from './components/Header';
 import PokemonHeader from './components/PokemonHeader';
 import PokedexTitle from './components/PokedexTitle';
 import SearchBar from './components/SearchBar';
@@ -8,70 +9,103 @@ import PokedexList from './components/PokedexList';
 import PokedexSearchResult from './components/PokedexSearchResult';
 import TeamTitle from './components/TeamTitle';
 import TeamSlotList from './components/TeamSlotList';
-import EditDialog from './components/EditDialog';
 import ConfirmDialog from './components/ConfirmDialog';
 import Toast from './components/Toast';
 import StatePanel from './components/StatePanel';
 import { POKEMONS } from './data/pokemons';
-import { TEAM_SIZE } from './data/team';
+import { TEAM_SIZE, createTeamPokemonId } from './data/team';
 import { withObjectParticle } from './utils/josa';
 import { loadTeam, saveTeam } from './utils/teamStorage';
 import { usePokemonSearch } from './hooks/usePokemonSearch';
 import { usePokedexPage } from './hooks/usePokedexPage';
-import type { Pokemon, TeamMember, TeamRole } from './types/pokemon';
+import PokemonDetailPage from './pages/PokemonDetailPage';
+import TeamEditPage from './pages/TeamEditPage';
+import NotFoundPage from './pages/NotFoundPage';
+import { POKEDEX_PAGE_SIZE } from './api/pokeapi';
+import type { Pokemon, TeamMember, TeamMemberEdit } from './types/pokemon';
 import pikachu from './assets/Pikachu.png';
 
 
 const RECOMMENDED_POKEMONS = POKEMONS.slice(0, 4);
 const INITIAL_LOAD = loadTeam();
 const TOAST_DURATION = 2000;
+function readPage(value: string | null): { page: number; valid: boolean } {
+  if (value === null) return { page: 1, valid: true };
+  if (!/^\d+$/.test(value) || Number(value) < 1) return { page: 1, valid: false };
+  return { page: Number(value), valid: true };
+}
 const NOTICE_DURATION = 3000;
 
 function App() {
-  const [page, setPage] = useState<NavItem>('홈');
   const [searchInput, setSearchInput] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [pokedexOffset, setPokedexOffset] = useState(0);
+  const [syncedQuery, setSyncedQuery] = useState('');
   const [team, setTeam] = useState<readonly TeamMember[]>(INITIAL_LOAD.team);
   const [savedTeam, setSavedTeam] = useState<readonly TeamMember[]>(INITIAL_LOAD.team);
   const [showRecoverNotice, setShowRecoverNotice] = useState(INITIAL_LOAD.recovered);
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [toast, setToast] = useState<{ id: number; message: string } | null>(null);
-  const [duplicateNotice, setDuplicateNotice] = useState<{ id: number; name: string } | null>(null);
+  const [duplicateNotice, setDuplicateNotice] = useState<{ id: number; name: string; pathname: string } | null>(null);
+
+  const location = useLocation();
+  const navigate = useNavigate();
+  const isPokedexRoute = useMatch('/pokemon') !== null;
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const urlQuery = isPokedexRoute ? (searchParams.get('q') ?? '').trim() : '';
+  const searchQuery = urlQuery.toLowerCase();
+  const { page: pokedexPage, valid: isValidPage } = readPage(searchParams.get('page'));
+  const pokedexOffset = (pokedexPage - 1) * POKEDEX_PAGE_SIZE;
+
+  if (isPokedexRoute && urlQuery !== syncedQuery) {
+    setSyncedQuery(urlQuery);
+    setSearchInput(urlQuery);
+  }
 
   const search = usePokemonSearch(searchQuery);
-  const pokedex = usePokedexPage(pokedexOffset, page === '도감' && searchQuery === '');
+  const pokedex = usePokedexPage(pokedexOffset, isPokedexRoute && searchQuery === '');
+  const lastPage = Math.max(Math.ceil(pokedex.count / POKEDEX_PAGE_SIZE), 1);
+
+  let correctedPage: number | null = null;
+  if (!isValidPage) correctedPage = 1;
+  else if (pokedex.status === 'success' && pokedexPage > lastPage) correctedPage = lastPage;
+
   const teamIds = team.map((member) => member.pokemon.id);
-  const editingIndex = team.findIndex((member) => member.pokemon.id === editingId);
-  const deletingMember = team.find((member) => member.pokemon.id === deletingId);
+  const deletingMember = team.find((member) => member.teamPokemonId === deletingId);
+  const duplicateName =
+    duplicateNotice?.pathname === location.pathname ? duplicateNotice.name : null;
 
   useEffect(() => {
     saveTeam(team);
   }, [team]);
 
-  function navigate(nextPage: NavItem) {
-    setPage(nextPage);
-    setDuplicateNotice(null);
+    function getSearchWith(key: string, value: string | null) {
+    const next = new URLSearchParams(searchParams);
+    if (value === null) next.delete(key);
+    else next.set(key, value);
+    return next;
   }
 
   function handleSearch() {
-    const nextQuery = searchInput.trim().toLowerCase();
-    if (nextQuery === searchQuery) {
+    const nextQuery = searchInput.trim();
+    if (nextQuery.toLowerCase() === searchQuery) {
       search.retry();
       return;
     }
-    setSearchQuery(nextQuery);
+    setSearchParams(getSearchWith('q', nextQuery === '' ? null : nextQuery));
+  }
+
+  function handlePageChange(offset: number) {
+    setSearchParams(getSearchWith('page', String(offset / POKEDEX_PAGE_SIZE + 1)));
   }
 
   function handleHomeSearch() {
-    handleSearch();
-    navigate('도감');
+    const nextQuery = searchInput.trim();
+    navigate(nextQuery === '' ? '/pokemon' : `/pokemon?${new URLSearchParams({ q: nextQuery })}`);
   }
 
   function showDuplicateNotice(name: string) {
     const id = Date.now();
-    setDuplicateNotice({ id, name });
+    setDuplicateNotice({ id, name, pathname: location.pathname });
     setTimeout(() => {
       setDuplicateNotice((current) => (current?.id === id ? null : current));
     }, NOTICE_DURATION);
@@ -96,23 +130,23 @@ function App() {
     setTeam((prev) => {
       if (prev.some((member) => member.pokemon.id === pokemon.id)) return prev;
       if (prev.length >= TEAM_SIZE) return prev;
-      return [...prev, { pokemon, nickname: '' }];
+      return [...prev, { teamPokemonId: createTeamPokemonId(prev), pokemon, nickname: '', memo: '' }];
     });
     setDuplicateNotice(null);
     showToast(`${withObjectParticle(pokemon.name)} 팀에 추가했어요.`);
   }
 
-  function handleEditSave(nickname: string, role: TeamRole | undefined) {
-    setTeam((prev) =>
-      prev.map((member) =>
-        member.pokemon.id === editingId ? { ...member, nickname, role } : member,
-      ),
+  async function handleMemberSave(teamPokemonId: string, values: TeamMemberEdit): Promise<boolean> {
+    const nextTeam = team.map((member) =>
+      member.teamPokemonId === teamPokemonId ? { ...member, ...values } : member,
     );
-    setEditingId(null);
+    if (!saveTeam(nextTeam)) return false;
+    setTeam(nextTeam);
+    return true;
   }
 
   function handleDeleteConfirm() {
-    setTeam((prev) => prev.filter((member) => member.pokemon.id !== deletingId));
+    setTeam((prev) => prev.filter((member) => member.teamPokemonId !== deletingId));
     setDeletingId(null);
   }
 
@@ -127,14 +161,8 @@ function App() {
   return (
     <>
       <div className="app">
-        <Header
-          activeNav={page}
-          teamCount={team.length}
-          teamLimit={TEAM_SIZE}
-          onNavigate={navigate}
-        />
+        <Header teamCount={team.length} teamLimit={TEAM_SIZE} />
 
-        
         {showRecoverNotice && (
           <StatePanel
             tone="error"
@@ -145,106 +173,118 @@ function App() {
           />
         )}
 
-        {page === '홈' && (
-          <>
-            <PokemonHeader
-              badge="오늘의 추천"
-              title="포켓몬과 함께하는 하루"
-              description="좋아하는 포켓몬을 찾고 나만의 팀을 만들어 보세요."
-              heroImageUrl={pikachu}
-              heroImageName="피카츄"
-              onPokedexClick={() => navigate('도감')}
-              onTeamClick={() => navigate('내 팀')}
-            />
-            <SearchBar
-              placeholder="이름 또는 번호"
-              value={searchInput}
-              onChange={setSearchInput}
-              onSearch={handleHomeSearch}
-            />
-            <PokemonList
-              title="추천 포켓몬"
-              moreLabel="전체 보기"
-              pokemons={RECOMMENDED_POKEMONS}
-              teamIds={teamIds}
-              teamLimit={TEAM_SIZE}
-              duplicateName={duplicateNotice?.name ?? null}
-              onAdd={handleAdd}
-              onMoreClick={() => navigate('도감')}
-            />
-          </>
-        )}
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <>
+                <PokemonHeader
+                  badge="오늘의 추천"
+                  title="포켓몬과 함께하는 하루"
+                  description="좋아하는 포켓몬을 찾고 나만의 팀을 만들어 보세요."
+                  heroImageUrl={pikachu}
+                  heroImageName="피카츄"
+                />
+                <SearchBar
+                  placeholder="이름 또는 번호"
+                  value={searchInput}
+                  onChange={setSearchInput}
+                  onSearch={handleHomeSearch}
+                />
+                <PokemonList
+                  title="추천 포켓몬"
+                  moreLabel="전체 보기"
+                  moreTo="/pokemon"
+                  pokemons={RECOMMENDED_POKEMONS}
+                  teamIds={teamIds}
+                  teamLimit={TEAM_SIZE}
+                  duplicateName={duplicateName}
+                  onAdd={handleAdd}
+                />
+              </>
+            }
+          />
 
-        {page === '도감' && (
-          <>
-            <PokedexTitle
-              title="포켓몬 도감"
-              description="페이지를 이동해도 이전 포켓몬을 빠르게 다시 볼 수 있어요."
-              badge={pokedex.isBackgroundFetching ? '갱신 중' : '최신 목록'}
-            />
-            <SearchBar
-              placeholder="이름 또는 번호"
-              value={searchInput}
-              onChange={setSearchInput}
-              onSearch={handleSearch}
-              status={
-                search.status === 'loading' || search.status === 'error'
-                  ? search.status
-                  : 'default'
-              }
-            />
-            {searchQuery === '' ? (
-              <PokedexList
-                pokedex={pokedex}
-                offset={pokedexOffset}
-                onOffsetChange={setPokedexOffset}
-                teamIds={teamIds}
-                teamLimit={TEAM_SIZE}
-                duplicateName={duplicateNotice?.name ?? null}
-                onAdd={handleAdd}
-              />
-            ) : (
-              <PokedexSearchResult
-                status={search.status}
-                pokemon={search.pokemon}
-                onRetry={search.retry}
-                teamIds={teamIds}
-                teamLimit={TEAM_SIZE}
-                duplicateName={duplicateNotice?.name ?? null}
-                onAdd={handleAdd}
-              />
-            )}
-          </>
-        )}
+          <Route
+            path="/pokemon"
+            element={
+              <>
+                {correctedPage !== null && (
+                  <Navigate replace to={{ search: `?${getSearchWith('page', String(correctedPage))}` }} />
+                )}
+                <PokedexTitle
+                  title="포켓몬 도감"
+                  description="페이지를 이동해도 이전 포켓몬을 빠르게 다시 볼 수 있어요."
+                  badge={pokedex.isBackgroundFetching ? '갱신 중' : '최신 목록'}
+                />
+                <SearchBar
+                  placeholder="이름 또는 번호"
+                  value={searchInput}
+                  onChange={setSearchInput}
+                  onSearch={handleSearch}
+                  status={
+                    search.status === 'loading' || search.status === 'error'
+                      ? search.status
+                      : 'default'
+                  }
+                />
+                {searchQuery === '' ? (
+                  <PokedexList
+                    pokedex={pokedex}
+                    offset={pokedexOffset}
+                    onOffsetChange={handlePageChange}
+                    teamIds={teamIds}
+                    teamLimit={TEAM_SIZE}
+                    duplicateName={duplicateName}
+                    onAdd={handleAdd}
+                  />
+                ) : (
+                  <PokedexSearchResult
+                    status={search.status}
+                    pokemon={search.pokemon}
+                    onRetry={search.retry}
+                    teamIds={teamIds}
+                    teamLimit={TEAM_SIZE}
+                    duplicateName={duplicateName}
+                    onAdd={handleAdd}
+                  />
+                )}
+              </>
+            }
+          />
+          <Route
+            path="/pokemon/:pokemonId"
+            element={<PokemonDetailPage teamIds={teamIds} teamLimit={TEAM_SIZE} onAdd={handleAdd} />}
+          />
 
-        {page === '내 팀' && (
-          <>
-            <TeamTitle
-              teamCount={team.length}
-              teamLimit={TEAM_SIZE}
-              onSave={handleTeamSave}
-              onCancel={handleTeamCancel}
-            />
-            <TeamSlotList
-              team={team}
-              size={TEAM_SIZE}
-              editingId={editingId}
-              onEdit={setEditingId}
-              onDelete={setDeletingId}
-            />
-          </>
-        )}
+          <Route
+            path="/my-team"
+            element={
+              <>
+                <TeamTitle
+                  teamCount={team.length}
+                  teamLimit={TEAM_SIZE}
+                  onSave={handleTeamSave}
+                  onCancel={handleTeamCancel}
+                />
+                <TeamSlotList
+                  team={team}
+                  size={TEAM_SIZE}
+                  onDelete={setDeletingId}
+                />
+              </>
+            }
+          />
+          
+          <Route
+            path="/my-team/:teamPokemonId/edit"
+            element={<TeamEditPage team={team} onSave={handleMemberSave} />}
+          />
+
+        
+        <Route path="*" element={<NotFoundPage />} />
+        </Routes>
       </div>
-
-      {editingIndex !== -1 && (
-        <EditDialog
-          key={editingId}
-          member={team[editingIndex]}
-          slotNumber={editingIndex + 1}
-          onCancel={() => setEditingId(null)}
-          onSave={handleEditSave}
-        />
-      )}
 
       {deletingMember && (
         <ConfirmDialog

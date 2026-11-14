@@ -1,26 +1,26 @@
 .edit-dialog__slot {
-  margin-top: 6px;
+  margin-top: 13px;
   color: var(--color-text-sub);
   font-size: 12px;
 }
 
 .edit-dialog__label {
   display: block;
-  margin-top: 18px;
+  margin-top: 21px;
   font-size: 14px;
   font-weight: 700;
   line-height: 1.4;
 }
 
 .edit-dialog__label--role {
-  margin-top: 16px;
+  margin-top: 18px;
 }
 
 .edit-dialog__input {
   width: 560px;
   max-width: 100%;
   height: 44px;
-  margin-top: 10px;
+  margin-top: 8px;
   padding: 0 13px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-input);
@@ -49,7 +49,7 @@
 }
 
 .edit-dialog__roles {
-  margin-top: 10px;
+  margin-top: 8px;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -69,4 +69,36 @@
 .edit-dialog__role--active {
   background-color: #2a75bb;
   color: #ffffff;
+}
+
+
+.edit-dialog__label--memo {
+  margin-top: 18px;
+}
+
+.edit-panel {
+  width: 640px;
+  max-width: 100%;
+  padding: 23px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+
+.edit-panel__title {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 37px;
+}
+
+.edit-panel__actions {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.edit-panel__actions .button {
+  box-shadow: none;
 }

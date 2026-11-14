@@ -4,8 +4,7 @@ import './TeamSlot.css';
 
 interface TeamSlotProps {
   member?: TeamMember;
-  isEditing?: boolean;
-  onEdit?: () => void;
+  editTo?: string;
   onDelete?: () => void;
 }
 
@@ -30,7 +29,7 @@ const TYPE_LABELS: Record<PokemonType, string> = {
   FAIRY: '페어리',
 };
 
-function TeamSlot({ member, isEditing = false, onEdit, onDelete }: TeamSlotProps) {
+function TeamSlot({ member, editTo, onDelete }: TeamSlotProps) {
   if (!member) {
     return (
       <div className="team-slot team-slot--empty">
@@ -53,7 +52,7 @@ function TeamSlot({ member, isEditing = false, onEdit, onDelete }: TeamSlotProps
   if (role) subLabels.push(role);
 
   return (
-    <div className={`team-slot${isEditing ? ' team-slot--editing' : ''}`}>
+    <div className="team-slot">
       <div className="team-slot__artwork">
         <img src={pokemon.imageUrl} alt={`${pokemon.name} 일러스트`} />
       </div>
@@ -64,7 +63,7 @@ function TeamSlot({ member, isEditing = false, onEdit, onDelete }: TeamSlotProps
         <p className="team-slot__sub">{subLabels.join(' · ')}</p>
       </div>
       <div className="team-slot__actions">
-        <Button variant={isEditing ? 'primary' : 'secondary'} size="sm" onClick={onEdit}>
+        <Button variant="secondary" size="sm" to={editTo}>
           편집
         </Button>
         <Button variant="primary" size="sm" onClick={onDelete}>
