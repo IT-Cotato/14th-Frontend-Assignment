@@ -28,9 +28,8 @@
   display: inline-flex;
   align-items: center;
   flex-shrink: 0;
-  background-color: var(--color-online-bg);
+  background-color: var(--color-badge);
   border-radius: var(--radius-pill);
-  color: var(--color-online-text);
   font-size: 12px;
   font-weight: 700;
 }
