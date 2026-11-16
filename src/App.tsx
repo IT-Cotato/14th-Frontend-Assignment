@@ -74,10 +74,6 @@ function App() {
   const [searchInput, setSearchInput] = useState('');
   // 검색 버튼을 눌러서 확정된 검색어 (목록 필터에 실제로 쓰임)
   const [searchKeyword, setSearchKeyword] = useState('');
-  // 정렬 (오름차순, 내림차순)
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-  // 선택한 타입
-  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   // 중복 추가를 시도한 포켓몬 이름. 안내가 필요 없으면 null
   const [duplicateName, setDuplicateName] = useState<string | null>(null);
   // 복구 안내를 보여줄지. 처음엔 "복구했으면 true", 확인 누르면 false
@@ -147,10 +143,6 @@ function App() {
             search={searchInput}
             onSearchChange={setSearchInput}
             onSearch={() => setSearchKeyword(searchInput)}
-            sortOrder={sortOrder}
-            onSortChange={setSortOrder}
-            selectedType={selectedTypes}
-            onTypeChange={setSelectedTypes}
           />
           <PokemonReco />
           <PokemonList
@@ -159,8 +151,6 @@ function App() {
             onAddToTeam={handleAddToTeam}
             isTeamFull={isTeamFull}
             duplicateName={duplicateName}      // 중복 안내용 이름 전달
-            sortOrder={sortOrder}
-            selectedType={selectedTypes}
           />
         </>
       ) : menu === 'dict' ? (
@@ -175,18 +165,12 @@ function App() {
 
           {recoverNotice}
 
-          <PokemonTitle
-            teamCount={team.length}
-            teamMax={TEAM_MAX}
-          />
+          <PokemonTitle/>
+          
           <PokemonSearch
             search={searchInput}
             onSearchChange={setSearchInput}
             onSearch={() => setSearchKeyword(searchInput)}
-            sortOrder={sortOrder}
-            onSortChange={setSortOrder}
-            selectedType={selectedTypes}
-            onTypeChange={setSelectedTypes}
           />
 
           <div className='dict-content-box'>
@@ -196,8 +180,6 @@ function App() {
               onAddToTeam={handleAddToTeam}
               isTeamFull={isTeamFull}
               duplicateName={duplicateName}      // 중복 안내용 이름 전달
-              sortOrder={sortOrder}
-              selectedType={selectedTypes}
             />
 
             <TeamSidebar

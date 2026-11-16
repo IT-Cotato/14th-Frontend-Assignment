@@ -554,16 +554,16 @@ box-shadow: 0 8px 24px 0 rgba(20, 33, 61, 0.08);
   line-height: 25px; /* 166.667% */
 }
 
-.pokeOnline-box {
+.latestlist-box {
   display: flex;
   padding: 8px 12px;
   align-items: flex-start;
   border-radius: 999px;
-  background: var(--color-success-soft);
+  background: var(--yellow);
 }
 
-.pokeOnline {
-  color: var(--color-text-success);
+.latestlist-text {
+  color: var(--ink);
   font-family: "Noto Sans KR";
   font-size: 12px;
   font-style: normal;
@@ -905,7 +905,7 @@ box-shadow: 0 8px 24px 0 rgba(20, 33, 61, 0.08);
       align-self: stretch;
     }
 
-    .pokeOnline-box {
+    .latestlist-box {
       align-self: flex-end;
       flex-shrink: 0;
       white-space: nowrap;
