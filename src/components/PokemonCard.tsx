@@ -13,6 +13,9 @@ type PokemonCardProps =
           onAdd: () => void;
       }
     | {
+          variant: "loading";
+      }
+    | {
           variant: "error";
           id: number;
           onRetry: () => void;
@@ -23,6 +26,22 @@ function formatNumber(id: number) {
 }
 
 function PokemonCard(props: PokemonCardProps) {
+    if (props.variant === "loading") {
+        return (
+            <article
+                className="pokemon-card pokemon-card--loading"
+                aria-busy="true"
+            >
+                <div className="pokemon-card__image-box" />
+                <p className="pokemon-card__number">#----</p>
+                <h3 className="pokemon-card__name">포켓몬을 찾는 중</h3>
+                <button className="pokemon-card__button" type="button" disabled>
+                    팀에 추가
+                </button>
+            </article>
+        );
+    }
+
     if (props.variant === "error") {
         return (
             <article className="pokemon-card pokemon-card--error">
