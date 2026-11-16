@@ -16,6 +16,10 @@
     gap: var(--space-3);
 }
 
+.team-slot.team-slot--compact {
+    width: 326px;
+}
+
 .team-slot__artwork {
     display: flex;
     align-items: center;
@@ -90,6 +94,7 @@
     line-height: 17px;
     white-space: nowrap;
     cursor: pointer;
+    text-decoration: none;
 }
 
 .team-slot__button--secondary {

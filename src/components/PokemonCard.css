@@ -29,6 +29,15 @@
     object-fit: contain;
 }
 
+.pokemon-card__image-link {
+    text-decoration: none;
+}
+
+.pokemon-card__name-link {
+    color: inherit;
+    text-decoration: none;
+}
+
 .pokemon-card__number {
     margin: 0;
     font-family: "Inter", sans-serif;

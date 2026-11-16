@@ -1,4 +1,5 @@
-import type { PokemonType } from "../data/pokemons";
+import { Link } from "react-router";
+import { formatPokemonNumber, type PokemonType } from "../data/pokemons";
 import "./PokemonCard.css";
 
 type PokemonCardProps =
@@ -21,10 +22,6 @@ type PokemonCardProps =
           onRetry: () => void;
       };
 
-function formatNumber(id: number) {
-    return `#${String(id).padStart(4, "0")}`;
-}
-
 function PokemonCard(props: PokemonCardProps) {
     if (props.variant === "loading") {
         return (
@@ -46,7 +43,9 @@ function PokemonCard(props: PokemonCardProps) {
         return (
             <article className="pokemon-card pokemon-card--error">
                 <div className="pokemon-card__image-box" />
-                <p className="pokemon-card__number">{formatNumber(props.id)}</p>
+                <p className="pokemon-card__number">
+                    {formatPokemonNumber(props.id)}
+                </p>
                 <h3 className="pokemon-card__name">상세 정보 실패</h3>
                 <button
                     className="pokemon-card__button"
@@ -60,6 +59,7 @@ function PokemonCard(props: PokemonCardProps) {
     }
 
     const { id, name, types, imageUrl, isAdded, isTeamFull, onAdd } = props;
+    const detailPath = `/pokemon/${id}`;
 
     let buttonLabel = "팀에 추가";
     let buttonModifier = "";
@@ -75,15 +75,24 @@ function PokemonCard(props: PokemonCardProps) {
         <article
             className={`pokemon-card${isAdded ? " pokemon-card--added" : ""}`}
         >
-            <div className="pokemon-card__image-box">
+            <Link
+                className="pokemon-card__image-box pokemon-card__image-link"
+                to={detailPath}
+                tabIndex={-1}
+                aria-hidden="true"
+            >
                 <img
                     className="pokemon-card__image"
                     src={imageUrl}
                     alt={name}
                 />
-            </div>
-            <p className="pokemon-card__number">{formatNumber(id)}</p>
-            <h3 className="pokemon-card__name">{name}</h3>
+            </Link>
+            <p className="pokemon-card__number">{formatPokemonNumber(id)}</p>
+            <h3 className="pokemon-card__name">
+                <Link className="pokemon-card__name-link" to={detailPath}>
+                    {name}
+                </Link>
+            </h3>
             <div className="pokemon-card__types">
                 {types.map((type) => (
                     <span

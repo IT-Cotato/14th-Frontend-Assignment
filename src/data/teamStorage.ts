@@ -13,6 +13,7 @@ type StoredTeamMember = {
     pokemon: Pokemon;
     nickname: string;
     role: TeamRole;
+    memo: string;
 };
 
 type LoadTeamResult = {
@@ -30,6 +31,7 @@ function toStoredTeam(team: TeamMember[]): StoredTeamMember[] {
         },
         nickname: member.nickname,
         role: member.role,
+        memo: member.memo,
     }));
 }
 
@@ -65,17 +67,23 @@ function parseTeam(raw: string): TeamMember[] | null {
         if (typeof item !== "object" || item === null) {
             return null;
         }
-        const { pokemon, nickname, role } = item as Record<string, unknown>;
+        const {
+            pokemon,
+            nickname,
+            role,
+            memo = "",
+        } = item as Record<string, unknown>;
         const isValid =
             isStoredPokemon(pokemon) &&
             typeof nickname === "string" &&
             getNicknameError(nickname) === null &&
             teamRoles.includes(role as TeamRole) &&
+            typeof memo === "string" &&
             !team.some((member) => member.pokemon.id === pokemon.id);
         if (!isValid) {
             return null;
         }
-        team.push({ pokemon, nickname, role: role as TeamRole });
+        team.push({ pokemon, nickname, role: role as TeamRole, memo });
     }
     return team;
 }

@@ -68,6 +68,7 @@
     white-space: nowrap;
     border: none;
     cursor: pointer;
+    text-decoration: none;
 }
 
 .site-header__nav-item--active {
