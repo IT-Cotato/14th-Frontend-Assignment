@@ -1,9 +1,7 @@
 import { useNavigate, useParams } from "react-router";
-import TeamSlot from "./TeamSlot";
 import TeamEditForm from "./TeamEditForm";
 import StatePanel from "./StatePanel";
 import type { TeamMember, TeamMemberChanges } from "../data/team";
-import "./TeamEditPage.css";
 
 type TeamEditPageProps = {
     team: TeamMember[];
@@ -39,15 +37,12 @@ function TeamEditPage({ team, onUpdateTeamMember }: TeamEditPageProps) {
     }
 
     return (
-        <div className="team-edit">
-            <TeamSlot member={member} isCompact />
-            <TeamEditForm
-                key={member.pokemon.id}
-                member={member}
-                slotNumber={memberIndex + 1}
-                onSave={handleSave}
-            />
-        </div>
+        <TeamEditForm
+            key={member.pokemon.id}
+            member={member}
+            slotNumber={memberIndex + 1}
+            onSave={handleSave}
+        />
     );
 }
 

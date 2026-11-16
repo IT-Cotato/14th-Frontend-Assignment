@@ -3,29 +3,11 @@ import { typeLabels } from "../data/pokemons";
 import { getDisplayName, roleLabels, type TeamMember } from "../data/team";
 import "./TeamSlot.css";
 
-type FilledTeamSlotProps = {
-    member: TeamMember;
-    isCompact?: boolean;
-} & (
-    | { editTo: string; onDelete: () => void }
-    | { editTo?: never; onDelete?: never }
-);
+type TeamSlotProps =
+    | { member: TeamMember; editTo: string; onDelete: () => void }
+    | { member: null; editTo?: never; onDelete?: never };
 
-type EmptyTeamSlotProps = {
-    member: null;
-    isCompact?: never;
-    editTo?: never;
-    onDelete?: never;
-};
-
-type TeamSlotProps = FilledTeamSlotProps | EmptyTeamSlotProps;
-
-function TeamSlot({
-    member,
-    isCompact = false,
-    editTo,
-    onDelete,
-}: TeamSlotProps) {
+function TeamSlot({ member, editTo, onDelete }: TeamSlotProps) {
     if (member === null) {
         return (
             <div className="team-slot team-slot--empty">
@@ -46,7 +28,7 @@ function TeamSlot({
     const typeText = pokemon.types.map((type) => typeLabels[type]).join(" · ");
 
     return (
-        <div className={`team-slot${isCompact ? " team-slot--compact" : ""}`}>
+        <div className="team-slot">
             <div className="team-slot__artwork">
                 <img
                     className="team-slot__image"
@@ -60,23 +42,21 @@ function TeamSlot({
                     {typeText} · {roleLabels[role]}
                 </p>
             </div>
-            {editTo !== undefined && onDelete !== undefined && (
-                <div className="team-slot__actions">
-                    <Link
-                        className="team-slot__button team-slot__button--secondary"
-                        to={editTo}
-                    >
-                        편집
-                    </Link>
-                    <button
-                        type="button"
-                        className="team-slot__button team-slot__button--danger"
-                        onClick={onDelete}
-                    >
-                        삭제
-                    </button>
-                </div>
-            )}
+            <div className="team-slot__actions">
+                <Link
+                    className="team-slot__button team-slot__button--secondary"
+                    to={editTo}
+                >
+                    편집
+                </Link>
+                <button
+                    type="button"
+                    className="team-slot__button team-slot__button--danger"
+                    onClick={onDelete}
+                >
+                    삭제
+                </button>
+            </div>
         </div>
     );
 }

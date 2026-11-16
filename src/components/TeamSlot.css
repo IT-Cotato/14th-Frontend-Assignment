@@ -16,10 +16,6 @@
     gap: var(--space-3);
 }
 
-.team-slot.team-slot--compact {
-    width: 326px;
-}
-
 .team-slot__artwork {
     display: flex;
     align-items: center;
