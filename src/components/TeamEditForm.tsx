@@ -1,5 +1,5 @@
 import { useState, type ChangeEvent, type FormEvent } from "react";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import {
     getNicknameError,
     roleLabels,
@@ -12,11 +12,11 @@ import "./TeamEditForm.css";
 
 type TeamEditFormProps = {
     member: TeamMember;
-    slotNumber: number;
     onSave: (changes: TeamMemberChanges) => void;
 };
 
-function TeamEditForm({ member, slotNumber, onSave }: TeamEditFormProps) {
+function TeamEditForm({ member, onSave }: TeamEditFormProps) {
+    const { pathname } = useLocation();
     const [nickname, setNickname] = useState(member.nickname);
     const [role, setRole] = useState<TeamRole>(member.role);
     const [memo, setMemo] = useState(member.memo);
@@ -53,7 +53,9 @@ function TeamEditForm({ member, slotNumber, onSave }: TeamEditFormProps) {
             <h1 id="team-edit-form-title" className="team-edit-form__title">
                 {member.pokemon.name} 편집
             </h1>
-            <p className="team-edit-form__subtitle">팀 슬롯 #{slotNumber}</p>
+            <p className="team-edit-form__subtitle">
+                {pathname} · 고유 팀 항목
+            </p>
 
             <div className="team-edit-form__field">
                 <label

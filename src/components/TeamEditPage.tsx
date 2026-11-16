@@ -12,11 +12,11 @@ function TeamEditPage({ team, onUpdateTeamMember }: TeamEditPageProps) {
     const { teamPokemonId = "" } = useParams();
     const navigate = useNavigate();
 
-    const memberIndex = team.findIndex(
-        (member) => String(member.pokemon.id) === teamPokemonId,
+    const member = team.find(
+        (teamMember) => String(teamMember.pokemon.id) === teamPokemonId,
     );
 
-    if (memberIndex === -1) {
+    if (member === undefined) {
         return (
             <StatePanel
                 variant="notFound"
@@ -29,9 +29,10 @@ function TeamEditPage({ team, onUpdateTeamMember }: TeamEditPageProps) {
         );
     }
 
-    const member = team[memberIndex];
-
     function handleSave(changes: TeamMemberChanges) {
+        if (member === undefined) {
+            return;
+        }
         onUpdateTeamMember(member.pokemon.id, changes);
         navigate("/my-team");
     }
@@ -40,7 +41,6 @@ function TeamEditPage({ team, onUpdateTeamMember }: TeamEditPageProps) {
         <TeamEditForm
             key={member.pokemon.id}
             member={member}
-            slotNumber={memberIndex + 1}
             onSave={handleSave}
         />
     );
