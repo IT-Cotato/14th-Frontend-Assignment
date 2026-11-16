@@ -1,5 +1,5 @@
 import { useState } from "react";
-import SiteHeader, { type MenuKey } from "./SiteHeader";
+import { Link } from "react-router";
 import PokemonHeader from "./PokemonHeader";
 import SearchBar from "./SearchBar";
 import FilterButton from "./FilterButton";
@@ -21,23 +21,19 @@ import {
 import "./HomePage.css";
 
 type HomePageProps = {
-    teamCount: number;
     maxTeamSize: number;
     addedPokemonIds: number[];
     isTeamFull: boolean;
     isRestoreNoticeOpen: boolean;
-    onNavigate: (menu: MenuKey) => void;
     onAddToTeam: (pokemon: Pokemon) => void;
     onDismissRestoreNotice: () => void;
 };
 
 function HomePage({
-    teamCount,
     maxTeamSize,
     addedPokemonIds,
     isTeamFull,
     isRestoreNoticeOpen,
-    onNavigate,
     onAddToTeam,
     onDismissRestoreNotice,
 }: HomePageProps) {
@@ -58,13 +54,7 @@ function HomePage({
     }
 
     return (
-        <div className="page">
-            <SiteHeader
-                activeMenu="home"
-                teamCount={teamCount}
-                maxTeamSize={maxTeamSize}
-                onNavigate={onNavigate}
-            />
+        <>
             <PokemonHeader
                 badge="오늘의 추천"
                 title="포켓몬과 함께하는 하루"
@@ -88,9 +78,9 @@ function HomePage({
             <section className="home__list">
                 <div className="home__list-header">
                     <h2 className="home__list-title">추천 포켓몬</h2>
-                    <button type="button" className="home__list-view-all">
+                    <Link className="home__list-view-all" to="/pokemon">
                         전체 보기
-                    </button>
+                    </Link>
                 </div>
                 {isRestoreNoticeOpen && (
                     <StatePanel
@@ -135,7 +125,7 @@ function HomePage({
                     onCancel={() => setIsFilterOpen(false)}
                 />
             )}
-        </div>
+        </>
     );
 }
 

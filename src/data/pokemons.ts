@@ -68,6 +68,10 @@ export const typeLabels: Record<PokemonType, string> = {
 
 export const pokemonTypes = Object.keys(typeLabels) as PokemonType[];
 
+export function formatPokemonNumber(id: number) {
+    return `#${String(id).padStart(4, "0")}`;
+}
+
 export type SortOrder = "asc" | "desc";
 
 export type PokemonFilters = {

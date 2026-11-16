@@ -49,6 +49,11 @@
     white-space: nowrap;
 }
 
+.pokedex__pill.pokedex__pill--error {
+    background-color: var(--color-bg-danger-soft);
+    color: var(--color-text-danger);
+}
+
 @media (max-width: 768px) {
     .pokedex__title-row {
         flex-direction: column;

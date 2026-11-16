@@ -90,6 +90,7 @@
     line-height: 17px;
     white-space: nowrap;
     cursor: pointer;
+    text-decoration: none;
 }
 
 .team-slot__button--secondary {

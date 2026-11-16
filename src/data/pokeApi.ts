@@ -1,6 +1,7 @@
 import { pokemonTypes, type Pokemon, type PokemonType } from "./pokemons";
 
 const API_BASE_URL = "https://pokeapi.co/api/v2";
+const MAX_RETRY_COUNT = 3;
 export const POKEMON_LIST_LIMIT = 20;
 
 export type PokemonListItem = {
@@ -17,6 +18,25 @@ export type PokemonListPage = {
     nextOffset: number | null;
 };
 
+export type PokemonStat = {
+    label: string;
+    value: number;
+};
+
+export type PokemonProfile = {
+    pokemon: Pokemon;
+    height: number;
+    weight: number;
+    ability: string | null;
+    stats: PokemonStat[];
+    description: string | null;
+};
+
+type LocalizedName = {
+    name: string;
+    language: { name: string };
+};
+
 type PokemonListResponse = {
     count: number;
     next: string | null;
@@ -24,9 +44,15 @@ type PokemonListResponse = {
     results: { name: string; url: string }[];
 };
 
+type PokemonAbilityEntry = {
+    ability: { name: string; url: string };
+};
+
 type PokemonDetailResponse = {
     id: number;
     name: string;
+    height: number;
+    weight: number;
     sprites: {
         other: {
             "official-artwork": {
@@ -35,12 +61,29 @@ type PokemonDetailResponse = {
         };
     };
     types: { type: { name: string } }[];
+    abilities: PokemonAbilityEntry[];
+    stats: { base_stat: number; stat: { name: string } }[];
     species: { url: string };
 };
 
 type PokemonSpeciesResponse = {
-    names: { name: string; language: { name: string } }[];
+    names: LocalizedName[];
+    flavor_text_entries: {
+        flavor_text: string;
+        language: { name: string };
+    }[];
 };
+
+type PokemonAbilityResponse = {
+    names: LocalizedName[];
+};
+
+const profileStats = [
+    { name: "hp", label: "HP" },
+    { name: "attack", label: "Attack" },
+    { name: "defense", label: "Defense" },
+    { name: "speed", label: "Speed" },
+];
 
 export class PokeApiError extends Error {
     status: number;
@@ -54,6 +97,10 @@ export class PokeApiError extends Error {
 
 export function isNotFoundError(error: unknown) {
     return error instanceof PokeApiError && error.status === 404;
+}
+
+export function shouldRetryRequest(failureCount: number, error: unknown) {
+    return !isNotFoundError(error) && failureCount < MAX_RETRY_COUNT;
 }
 
 export function isValidPokemonQuery(query: string) {
@@ -88,21 +135,32 @@ function isPokemonType(value: string): value is PokemonType {
     return pokemonTypes.includes(value as PokemonType);
 }
 
+function findKoreanName(names: LocalizedName[]) {
+    return names.find((entry) => entry.language.name === "ko")?.name;
+}
+
 function toPokemon(
     detail: PokemonDetailResponse,
     species: PokemonSpeciesResponse,
 ): Pokemon {
-    const koreanName = species.names.find(
-        (entry) => entry.language.name === "ko",
-    );
     return {
         id: detail.id,
-        name: koreanName?.name ?? detail.name,
+        name: findKoreanName(species.names) ?? detail.name,
         types: detail.types
             .map((entry) => entry.type.name)
             .filter(isPokemonType),
         imageUrl: detail.sprites.other["official-artwork"].front_default,
     };
+}
+
+function getDescription(species: PokemonSpeciesResponse) {
+    const entries = species.flavor_text_entries;
+    const entry =
+        entries.find((item) => item.language.name === "ko") ??
+        entries.find((item) => item.language.name === "en");
+    return entry === undefined
+        ? null
+        : entry.flavor_text.replace(/\s+/g, " ").trim();
 }
 
 function toPokemonListPage(
@@ -142,4 +200,45 @@ export async function fetchPokemon(url: string, signal: AbortSignal) {
         signal,
     );
     return toPokemon(detail, species);
+}
+
+async function fetchAbilityName(
+    entry: PokemonAbilityEntry | undefined,
+    signal: AbortSignal,
+) {
+    if (entry === undefined) {
+        return null;
+    }
+    const ability = await fetchJson<PokemonAbilityResponse>(
+        entry.ability.url,
+        signal,
+    );
+    return findKoreanName(ability.names) ?? entry.ability.name;
+}
+
+export async function fetchPokemonProfile(
+    idOrName: string,
+    signal: AbortSignal,
+): Promise<PokemonProfile> {
+    const detail = await fetchJson<PokemonDetailResponse>(
+        getPokemonUrl(idOrName),
+        signal,
+    );
+    const [species, ability] = await Promise.all([
+        fetchJson<PokemonSpeciesResponse>(detail.species.url, signal),
+        fetchAbilityName(detail.abilities[0], signal),
+    ]);
+    return {
+        pokemon: toPokemon(detail, species),
+        height: detail.height / 10,
+        weight: detail.weight / 10,
+        ability,
+        stats: profileStats.map(({ name, label }) => ({
+            label,
+            value:
+                detail.stats.find((entry) => entry.stat.name === name)
+                    ?.base_stat ?? 0,
+        })),
+        description: getDescription(species),
+    };
 }

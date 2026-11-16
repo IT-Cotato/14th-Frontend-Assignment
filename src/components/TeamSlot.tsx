@@ -1,12 +1,13 @@
+import { Link } from "react-router";
 import { typeLabels } from "../data/pokemons";
 import { getDisplayName, roleLabels, type TeamMember } from "../data/team";
 import "./TeamSlot.css";
 
 type TeamSlotProps =
-    | { member: TeamMember; onEdit: () => void; onDelete: () => void }
-    | { member: null; onEdit?: never; onDelete?: never };
+    | { member: TeamMember; editTo: string; onDelete: () => void }
+    | { member: null; editTo?: never; onDelete?: never };
 
-function TeamSlot({ member, onEdit, onDelete }: TeamSlotProps) {
+function TeamSlot({ member, editTo, onDelete }: TeamSlotProps) {
     if (member === null) {
         return (
             <div className="team-slot team-slot--empty">
@@ -42,13 +43,12 @@ function TeamSlot({ member, onEdit, onDelete }: TeamSlotProps) {
                 </p>
             </div>
             <div className="team-slot__actions">
-                <button
-                    type="button"
+                <Link
                     className="team-slot__button team-slot__button--secondary"
-                    onClick={onEdit}
+                    to={editTo}
                 >
                     편집
-                </button>
+                </Link>
                 <button
                     type="button"
                     className="team-slot__button team-slot__button--danger"
