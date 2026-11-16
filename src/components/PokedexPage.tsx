@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from "react";
+import { useSearchParams } from "react-router";
 import SearchBar from "./SearchBar";
 import PokemonList from "./PokemonList";
 import PokemonCardItem from "./PokemonCardItem";
@@ -18,6 +19,27 @@ type PokedexPageProps = {
     onDismissRestoreNotice: () => void;
 };
 
+function parsePage(value: string | null) {
+    if (value === null || !/^\d+$/.test(value)) {
+        return 1;
+    }
+    const page = Number(value);
+    return page >= 1 ? page : 1;
+}
+
+function getPagePath(page: number) {
+    const params = new URLSearchParams();
+    if (page > 1) {
+        params.set("page", String(page));
+    }
+    const search = params.toString();
+    return search === "" ? "/pokemon" : `/pokemon?${search}`;
+}
+
+function getPageFromOffset(offset: number | null) {
+    return offset === null ? null : offset / POKEMON_LIST_LIMIT + 1;
+}
+
 function PokedexPage({
     addedPokemonIds,
     isTeamFull,
@@ -25,10 +47,21 @@ function PokedexPage({
     onAddToTeam,
     onDismissRestoreNotice,
 }: PokedexPageProps) {
-    const [searchInput, setSearchInput] = useState("");
-    const [searchQuery, setSearchQuery] = useState("");
-    const [offset, setOffset] = useState(0);
-    const pokemonList = usePokemonList({ limit: POKEMON_LIST_LIMIT, offset });
+    const [searchParams, setSearchParams] = useSearchParams();
+    const searchQuery = (searchParams.get("q") ?? "").trim().toLowerCase();
+    const currentPage = parsePage(searchParams.get("page"));
+
+    const [searchInput, setSearchInput] = useState(searchQuery);
+    const [previousSearchQuery, setPreviousSearchQuery] = useState(searchQuery);
+    if (searchQuery !== previousSearchQuery) {
+        setPreviousSearchQuery(searchQuery);
+        setSearchInput(searchQuery);
+    }
+
+    const pokemonList = usePokemonList({
+        limit: POKEMON_LIST_LIMIT,
+        offset: (currentPage - 1) * POKEMON_LIST_LIMIT,
+    });
     const isBackgroundFetching =
         pokemonList.isFetching && !pokemonList.isPending;
     const isRefreshFailed =
@@ -42,25 +75,11 @@ function PokedexPage({
     }
 
     function handleSearch() {
-        setSearchQuery(searchInput.trim().toLowerCase());
-    }
-
-    function handlePreviousPage() {
-        const previousOffset = pokemonList.data?.previousOffset ?? null;
-        if (previousOffset !== null) {
-            setOffset(previousOffset);
+        const nextQuery = searchInput.trim().toLowerCase();
+        if (nextQuery === searchQuery) {
+            return;
         }
-    }
-
-    function handleNextPage() {
-        const nextOffset = pokemonList.data?.nextOffset ?? null;
-        if (nextOffset !== null) {
-            setOffset(nextOffset);
-        }
-    }
-
-    function handlePageChange(page: number) {
-        setOffset((page - 1) * POKEMON_LIST_LIMIT);
+        setSearchParams(nextQuery === "" ? {} : { q: nextQuery });
     }
 
     let content: ReactNode;
@@ -99,6 +118,20 @@ function PokedexPage({
                 onAction={() => pokemonList.refetch()}
             />
         );
+    } else if (pokemonList.data.items.length === 0) {
+        content = (
+            <StatePanel
+                title="이 페이지에는 포켓몬이 없어요"
+                description="첫 페이지에서 다시 찾아보세요."
+                links={[
+                    {
+                        label: "첫 페이지로",
+                        to: "/pokemon",
+                        variant: "primary",
+                    },
+                ]}
+            />
+        );
     } else {
         const listPage = pokemonList.data;
         content = (
@@ -127,11 +160,9 @@ function PokedexPage({
                 <Pagination
                     currentPage={listPage.currentPage}
                     totalPages={listPage.totalPages}
-                    hasPrevious={listPage.previousOffset !== null}
-                    hasNext={listPage.nextOffset !== null}
-                    onPrevious={handlePreviousPage}
-                    onNext={handleNextPage}
-                    onPageChange={handlePageChange}
+                    previousPage={getPageFromOffset(listPage.previousOffset)}
+                    nextPage={getPageFromOffset(listPage.nextOffset)}
+                    getPagePath={getPagePath}
                 />
             </>
         );

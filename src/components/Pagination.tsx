@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import "./Pagination.css";
 
 const PAGE_GROUP_SIZE = 4;
@@ -5,11 +6,9 @@ const PAGE_GROUP_SIZE = 4;
 type PaginationProps = {
     currentPage: number;
     totalPages: number;
-    hasPrevious: boolean;
-    hasNext: boolean;
-    onPrevious: () => void;
-    onNext: () => void;
-    onPageChange: (page: number) => void;
+    previousPage: number | null;
+    nextPage: number | null;
+    getPagePath: (page: number) => string;
 };
 
 function getPageGroup(currentPage: number, totalPages: number) {
@@ -22,49 +21,64 @@ function getPageGroup(currentPage: number, totalPages: number) {
 function Pagination({
     currentPage,
     totalPages,
-    hasPrevious,
-    hasNext,
-    onPrevious,
-    onNext,
-    onPageChange,
+    previousPage,
+    nextPage,
+    getPagePath,
 }: PaginationProps) {
     const pages = getPageGroup(currentPage, totalPages);
 
     return (
         <nav className="pagination" aria-label="포켓몬 목록 페이지">
-            <button
-                type="button"
-                className="pagination__button"
-                aria-label="이전 페이지"
-                disabled={!hasPrevious}
-                onClick={onPrevious}
-            >
-                ‹
-            </button>
+            {previousPage !== null ? (
+                <Link
+                    className="pagination__button"
+                    to={getPagePath(previousPage)}
+                    aria-label="이전 페이지"
+                >
+                    ‹
+                </Link>
+            ) : (
+                <span
+                    className="pagination__button pagination__button--disabled"
+                    role="link"
+                    aria-label="이전 페이지"
+                    aria-disabled="true"
+                >
+                    ‹
+                </span>
+            )}
             {pages.map((page) => (
-                <button
+                <Link
                     key={page}
-                    type="button"
                     className={`pagination__button pagination__button--number${
                         page === currentPage
                             ? " pagination__button--current"
                             : ""
                     }`}
+                    to={getPagePath(page)}
                     aria-current={page === currentPage ? "page" : undefined}
-                    onClick={() => onPageChange(page)}
                 >
                     {page}
-                </button>
+                </Link>
             ))}
-            <button
-                type="button"
-                className="pagination__button"
-                aria-label="다음 페이지"
-                disabled={!hasNext}
-                onClick={onNext}
-            >
-                ›
-            </button>
+            {nextPage !== null ? (
+                <Link
+                    className="pagination__button"
+                    to={getPagePath(nextPage)}
+                    aria-label="다음 페이지"
+                >
+                    ›
+                </Link>
+            ) : (
+                <span
+                    className="pagination__button pagination__button--disabled"
+                    role="link"
+                    aria-label="다음 페이지"
+                    aria-disabled="true"
+                >
+                    ›
+                </span>
+            )}
         </nav>
     );
 }

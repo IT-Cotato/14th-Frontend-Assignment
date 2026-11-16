@@ -161,7 +161,13 @@ function App() {
                         />
                         <Route
                             path=":pokemonId"
-                            element={<PokemonDetailPage />}
+                            element={
+                                <PokemonDetailPage
+                                    addedPokemonIds={addedPokemonIds}
+                                    isTeamFull={isTeamFull}
+                                    onAddToTeam={handleAddToTeam}
+                                />
+                            }
                         />
                     </Route>
                     <Route path="my-team">
