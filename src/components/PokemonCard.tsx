@@ -79,7 +79,7 @@ function PokemonCard(props: PokemonCardProps) {
             className={`pokemon-card${isAdded ? " pokemon-card--added" : ""}`}
         >
             <Link
-                className="pokemon-card__image-box pokemon-card__image-link"
+                className="pokemon-card__image-box"
                 to={detailPath}
                 state={detailState}
                 tabIndex={-1}

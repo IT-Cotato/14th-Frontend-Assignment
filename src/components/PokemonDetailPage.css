@@ -4,7 +4,6 @@
     font-size: 13px;
     line-height: 16px;
     color: var(--color-text-brand);
-    white-space: pre;
 }
 
 .pokemon-detail__breadcrumb-link {
