@@ -3,6 +3,7 @@ import { Link, useLocation, useParams } from "react-router";
 import PokemonDetailCard from "./PokemonDetailCard";
 import StatePanel from "./StatePanel";
 import { usePokemonProfile } from "../hooks/usePokemonProfile";
+import { isNotFoundError, isValidPokemonQuery } from "../data/pokeApi";
 import { formatPokemonNumber, type Pokemon } from "../data/pokemons";
 import "./PokemonDetailPage.css";
 
@@ -44,13 +45,27 @@ function PokemonDetailPage({
     const profileQuery = usePokemonProfile(pokemonId);
 
     const listPath = getListPath(location.state);
+    const isDataNotFound =
+        !isValidPokemonQuery(pokemonId) ||
+        (profileQuery.isLoadingError && isNotFoundError(profileQuery.error));
     const currentLabel =
         profileQuery.data !== undefined
             ? formatPokemonNumber(profileQuery.data.pokemon.id)
             : getRouteLabel(pokemonId);
 
     let content: ReactNode;
-    if (profileQuery.isPending) {
+    if (isDataNotFound) {
+        content = (
+            <StatePanel
+                variant="notFound"
+                title="포켓몬 정보가 없어요"
+                description="도감 번호나 이름을 확인해 주세요."
+                links={[
+                    { label: "도감으로", to: listPath, variant: "primary" },
+                ]}
+            />
+        );
+    } else if (profileQuery.isPending) {
         content = (
             <StatePanel
                 variant="loading"
