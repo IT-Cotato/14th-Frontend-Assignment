@@ -38,6 +38,15 @@ function PokedexPage({
     const pokemonList = usePokemonList({ limit: POKEMON_LIST_LIMIT, offset });
     const isBackgroundFetching =
         pokemonList.isFetching && !pokemonList.isPending;
+    const isRefreshFailed =
+        pokemonList.isRefetchError && !pokemonList.isFetching;
+
+    let pillLabel = "최신 목록";
+    if (isBackgroundFetching) {
+        pillLabel = "갱신 중";
+    } else if (isRefreshFailed) {
+        pillLabel = "갱신 실패";
+    }
 
     function handleSearch() {
         setSearchQuery(searchInput.trim().toLowerCase());
@@ -101,6 +110,15 @@ function PokedexPage({
         const listPage = pokemonList.data;
         content = (
             <>
+                {isRefreshFailed && (
+                    <StatePanel
+                        variant="error"
+                        title="목록을 새로 불러오지 못했어요"
+                        description="이전에 불러온 목록을 보여주고 있어요."
+                        actionLabel="다시 시도"
+                        onAction={() => pokemonList.refetch()}
+                    />
+                )}
                 <PokemonList>
                     {listPage.items.map((item) => (
                         <li key={item.name}>
@@ -143,8 +161,13 @@ function PokedexPage({
                     </p>
                 </div>
                 <div className="pokedex__controls">
-                    <span className="pokedex__pill" role="status">
-                        {isBackgroundFetching ? "갱신 중" : "최신 목록"}
+                    <span
+                        className={`pokedex__pill${
+                            isRefreshFailed ? " pokedex__pill--error" : ""
+                        }`}
+                        role="status"
+                    >
+                        {pillLabel}
                     </span>
                 </div>
             </div>
