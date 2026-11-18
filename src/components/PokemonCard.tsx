@@ -7,6 +7,7 @@ import {
 } from "./teamTypes";
 
 interface PokemonCardProps {
+  id?: number; // 추가: 있으면 번호 문자열 대신 이 값을 사용
   image: string;
   number: string;
   name: string;
@@ -17,6 +18,7 @@ interface PokemonCardProps {
 }
 
 function PokemonCard({
+  id: idProp, // 추가
   image,
   number,
   name,
@@ -28,8 +30,8 @@ function PokemonCard({
   // 타입이 여러 개면 전부, 아니면 기존처럼 type 하나만 사용
   const typeList = types && types.length > 0 ? types : [type];
 
-  // "#025" 같은 번호 문자열에서 숫자만 뽑아 id로 사용
-  const id = Number(number.replace(/\D/g, ""));
+  // 수정: id가 오면 그대로 쓰고, 없으면 기존처럼 "#025" 같은 번호 문자열에서 숫자만 뽑아 사용
+  const id = idProp ?? Number(number.replace(/\D/g, ""));
   const isAdded = team.some((member) => member.id === id);
   const isFull = team.length >= MAX_TEAM_SIZE;
 

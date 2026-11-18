@@ -100,8 +100,65 @@ export async function fetchPokemon(
   };
 }
 
-type ListResponse = { results: { name: string; url: string }[] };
+// ── 추가: query key ──
+export type PageParams = { limit: number; offset: number };
 
+export const pokemonKeys = {
+  list: (params: PageParams) => ["pokemon", "list", params] as const,
+  detail: (id: number) => ["pokemon", "detail", id] as const,
+  search: (target: string) => ["pokemon", "search", target] as const,
+};
+
+// ── 추가: 목록 응답 → 화면 모델 ──
+export type PokemonListItem = { id: number; url: string; name: string };
+
+export type PokemonPage = {
+  count: number;
+  items: PokemonListItem[];
+  next: PageParams | null;
+  previous: PageParams | null;
+};
+
+// 수정: count, next, previous 추가
+type ListResponse = {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: { name: string; url: string }[];
+};
+
+// next/previous URL → { limit, offset }
+function toPageParams(url: string | null): PageParams | null {
+  if (!url) return null;
+  const params = new URL(url).searchParams;
+  return {
+    limit: Number(params.get("limit")),
+    offset: Number(params.get("offset")),
+  };
+}
+
+export async function fetchPokemonPage(
+  { limit, offset }: PageParams,
+  signal: AbortSignal,
+): Promise<PokemonPage> {
+  const list = await getJson<ListResponse>(
+    `${BASE_URL}/pokemon?limit=${limit}&offset=${offset}`,
+    signal,
+  );
+
+  return {
+    count: list.count,
+    items: list.results.map(({ name, url }) => ({
+      id: getIdFromUrl(url),
+      url,
+      name,
+    })),
+    next: toPageParams(list.next),
+    previous: toPageParams(list.previous),
+  };
+}
+
+// ── 아래는 기존 코드 (W06에서는 더 이상 쓰이지 않음) ──
 export async function loadCards(
   query: string,
   signal: AbortSignal,
