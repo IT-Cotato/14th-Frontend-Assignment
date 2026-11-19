@@ -184,6 +184,9 @@ function PokemonList({
       const { page, totalPages } = api.dex.pagination
       // 고른 페이지를 받는 동안 이전 카드가 남아 있다는 것은 화면에 그리지 않고 여기서만 알린다.
       if (api.dex.state.isPlaceholder) return `${page}페이지를 불러오는 중`
+      if (api.dex.state.refreshFailed) {
+        return `${page}페이지 목록을 갱신하지 못했어요. 이전에 받은 목록을 보여 주고 있어요.`
+      }
       return `${totalPages}페이지 중 ${page}페이지, 포켓몬 ${api.dex.state.entries.length}마리`
     }
     return null

@@ -209,6 +209,15 @@ function App() {
         teamCount={team.length}
         teamLimit={TEAM_LIMIT}
         fetchStatus={isApiDex ? getFetchStatus(dex.fetchStatus, search.state) : undefined}
+        // 캐시된 목록의 갱신이 실패했을 때만 배지에서 다시 시도한다. (첫 방문 실패는 Error 패널이 맡는다)
+        onRetryRefresh={
+          isApiDex &&
+          search.state.status === 'idle' &&
+          dex.state.status === 'success' &&
+          dex.state.refreshFailed
+            ? dex.retry
+            : undefined
+        }
       />
       {storageIssue && (
         <StorageNotice

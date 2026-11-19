@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import type { DexFetchStatus } from '../hooks/usePokemonDex.ts'
 
 const brandName = 'PokéMate'
@@ -27,6 +28,8 @@ type PokemonHeaderProps = {
   teamLimit: number
   /** PokéAPI 도감 화면일 때만 넘긴다. 있으면 W06 제목과 갱신 표시 배지를 그린다. */
   fetchStatus?: DexFetchStatus
+  /** 캐시된 목록을 다시 받다 실패했을 때만 넘긴다. 있으면 배지를 ‘다시 시도’ 버튼으로 그린다. */
+  onRetryRefresh?: () => void
 }
 
 const navItems: { view: AppView; label: string }[] = [
@@ -40,7 +43,23 @@ function PokemonHeader({
   teamCount,
   teamLimit,
   fetchStatus,
+  onRetryRefresh,
 }: PokemonHeaderProps) {
+  const badgeRef = useRef<HTMLSpanElement>(null)
+  // 다시 시도 버튼은 요청이 시작되면 ‘갱신 중’ 배지로 바뀌어 사라진다. 그때 포커스를 바뀐 배지로 옮긴다.
+  const focusBadgeRef = useRef(false)
+
+  useEffect(() => {
+    if (!focusBadgeRef.current || onRetryRefresh) return
+    focusBadgeRef.current = false
+    badgeRef.current?.focus()
+  }, [onRetryRefresh])
+
+  function handleRetryRefresh() {
+    focusBadgeRef.current = true
+    onRetryRefresh?.()
+  }
+
   return (
     <header className="pokemon-header">
       <div className="top-bar">
@@ -90,10 +109,21 @@ function PokemonHeader({
             <h1 className="dex-intro__title">{apiDexTitle}</h1>
             <p className="dex-intro__description">{apiDexDescription}</p>
           </div>
-          {/* 요청이 시작·완료될 때 문구가 바뀌므로 스크린 리더에도 조용히 알린다 */}
-          <span className="dex-intro__badge" role="status">
-            {fetchStatusLabels[fetchStatus]}
-          </span>
+          {onRetryRefresh ? (
+            // 갱신 실패: 카드는 그대로 두고 같은 배지 자리에서 다시 시도한다.
+            <button
+              type="button"
+              className="dex-intro__badge dex-intro__badge--retry"
+              onClick={handleRetryRefresh}
+            >
+              {fetchStatusLabels.failed} · 다시 시도
+            </button>
+          ) : (
+            // 요청이 시작·완료될 때 문구가 바뀌므로 스크린 리더에도 조용히 알린다
+            <span ref={badgeRef} className="dex-intro__badge" role="status" tabIndex={-1}>
+              {fetchStatusLabels[fetchStatus]}
+            </span>
+          )}
         </div>
       )}
       {currentView === 'dex' && !fetchStatus && (

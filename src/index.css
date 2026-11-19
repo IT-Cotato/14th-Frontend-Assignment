@@ -1332,6 +1332,11 @@ legend.field__label {
   white-space: nowrap;
 }
 
+/* 갱신 실패 때 배지 자리에 그리는 ‘다시 시도’ 버튼. 배지 모양 그대로 버튼 기본 테두리만 없앤다 */
+.dex-intro__badge--retry {
+  border: 0;
+}
+
 /* 입력창 682 + 간격 12 + 검색 66 (시안에는 필터 버튼이 없다) */
 .page--api-dex .search {
   max-width: 760px;
