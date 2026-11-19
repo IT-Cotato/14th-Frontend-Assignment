@@ -35,13 +35,16 @@ function PokemonHeader({
         <div className="firstdiv">
           <div className="popup_content">
             <h1>포켓몬 도감</h1>
-            <p>다양한 포켓몬을 만나고 팀에 추가해 보세요.</p>
+            <p>페이지를 이동해도 이전 포켓몬을 빠르게 다시 볼 수 있어요.</p>
           </div>
 
           <div className="entire">
-            <span className="api-box">
-              PokéAPI 온라인
+            <span className="list-box">
+              최신 목록
             </span>
+            {/* <span className="api-box">
+              PokéAPI 온라인
+            </span> */}
             {/* <span className="yellow-box">
               전체 151마리
             </span> */}
