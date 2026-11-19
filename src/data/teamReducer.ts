@@ -15,7 +15,7 @@ export interface TeamState {
 
 export type TeamAction =
   /** 추가 여부와 안내를 최신 팀 기준으로 함께 정한다. noticeId는 이벤트 핸들러가 미리 정해 넘긴다. */
-  | { type: 'add'; pokemon: Pokemon; noticeId: number }
+  | { type: 'add'; pokemon: Pokemon; memberId: string; noticeId: number }
   /** 삭제·편집·되돌리기. 팀만 바꾸는 순수 함수를 넘긴다. */
   | { type: 'updateTeam'; update: (team: TeamMember[]) => TeamMember[] }
   | { type: 'notify'; notice: Notice }
@@ -51,7 +51,7 @@ export function teamReducer(state: TeamState, action: TeamAction): TeamState {
           },
         }
       }
-      const team = addTeamMember(state.team, pokemon)
+      const team = addTeamMember(state.team, pokemon, action.memberId)
       return {
         team,
         notice: {

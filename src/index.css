@@ -1692,3 +1692,346 @@ legend.field__label {
     gap: 19px;
   }
 }
+
+/* ===== W07 라우팅: 링크로 바뀐 메뉴·버튼·카드 ===== */
+.nav-pill {
+  text-decoration: none;
+}
+
+a.button {
+  display: inline-block;
+  text-decoration: none;
+  text-align: center;
+}
+
+/* W07 상세 시안의 FLYING 칩 색. 로컬 preview 화면의 기존 타입 색은 그대로 둔다 */
+.page--api-dex .type-chip--flying {
+  background-color: #748fc9;
+}
+
+.pokemon-card__link {
+  text-decoration: none;
+}
+
+.pokemon-card__name-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.pokemon-card__name-link:hover {
+  text-decoration: underline;
+}
+
+.state-panel__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* 홈: 기존 도감 소개와 같은 제목 아래 도감·내 팀으로 가는 두 버튼 */
+.home {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-section);
+}
+
+.home__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* ===== W07 포켓몬 상세 (PC 시안 1440×1024 기준) =====
+   브레드크럼 → 카드(1280, 안쪽 여백 40): 왼쪽 이미지 470×430(분홍) 안 350×350, 오른쪽 정보 열(간격 48) */
+.pokemon-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-link);
+  font-family: var(--font-base);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 20px;
+}
+
+.breadcrumb__link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.breadcrumb__link:hover {
+  text-decoration: underline;
+}
+
+.detail-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 48px;
+  padding: 40px;
+  border-radius: 24px;
+  background-color: var(--color-surface);
+  box-shadow:
+    inset 0 0 0 1px var(--color-border),
+    0 24px 48px rgba(20, 33, 61, 0.08);
+}
+
+.detail-card__visual {
+  display: flex;
+  flex: 0 0 470px;
+  align-items: center;
+  justify-content: center;
+  height: 430px;
+  border-radius: 24px;
+  background-color: #fff0f3;
+}
+
+.detail-card__image-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 350px;
+  height: 350px;
+  border-radius: 40px;
+  background-color: var(--color-surface-muted);
+}
+
+.detail-card__image {
+  width: 280px;
+  height: 280px;
+  object-fit: contain;
+}
+
+.detail-card__info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+  min-width: 0;
+}
+
+.detail-card__number {
+  padding: 7px 12px;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  font-family: var(--font-en);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 15px;
+}
+
+/* 시안 픽셀 기준 세로 위치: 번호 212, 이름 259, 설명 329, 타입 373, 특징 420, 스탯 491, 버튼 596 */
+.detail-card__name {
+  color: var(--color-text);
+  font-family: var(--font-ko);
+  font-size: 42px;
+  font-weight: 800;
+  line-height: 46px;
+}
+
+.detail-card__description {
+  margin-top: 6px;
+  color: var(--color-text-muted);
+  font-family: var(--font-ko);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 22px;
+}
+
+.detail-card__types {
+  justify-content: flex-start;
+  margin-top: 4px;
+}
+
+.detail-card__facts,
+.detail-card__stats {
+  margin: 0;
+}
+
+.detail-card__facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.detail-card__fact {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-muted);
+}
+
+.detail-card__fact dt {
+  color: var(--color-text-muted);
+  font-family: var(--font-ko);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 14px;
+}
+
+.detail-card__fact dd {
+  margin: 0;
+  color: var(--color-text);
+  font-family: var(--font-base);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 20px;
+}
+
+.detail-card__stats {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: -4px;
+}
+
+.detail-card__stat {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.detail-card__stat dt {
+  color: var(--color-text-muted);
+  font-family: var(--font-en);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 20px;
+}
+
+.detail-card__stat dd {
+  margin: 0;
+}
+
+/* 스탯 막대: 120을 최대치로 채운다 */
+.stat-bar {
+  display: block;
+  width: 280px;
+  height: 8px;
+  overflow: hidden;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-surface-muted);
+}
+
+.stat-bar__fill {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-primary);
+}
+
+.detail-card__add.button--added:disabled {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: inset 0 0 0 1px var(--color-border-strong);
+}
+
+/* ===== W07 팀 편집 화면 (/my-team/:teamPokemonId/edit) =====
+   W07 Product Screen: 왼쪽 편집 중인 팀 슬롯, 오른쪽 편집 카드 */
+.team-edit {
+  display: grid;
+  grid-template-columns: minmax(0, 392px) minmax(0, 560px);
+  align-items: start;
+  gap: 20px;
+}
+
+.team-edit > .state-panel {
+  grid-column: 1 / -1;
+}
+
+.team-edit__card {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 28px;
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface);
+  box-shadow:
+    inset 0 0 0 1px var(--color-border),
+    var(--shadow-surface);
+}
+
+.team-edit__error {
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  /* 모바일 상세 (390×844 시안): 이미지 위·정보 아래 한 열, 이미지 250×250 안 202×202 */
+  .detail-card {
+    flex-direction: column;
+    gap: 18px;
+    padding: 24px 22px;
+  }
+
+  .detail-card__visual {
+    flex-basis: auto;
+    width: 250px;
+    height: 250px;
+  }
+
+  .detail-card__image-box {
+    width: 202px;
+    height: 202px;
+    border-radius: 32px;
+  }
+
+  .detail-card__image {
+    width: 160px;
+    height: 160px;
+  }
+
+  .detail-card__info {
+    gap: 12px;
+  }
+
+  .detail-card__name {
+    font-size: 30px;
+    line-height: 34px;
+  }
+
+  .detail-card__description {
+    margin-top: 0;
+    font-size: 13px;
+    line-height: 20px;
+  }
+
+  .detail-card__types {
+    margin-top: 0;
+  }
+
+  .detail-card__stats {
+    margin-top: 0;
+  }
+
+  .stat-bar {
+    width: 180px;
+  }
+
+  .detail-card__add {
+    padding-right: 16px;
+    padding-left: 16px;
+    font-size: 13px;
+  }
+
+  .pokemon-detail {
+    gap: 16px;
+  }
+
+  .team-edit {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .team-edit__card {
+    padding: 20px;
+  }
+}

@@ -1,7 +1,13 @@
 import { useEffect, useReducer, useRef, useState } from 'react'
+import { Route, Routes, useLocation, useSearchParams } from 'react-router'
+import { normalizePokemonQuery } from './api/pokeapi.ts'
+import HomePage from './components/HomePage.tsx'
+import NotFoundPage from './components/NotFoundPage.tsx'
+import PokemonDetailPage from './components/PokemonDetailPage.tsx'
 import PokemonHeader from './components/PokemonHeader.tsx'
-import type { AppView } from './components/PokemonHeader.tsx'
+import type { DexIntro } from './components/PokemonHeader.tsx'
 import PokemonList from './components/PokemonList.tsx'
+import TeamEditPage from './components/TeamEditPage.tsx'
 import PokemonTeam from './components/PokemonTeam.tsx'
 import type { Pokemon, PokemonType } from './components/PokemonCard.tsx'
 import StorageNotice from './components/StorageNotice.tsx'
@@ -19,14 +25,14 @@ import {
 } from './data/pokemons.ts'
 import {
   TEAM_LIMIT,
+  createTeamMemberId,
   getMemberDisplayName,
   isSameTeam,
   removeTeamMember,
-  updateTeamMember,
 } from './data/team.ts'
-import type { TeamMember, TeamMemberChanges } from './data/team.ts'
+import type { TeamMember } from './data/team.ts'
 import { teamReducer } from './data/teamReducer.ts'
-import { usePokemonDex } from './hooks/usePokemonDex.ts'
+import { parseDexPage, usePokemonDex } from './hooks/usePokemonDex.ts'
 import type { DexFetchStatus } from './hooks/usePokemonDex.ts'
 import { usePokemonSearch } from './hooks/usePokemonSearch.ts'
 import type { PokemonSearchState } from './hooks/usePokemonSearch.ts'
@@ -63,7 +69,14 @@ function getFetchStatus(
 }
 
 function App() {
-  const [view, setView] = useState<AppView>('dex')
+  const location = useLocation()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const isDexRoute = location.pathname === '/pokemon'
+  const isDetailRoute = location.pathname.startsWith('/pokemon/')
+  // 도감 목록 조건은 주소에 둔다. 새로고침·뒤로/앞으로 가기·직접 접근에서 같은 목록이 복원된다.
+  const rawPage = searchParams.get('page')
+  const page = parseDexPage(rawPage)
+  const q = searchParams.get('q') ?? ''
   // 마지막으로 "팀 저장"한 팀을 처음 한 번만 읽는다. 읽기만 하므로 StrictMode에서 두 번 불려도 안전하다.
   // v2는 저장된 포켓몬 정보로 바로 복원한다. 카탈로그는 v2가 없을 때 v1(번호만 저장)을 복원하는 데만 쓴다.
   const [initialLoad] = useState(() => loadTeam(pokemonCatalog))
@@ -80,18 +93,58 @@ function App() {
   const [storageIssue, setStorageIssue] = useState<StorageIssue | null>(
     initialLoad.issue,
   )
-  // 도감 ↔ 내 팀을 오가도 유지되도록 검색 조건도 App에 둔다. 걸러진 목록은 저장하지 않고 렌더링 때 계산한다.
-  const [query, setQuery] = useState('')
+  // 검색창에 보이는 원본 값. 제출하면 주소의 q가 되고, 주소의 q가 바뀌면(뒤로 가기 등) 입력값도 따라간다.
+  const [query, setQuery] = useState(q)
+  const [syncedQ, setSyncedQ] = useState(q)
+  if (syncedQ !== q) {
+    setSyncedQ(q)
+    setQuery(q)
+  }
   // 필터 창에서 "적용"으로 확정한 타입(복수 선택)과 정렬. 창 안의 임시 선택은 FilterDialog가 따로 가진다.
   const [selectedTypes, setSelectedTypes] = useState<PokemonType[]>([])
   const [sortOrder, setSortOrder] = useState<SortOrder | null>(DEFAULT_SORT_ORDER)
   const noticeIdRef = useRef(0)
-  // preview 화면은 로컬 데이터만 쓰고 API를 요청하지 않는다.
-  const previewPokemons = selectPreviewPokemons(window.location.search)
-  // 도감 ↔ 내 팀을 오가도 페이지·캐시가 유지되도록 App에서 요청한다.
-  const dex = usePokemonDex({ enabled: previewPokemons === null })
-  // 제출한 검색어의 상세 검색. 입력창의 원본 값(query)과 따로 관리한다.
-  const search = usePokemonSearch({ enabled: previewPokemons === null })
+  // preview 화면(/pokemon?preview=…)은 로컬 데이터만 쓰고 API를 요청하지 않는다.
+  const previewPokemons = isDexRoute ? selectPreviewPokemons(location.search) : null
+  const isApiDex = isDexRoute && previewPokemons === null
+  // 목록·검색 캐시는 TanStack Query와 컴포넌트 state에 있어 다른 화면에 다녀와도 유지된다.
+  const dex = usePokemonDex({
+    enabled: isApiDex,
+    page,
+    onPageChange: (nextPage) => updateDexParams({ page: nextPage }),
+  })
+  const search = usePokemonSearch({ enabled: isApiDex, query: q })
+
+  // 잘못된 page는 1, 4를 넘으면 4로 주소를 고친다. 보정은 기록을 남기지 않는다(replace).
+  useEffect(() => {
+    if (!isApiDex || rawPage === null || rawPage === String(page)) return
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        next.set('page', String(page))
+        return next
+      },
+      { replace: true },
+    )
+  }, [isApiDex, rawPage, page, setSearchParams])
+
+  /** 도감 주소의 page·q를 바꾼다. 이동마다 기록이 남아 뒤로/앞으로 가기로 오갈 수 있다. */
+  function updateDexParams(changes: { page?: number; q?: string }) {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev)
+      if (changes.page !== undefined) next.set('page', String(changes.page))
+      if (changes.q !== undefined) {
+        if (changes.q === '') next.delete('q')
+        else next.set('q', changes.q)
+      }
+      return next
+    })
+  }
+
+  /** 검색 제출: 정리한 값이 비어 있으면 검색을 끝내고 기본 목록으로 돌아간다. */
+  function submitSearch(value: string) {
+    updateDexParams({ q: normalizePokemonQuery(value) === '' ? '' : value.trim() })
+  }
 
   // 안내는 잠시 보여 준 뒤 사라진다. 새 안내가 오면 타이머를 다시 시작한다.
   useEffect(() => {
@@ -117,7 +170,8 @@ function App() {
   function handleAdd(pokemon: Pokemon) {
     // 추가 여부(중복·정원)와 안내는 reducer가 최신 팀을 기준으로 함께 정한다.
     // 이번 렌더링의 team 스냅샷으로 미리 판단하지 않으므로, 연속 호출에도 거절된 추가에 성공 안내가 붙지 않는다.
-    dispatchTeam({ type: 'add', pokemon, noticeId: nextNoticeId() })
+    // 팀 항목 ID는 이벤트 핸들러에서 정한다. reducer는 받은 ID를 그대로 쓴다.
+    dispatchTeam({ type: 'add', pokemon, memberId: createTeamMemberId(), noticeId: nextNoticeId() })
   }
 
   function handleRemoveMember(pokemonId: number) {
@@ -134,18 +188,12 @@ function App() {
     }
   }
 
-  function handleEditMember(pokemonId: number, changes: TeamMemberChanges) {
-    const member = team.find((m) => m.pokemon.id === pokemonId)
-    dispatchTeam({
-      type: 'updateTeam',
-      update: (prevTeam) => updateTeamMember(prevTeam, pokemonId, changes),
-    })
-    if (member) {
-      showNotice(
-        'success',
-        `${member.pokemon.name}의 별명·역할을 팀에 반영했어요. ‘팀 저장’을 눌러야 새로고침 후에도 유지돼요.`,
-      )
-    }
+  /** 편집 화면에서 저장에 성공한 팀. 저장된 팀이므로 작업 중인 팀과 마지막 저장 팀을 함께 맞춘다. */
+  function handleMemberSaved(nextTeam: TeamMember[], member: TeamMember) {
+    dispatchTeam({ type: 'updateTeam', update: () => nextTeam })
+    setSavedTeam(nextTeam)
+    setStorageIssue(null)
+    showNotice('success', `${member.pokemon.name}의 별명·역할·메모를 저장했어요.`)
   }
 
   function handleSaveTeam() {
@@ -178,13 +226,6 @@ function App() {
     )
   }
 
-  function handleNavigate(nextView: AppView) {
-    // 내 팀으로 가면 제출한 검색을 끝낸다. 진행 중인 검색 요청은 취소되고, 도감으로 돌아오면 기본 목록이 보인다.
-    // 입력창의 원본 query는 그대로 두며, 다시 제출해야 검색한다.
-    if (nextView === 'team') search.reset()
-    setView(nextView)
-  }
-
   function handleApplyFilter(
     types: PokemonType[],
     nextSortOrder: SortOrder | null,
@@ -198,14 +239,14 @@ function App() {
     setSelectedTypes([])
   }
 
-  // W05·W06 시안은 PokéAPI 도감 화면에만 적용한다. 내 팀 화면·로컬 preview는 기존 스타일을 유지한다.
-  const isApiDex = previewPokemons === null && view === 'dex'
+  // W05~W07 시안은 PokéAPI 도감·상세 화면에만 적용한다. 홈·내 팀·편집·로컬 preview는 기존 스타일을 유지한다.
+  let dexIntro: DexIntro = null
+  if (isDexRoute) dexIntro = isApiDex ? 'api' : 'local'
 
   return (
-    <div className={`page${isApiDex ? ' page--api-dex' : ''}`}>
+    <div className={`page${isApiDex || isDetailRoute ? ' page--api-dex' : ''}`}>
       <PokemonHeader
-        currentView={view}
-        onNavigate={handleNavigate}
+        dexIntro={dexIntro}
         teamCount={team.length}
         teamLimit={TEAM_LIMIT}
         fetchStatus={isApiDex ? getFetchStatus(dex.fetchStatus, search.state) : undefined}
@@ -225,39 +266,52 @@ function App() {
           onDismiss={() => setStorageIssue(null)}
         />
       )}
-      {view === 'dex' ? (
-        <PokemonList
-          pokemons={previewPokemons ?? dex.pokemons}
-          api={previewPokemons === null ? { dex, search } : undefined}
-          team={team}
-          onAdd={handleAdd}
-          query={query}
-          selectedTypes={selectedTypes}
-          sortOrder={sortOrder}
-          onQueryChange={setQuery}
-          onApplyFilter={handleApplyFilter}
-          onResetFilters={handleResetFilters}
-          // W05·W06 시안의 PokéAPI 도감에는 팀 패널이 없다. 팀은 ‘내 팀’ 화면에서 관리한다.
-          teamPanel={
-            previewPokemons === null ? null : (
-              <TeamPanel
-                team={team}
-                onEditMember={handleEditMember}
-                onRemoveMember={handleRemoveMember}
-              />
-            )
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route
+          path="/pokemon"
+          element={
+            <PokemonList
+              pokemons={previewPokemons ?? dex.pokemons}
+              api={previewPokemons === null ? { dex, search: { ...search, submit: submitSearch } } : undefined}
+              team={team}
+              onAdd={handleAdd}
+              query={query}
+              selectedTypes={selectedTypes}
+              sortOrder={sortOrder}
+              onQueryChange={setQuery}
+              onApplyFilter={handleApplyFilter}
+              onResetFilters={handleResetFilters}
+              dexSearch={location.search}
+              // W05~W07 시안의 PokéAPI 도감에는 팀 패널이 없다. 팀은 ‘내 팀’ 화면에서 관리한다.
+              teamPanel={
+                previewPokemons === null ? null : (
+                  <TeamPanel team={team} onRemoveMember={handleRemoveMember} />
+                )
+              }
+            />
           }
         />
-      ) : (
-        <PokemonTeam
-          team={team}
-          onEditMember={handleEditMember}
-          onRemoveMember={handleRemoveMember}
-          onSaveTeam={handleSaveTeam}
-          onRevertTeam={handleRevertTeam}
-          onGoToDex={() => setView('dex')}
+        <Route path="/pokemon/:pokemonId" element={<PokemonDetailPage team={team} onAdd={handleAdd} />} />
+        <Route
+          path="/my-team"
+          element={
+            <PokemonTeam
+              team={team}
+              onRemoveMember={handleRemoveMember}
+              onSaveTeam={handleSaveTeam}
+              onRevertTeam={handleRevertTeam}
+            />
+          }
         />
-      )}
+        <Route
+          path="/my-team/:teamPokemonId/edit"
+          element={
+            <TeamEditPage team={team} onSaved={handleMemberSaved} onRemoveMember={handleRemoveMember} />
+          }
+        />
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
       <Toast notice={notice} />
     </div>
   )

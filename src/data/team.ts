@@ -5,6 +5,8 @@ export const TEAM_LIMIT = 6
 
 /** 별명 길이 제한. 시안에 명시되지 않아 이번 실습의 구현 기준으로 정한 값이다. */
 export const NICKNAME_MAX_LENGTH = 20
+/** 메모 길이 제한. 시안에 명시되지 않아 별명과 같은 방식으로 정한 구현 기준이다. */
+export const MEMO_MAX_LENGTH = 50
 
 export type TeamRole = 'attack' | 'defense' | 'support'
 
@@ -18,12 +20,20 @@ const DEFAULT_ROLE: TeamRole = 'attack'
 
 /** 팀원은 원본 도감 데이터(pokemon)를 그대로 두고 별명·역할만 따로 가진다. */
 export interface TeamMember {
+  /** 팀 항목의 고유 ID. 포켓몬 번호와 별개이며 편집 주소(/my-team/:teamPokemonId/edit)에 쓴다. */
+  id: string
   pokemon: Pokemon
   nickname: string
   role: TeamRole
+  memo: string
 }
 
-export type TeamMemberChanges = Pick<TeamMember, 'nickname' | 'role'>
+export type TeamMemberChanges = Pick<TeamMember, 'nickname' | 'role' | 'memo'>
+
+/** 새 팀 항목의 ID. 삭제된 항목의 주소가 다른 포켓몬을 가리키지 않도록 순번이 아닌 임의 값을 쓴다. */
+export function createTeamMemberId() {
+  return `tp_${crypto.randomUUID().slice(0, 8)}`
+}
 
 /** 도감 카드의 추가 버튼 상태. 이미 추가됨을 정원 초과보다 먼저 판단한다. */
 export type AddStatus = 'added' | 'full' | 'available'
@@ -63,9 +73,11 @@ export function isSameTeam(a: TeamMember[], b: TeamMember[]) {
     a.length === b.length &&
     a.every(
       (member, index) =>
+        member.id === b[index].id &&
         member.pokemon.id === b[index].pokemon.id &&
         member.nickname === b[index].nickname &&
-        member.role === b[index].role,
+        member.role === b[index].role &&
+        member.memo === b[index].memo,
     )
   )
 }
@@ -75,9 +87,9 @@ export function isSameTeam(a: TeamMember[], b: TeamMember[]) {
  * 이전 배열을 바꾸지 않고, 바뀔 것이 없으면 이전 배열을 그대로 돌려준다.
  */
 
-export function addTeamMember(prevTeam: TeamMember[], pokemon: Pokemon) {
+export function addTeamMember(prevTeam: TeamMember[], pokemon: Pokemon, id: string) {
   if (getAddStatus(prevTeam, pokemon.id) !== 'available') return prevTeam
-  return [...prevTeam, { pokemon, nickname: '', role: DEFAULT_ROLE }]
+  return [...prevTeam, { id, pokemon, nickname: '', role: DEFAULT_ROLE, memo: '' }]
 }
 
 export function removeTeamMember(prevTeam: TeamMember[], pokemonId: number) {
@@ -91,7 +103,7 @@ export function updateTeamMember(
 ) {
   return prevTeam.map((member) =>
     member.pokemon.id === pokemonId
-      ? { ...member, nickname: changes.nickname, role: changes.role }
+      ? { ...member, nickname: changes.nickname, role: changes.role, memo: changes.memo }
       : member,
   )
 }

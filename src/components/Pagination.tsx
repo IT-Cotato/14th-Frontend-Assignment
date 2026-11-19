@@ -1,6 +1,5 @@
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import type { MouseEvent } from 'react'
-import { flushSync } from 'react-dom'
 
 type PaginationProps = {
   /** 고른 페이지 */
@@ -21,15 +20,22 @@ function Pagination({
   onPageChange,
 }: PaginationProps) {
   const navRef = useRef<HTMLElement>(null)
+  // 방금 누른 화살표. 페이지 이동(주소 변경)이 반영된 뒤 그 화살표가 끝 페이지에서 disabled로 바뀌어
+  // 포커스를 잃었으면 현재 페이지 번호로 포커스를 옮긴다.
+  const clickedArrowRef = useRef<HTMLButtonElement | null>(null)
 
-  function handleArrowClick(page: number, event: MouseEvent<HTMLButtonElement>) {
-    const button = event.currentTarget
-    // 화면을 바로 갱신해, 방금 누른 화살표가 끝 페이지에서 disabled로 바뀌어 포커스를 잃으면
-    // 현재 페이지 번호로 포커스를 옮긴다.
-    flushSync(() => onPageChange(page))
-    if (button.disabled) {
+  useEffect(() => {
+    const arrow = clickedArrowRef.current
+    if (!arrow) return
+    clickedArrowRef.current = null
+    if (arrow.disabled) {
       navRef.current?.querySelector<HTMLButtonElement>('[aria-current="page"]')?.focus()
     }
+  }, [currentPage])
+
+  function handleArrowClick(page: number, event: MouseEvent<HTMLButtonElement>) {
+    clickedArrowRef.current = event.currentTarget
+    onPageChange(page)
   }
 
   return (

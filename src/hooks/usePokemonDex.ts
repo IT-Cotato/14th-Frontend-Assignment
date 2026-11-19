@@ -1,13 +1,11 @@
-import { useState } from 'react'
 import { keepPreviousData, useQueries, useQuery } from '@tanstack/react-query'
 import {
-  fetchPokemonDetailByUrl,
   fetchPokemonList,
-  fetchPokemonSpeciesByUrl,
   getKoreanName,
   getPokemonIdFromUrl,
   toPokemon,
 } from '../api/pokeapi.ts'
+import { pokemonDetailQuery, pokemonSpeciesQuery } from '../api/pokemonQueries.ts'
 import type { Pokemon } from '../components/PokemonCard.tsx'
 
 /** 한 페이지에 보이는 카드 수. W06 시안: PC 4열 한 줄, 모바일 2열 두 줄 */
@@ -25,6 +23,16 @@ function isDexPage(page: number) {
   return Number.isInteger(page) && page >= 1 && page <= DEX_PAGE_COUNT
 }
 
+/**
+ * 주소의 page 값을 도감 페이지로 바꾼다. 없거나 잘못된 값(숫자가 아님·소수·1 미만)은 1, 4를 넘으면 4로 보정한다.
+ */
+export function parseDexPage(raw: string | null) {
+  if (raw === null || !/^\d+$/.test(raw)) return 1
+  const page = Number(raw)
+  if (page < 1) return 1
+  return Math.min(page, DEX_PAGE_COUNT)
+}
+
 /** 페이지의 목록 요청 조건. 마지막 페이지도 처음 16마리를 넘지 않도록 limit을 줄인다. */
 function getPageParams(page: number): DexPageParams {
   const offset = (page - 1) * DEX_PAGE_SIZE
@@ -32,20 +40,10 @@ function getPageParams(page: number): DexPageParams {
 }
 
 /**
- * 쿼리 키. 요청 조건을 모두 키에 넣어, 목록은 limit·offset별로, 카드 상세·한국어 이름은 주소별로 따로 캐시된다.
- * 검색(usePokemonSearch)은 이 캐시를 쓰지 않으므로 목록과 검색 결과가 서로 덮어쓰지 않는다.
+ * 목록 쿼리 키. 요청 조건(limit·offset)을 모두 넣어 페이지별로 따로 캐시된다.
+ * 카드 상세·한국어 이름은 상세 화면과 함께 쓰는 주소별 쿼리(pokemonQueries.ts)다.
  */
-const dexQueryKeys = {
-  list: (params: DexPageParams) => ['pokemon', 'list', params] as const,
-  detail: (url: string) => ['pokemon', 'detail', url] as const,
-  species: (speciesUrl: string) => ['pokemon', 'species', speciesUrl] as const,
-}
-
-/** 카드 상세. 한국어 이름을 받을 species 주소를 함께 둔다. */
-async function fetchDexDetail(url: string, signal: AbortSignal) {
-  const detail = await fetchPokemonDetailByUrl(url, { signal })
-  return { pokemon: toPokemon(detail), speciesUrl: detail.species.url }
-}
+const dexListKey = (params: DexPageParams) => ['pokemon', 'list', params] as const
 
 /** 카드 한 장의 상세 요청 상태. 실패 항목도 목록에서 빼지 않고 이 상태로 자리를 지킨다. */
 export type DexEntryDetail =
@@ -94,8 +92,12 @@ export interface DexPagination {
 const loadingDetail: DexEntryDetail = { status: 'loading' }
 
 type UsePokemonDexOptions = {
-  /** false면 요청하지 않는다. (?preview 로컬 데이터 화면) */
+  /** false면 요청하지 않는다. (?preview 로컬 데이터 화면·도감이 아닌 화면) */
   enabled: boolean
+  /** 주소의 page 값(parseDexPage로 보정한 값) */
+  page: number
+  /** 페이지 이동. 주소의 page를 바꾼다. */
+  onPageChange: (page: number) => void
 }
 
 /**
@@ -104,14 +106,13 @@ type UsePokemonDexOptions = {
  *   캐시가 없는 페이지는 목록을 받는 동안 이전 페이지 카드를 그대로 두고, 목록이 오면 카드별로 상세를 받는다.
  * - 카드 상세·한국어 이름: 주소별 쿼리로 한 번 받은 결과를 다시 쓴다. 실패한 카드만 다시 시도하거나 다시 들어올 때 새로 받는다.
  */
-export function usePokemonDex({ enabled }: UsePokemonDexOptions) {
-  const [pageState, setPageState] = useState(1)
-  // 저장된 페이지가 범위 밖이면 1페이지로 돌린다. 범위 밖 페이지는 그리지도 요청하지도 않는다.
-  const page = isDexPage(pageState) ? pageState : 1
+export function usePokemonDex({ enabled, page: requestedPage, onPageChange }: UsePokemonDexOptions) {
+  // 범위 밖 페이지는 그리지도 요청하지도 않는다.
+  const page = isDexPage(requestedPage) ? requestedPage : 1
   const params = getPageParams(page)
 
   const listQuery = useQuery({
-    queryKey: dexQueryKeys.list(params),
+    queryKey: dexListKey(params),
     // TanStack Query가 주는 signal을 넘겨, 페이지를 떠나 쓰이지 않게 된 요청은 취소된다.
     queryFn: ({ signal }) => fetchPokemonList(params, { signal }),
     enabled,
@@ -121,30 +122,23 @@ export function usePokemonDex({ enabled }: UsePokemonDexOptions) {
   // 응답이 요청한 limit보다 많아도 limit까지만 쓴다. 그 밖의 항목은 상세도 요청하지 않는다.
   const results = listQuery.data?.results.slice(0, params.limit) ?? []
 
-  // 상세·한국어 이름은 도감 번호별로 바뀌지 않으므로 성공한 결과는 다시 요청하지 않는다(staleTime: Infinity).
-  // 실패한 쿼리는 데이터가 없어 그 카드가 다시 보일 때 새로 요청된다.
+  // 상세·한국어 이름은 한 번 성공하면 다시 요청하지 않고, 실패한 카드만 다시 보일 때 새로 요청된다.
   const detailQueries = useQueries({
-    queries: results.map(({ url }) => ({
-      queryKey: dexQueryKeys.detail(url),
-      queryFn: ({ signal }: { signal: AbortSignal }) => fetchDexDetail(url, signal),
-      enabled,
-      staleTime: Infinity,
-    })),
+    queries: results.map(({ url }) => ({ ...pokemonDetailQuery(url), enabled })),
   })
   // 상세가 성공한 카드만 한국어 이름을 받는다. species 조회가 실패해도 카드는 영문 이름으로 성공 상태다.
   const speciesUrls = [
-    ...new Set(detailQueries.flatMap((query) => (query.data ? [query.data.speciesUrl] : []))),
+    ...new Set(detailQueries.flatMap((query) => (query.data ? [query.data.species.url] : []))),
   ]
   const speciesQueries = useQueries({
-    queries: speciesUrls.map((speciesUrl) => ({
-      queryKey: dexQueryKeys.species(speciesUrl),
-      queryFn: async ({ signal }: { signal: AbortSignal }) =>
-        getKoreanName(await fetchPokemonSpeciesByUrl(speciesUrl, { signal })),
-      enabled,
-      staleTime: Infinity,
-    })),
+    queries: speciesUrls.map((url) => ({ ...pokemonSpeciesQuery(url), enabled })),
   })
-  const koreanNames = new Map(speciesUrls.map((url, index) => [url, speciesQueries[index]?.data]))
+  const koreanNames = new Map(
+    speciesUrls.map((url, index) => {
+      const species = speciesQueries[index]?.data
+      return [url, species ? getKoreanName(species) : null]
+    }),
+  )
 
   // 화면용 상태는 저장하지 않고 쿼리 상태에서 렌더링할 때 계산한다.
   const entries: DexEntry[] = results.map(({ name, url }, index) => {
@@ -152,10 +146,9 @@ export function usePokemonDex({ enabled }: UsePokemonDexOptions) {
     let detail: DexEntryDetail = loadingDetail
     if (query?.data) {
       // 한국어 이름을 받기 전이거나 species 조회가 실패하면 영문 이름을 쓴다.
-      const koreanName = koreanNames.get(query.data.speciesUrl)
       detail = {
         status: 'success',
-        pokemon: koreanName ? { ...query.data.pokemon, name: koreanName } : query.data.pokemon,
+        pokemon: toPokemon(query.data, koreanNames.get(query.data.species.url)),
       }
     } else if (query?.isError && !query.isFetching) {
       // 404도 여기서는 이 카드의 상세 실패다. (검색 결과 없음은 검색 단계에서 다룬다)
@@ -210,7 +203,7 @@ export function usePokemonDex({ enabled }: UsePokemonDexOptions) {
   /** 페이지 이동. 범위 밖이거나 지금 페이지면 무시한다. (버튼 disabled와 별개로 한 번 더 막는다) */
   function goToPage(nextPage: number) {
     if (!isDexPage(nextPage) || nextPage === page) return
-    setPageState(nextPage)
+    onPageChange(nextPage)
   }
 
   /** 지금 페이지 목록 다시 시도. 같은 페이지 요청이 진행 중이면 새로 보내지 않고 그 요청을 기다린다. */

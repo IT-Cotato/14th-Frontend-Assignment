@@ -30,10 +30,24 @@ export interface PokemonDetailResponse {
     }
   }
   species: NamedApiResource
+  /** 데시미터(17 → 1.7m) */
+  height: number
+  /** 헥토그램(905 → 90.5kg) */
+  weight: number
+  stats: { base_stat: number; stat: NamedApiResource }[]
+  abilities: { is_hidden: boolean; slot: number; ability: NamedApiResource }[]
 }
 
 /** GET /pokemon-species/{id 또는 name} */
 export interface PokemonSpeciesResponse {
+  id: number
+  name: string
+  names: { name: string; language: NamedApiResource }[]
+  flavor_text_entries: { flavor_text: string; language: NamedApiResource }[]
+}
+
+/** GET /ability/{id 또는 name} */
+export interface PokemonAbilityResponse {
   id: number
   name: string
   names: { name: string; language: NamedApiResource }[]
@@ -176,7 +190,31 @@ function isPokemonDetailResponse(value: unknown): value is PokemonDetailResponse
         isNamedApiResource(item.type),
     ) &&
     isSprites(value.sprites) &&
-    isNamedApiResource(value.species)
+    isNamedApiResource(value.species) &&
+    typeof value.height === 'number' &&
+    typeof value.weight === 'number' &&
+    Array.isArray(value.stats) &&
+    value.stats.every(
+      (item) =>
+        isRecord(item) && typeof item.base_stat === 'number' && isNamedApiResource(item.stat),
+    ) &&
+    Array.isArray(value.abilities) &&
+    value.abilities.every(
+      (item) =>
+        isRecord(item) &&
+        typeof item.is_hidden === 'boolean' &&
+        typeof item.slot === 'number' &&
+        isNamedApiResource(item.ability),
+    )
+  )
+}
+
+function isLocalizedNames(value: unknown): value is { name: string; language: NamedApiResource }[] {
+  return (
+    Array.isArray(value) &&
+    value.every(
+      (item) => isRecord(item) && typeof item.name === 'string' && isNamedApiResource(item.language),
+    )
   )
 }
 
@@ -185,13 +223,23 @@ function isPokemonSpeciesResponse(value: unknown): value is PokemonSpeciesRespon
     isRecord(value) &&
     typeof value.id === 'number' &&
     typeof value.name === 'string' &&
-    Array.isArray(value.names) &&
-    value.names.every(
+    isLocalizedNames(value.names) &&
+    Array.isArray(value.flavor_text_entries) &&
+    value.flavor_text_entries.every(
       (item) =>
         isRecord(item) &&
-        typeof item.name === 'string' &&
+        typeof item.flavor_text === 'string' &&
         isNamedApiResource(item.language),
     )
+  )
+}
+
+function isPokemonAbilityResponse(value: unknown): value is PokemonAbilityResponse {
+  return (
+    isRecord(value) &&
+    typeof value.id === 'number' &&
+    typeof value.name === 'string' &&
+    isLocalizedNames(value.names)
   )
 }
 
@@ -264,6 +312,31 @@ export function fetchPokemonSpeciesByUrl(url: string, options: RequestOptions = 
 /** species의 names에서 한국어 이름을 찾는다. 없으면 null이며, 대체 이름은 호출부가 정한다. */
 export function getKoreanName(species: PokemonSpeciesResponse) {
   return species.names.find((entry) => entry.language.name === 'ko')?.name ?? null
+}
+
+/** 특성 조회. 상세 응답의 abilities[].ability.url을 그대로 넘긴다. */
+export function fetchPokemonAbilityByUrl(url: string, options: RequestOptions = {}) {
+  return requestValidated(url, options, isPokemonAbilityResponse, '포켓몬 특성')
+}
+
+/** 이름 목록에서 한국어 → 영어 순서로 찾는다. 둘 다 없으면 null */
+export function getLocalizedName(names: { name: string; language: NamedApiResource }[]) {
+  return (
+    names.find((entry) => entry.language.name === 'ko')?.name ??
+    names.find((entry) => entry.language.name === 'en')?.name ??
+    null
+  )
+}
+
+/**
+ * 도감 설명. 가장 최근 게임의 한국어 설명을 쓰고, 없으면 영어 설명으로 대체한다.
+ * 원문의 줄바꿈·폼피드는 공백 하나로 바꾼다. 둘 다 없으면 null
+ */
+export function getFlavorText(species: PokemonSpeciesResponse) {
+  const pick = (language: string) =>
+    species.flavor_text_entries.findLast((entry) => entry.language.name === language)?.flavor_text
+  const text = pick('ko') ?? pick('en')
+  return text === undefined ? null : text.replace(/\s+/g, ' ').trim()
 }
 
 /* ===== 기존 Pokemon 형식으로 변환 ===== */

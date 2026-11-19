@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { NavLink } from 'react-router'
 import type { DexFetchStatus } from '../hooks/usePokemonDex.ts'
 
 const brandName = 'PokéMate'
@@ -10,7 +11,8 @@ const dexDescription = '도감과 나의 팀을 한 화면에서 관리할 수 �
 const apiDexTitle = '포켓몬 도감'
 const apiDexDescription = '페이지를 이동해도 이전 포켓몬을 빠르게 다시 볼 수 있어요.'
 
-export type AppView = 'dex' | 'team'
+/** 도감 소개: api(PokéAPI 도감), local(?preview 로컬 도감), null(도감이 아닌 화면) */
+export type DexIntro = 'api' | 'local' | null
 
 /** 시안의 노란 배지. 기본 문구는 ‘최신 목록’이고, 요청 중에는 작은 갱신 표시로 문구만 바뀐다. */
 const fetchStatusLabels: Record<DexFetchStatus, string> = {
@@ -21,8 +23,7 @@ const fetchStatusLabels: Record<DexFetchStatus, string> = {
 }
 
 type PokemonHeaderProps = {
-  currentView: AppView
-  onNavigate: (view: AppView) => void
+  dexIntro: DexIntro
   /** 실제 팀 state의 team.length에서 계산한 값 */
   teamCount: number
   teamLimit: number
@@ -32,14 +33,15 @@ type PokemonHeaderProps = {
   onRetryRefresh?: () => void
 }
 
-const navItems: { view: AppView; label: string }[] = [
-  { view: 'dex', label: '도감' },
-  { view: 'team', label: '내 팀' },
+/** 홈은 / 에서만, 도감·내 팀은 하위 경로(상세·편집)에서도 선택된 메뉴로 보인다. */
+const navItems: { to: string; label: string; className: string; end: boolean }[] = [
+  { to: '/', label: '홈', className: 'nav-pill--home', end: true },
+  { to: '/pokemon', label: '도감', className: 'nav-pill--dex', end: false },
+  { to: '/my-team', label: '내 팀', className: 'nav-pill--team', end: false },
 ]
 
 function PokemonHeader({
-  currentView,
-  onNavigate,
+  dexIntro,
   teamCount,
   teamLimit,
   fetchStatus,
@@ -72,23 +74,18 @@ function PokemonHeader({
 
         <div className="top-bar__actions">
           <nav className="top-nav" aria-label="주요 메뉴">
-            <button type="button" className="nav-pill nav-pill--home">
-              홈
-            </button>
-            {navItems.map(({ view, label }) => {
-              const isActive = view === currentView
-              return (
-                <button
-                  key={view}
-                  type="button"
-                  className={`nav-pill nav-pill--${view}${isActive ? ' nav-pill--active' : ''}`}
-                  aria-current={isActive ? 'page' : undefined}
-                  onClick={() => onNavigate(view)}
-                >
-                  {label}
-                </button>
-              )
-            })}
+            {navItems.map(({ to, label, className, end }) => (
+              <NavLink
+                key={to}
+                to={to}
+                end={end}
+                className={({ isActive }) =>
+                  `nav-pill ${className}${isActive ? ' nav-pill--active' : ''}`
+                }
+              >
+                {label}
+              </NavLink>
+            ))}
           </nav>
 
           <span
@@ -103,7 +100,7 @@ function PokemonHeader({
       </div>
 
       {/* 도감 소개는 도감 화면에서만 보인다. 내 팀 화면의 제목은 PokemonTeam이 그린다. */}
-      {currentView === 'dex' && fetchStatus && (
+      {dexIntro === 'api' && fetchStatus && (
         <div className="dex-intro">
           <div className="dex-intro__text">
             <h1 className="dex-intro__title">{apiDexTitle}</h1>
@@ -126,7 +123,7 @@ function PokemonHeader({
           )}
         </div>
       )}
-      {currentView === 'dex' && !fetchStatus && (
+      {dexIntro === 'local' && (
         <div className="dex-intro">
           <div className="dex-intro__text">
             <h1 className="dex-intro__title">{dexTitle}</h1>

@@ -1,6 +1,7 @@
 import { useRef } from 'react'
+import { Link } from 'react-router'
 import { TEAM_LIMIT } from '../data/team.ts'
-import type { TeamMember, TeamMemberChanges } from '../data/team.ts'
+import type { TeamMember } from '../data/team.ts'
 import TeamSlot, { EmptyTeamSlot } from './TeamSlot.tsx'
 import { useTeamMemberDialogs } from './useTeamMemberDialogs.tsx'
 
@@ -9,26 +10,21 @@ const teamDescription = `최대 ${TEAM_LIMIT}마리의 포켓몬으로 나만의
 
 type PokemonTeamProps = {
   team: TeamMember[]
-  onEditMember: (pokemonId: number, changes: TeamMemberChanges) => void
   onRemoveMember: (pokemonId: number) => void
   onSaveTeam: () => void
   onRevertTeam: () => void
-  onGoToDex: () => void
 }
 
 function PokemonTeam({
   team,
-  onEditMember,
   onRemoveMember,
   onSaveTeam,
   onRevertTeam,
-  onGoToDex,
 }: PokemonTeamProps) {
   const titleRef = useRef<HTMLHeadingElement>(null)
-  // 편집·삭제 창은 도감의 팀 패널과 같은 로직을 쓴다.
-  const { openEdit, openDelete, closeDialogs, dialogs } = useTeamMemberDialogs({
+  // 삭제 확인 창은 도감의 팀 패널과 같은 로직을 쓴다. 편집은 /my-team/:teamPokemonId/edit 화면에서 한다.
+  const { openDelete, closeDialogs, dialogs } = useTeamMemberDialogs({
     team,
-    onEditMember,
     onRemoveMember,
     returnFocusFallback: titleRef,
   })
@@ -82,23 +78,19 @@ function PokemonTeam({
             아직 팀에 포켓몬이 없어요. 도감에서 ‘팀에 추가’를 눌러 최대{' '}
             {TEAM_LIMIT}마리까지 채워 보세요.
           </p>
-          <button
-            type="button"
-            className="button button--secondary button--slot"
-            onClick={onGoToDex}
-          >
+          <Link to="/pokemon" className="button button--secondary button--slot">
             도감으로 이동
-          </button>
+          </Link>
         </div>
       )}
 
       <ol className="team-slots" aria-label={`팀 슬롯 ${TEAM_LIMIT}칸`}>
         {slots.map((member, index) =>
           member ? (
-            <li key={member.pokemon.id}>
+            <li key={member.id}>
               <TeamSlot
                 member={member}
-                onEdit={() => openEdit(member.pokemon.id)}
+                editTo={`/my-team/${member.id}/edit`}
                 onDelete={() => openDelete(member.pokemon.id)}
               />
             </li>

@@ -40,6 +40,8 @@ type PokemonListProps = {
   /** 검색어와 타입 조건을 함께 해제한다. 정렬 방향은 유지한다. */
   onResetFilters: () => void
   teamPanel: ReactNode
+  /** 지금 도감 주소의 ?page=&q=. 카드에서 상세로 갈 때 넘겨, 도감으로 돌아오면 같은 조건을 복원한다. */
+  dexSearch?: string
   /**
    * PokéAPI 화면의 목록·검색 요청 상태. 있으면 API 목록과 제출형 상세 검색을 그리고,
    * 없으면(?preview 로컬 데이터) 기존처럼 pokemons에 로컬 검색·필터·정렬을 적용한다.
@@ -99,6 +101,7 @@ function PokemonList({
   onResetFilters,
   teamPanel,
   api,
+  dexSearch = '',
 }: PokemonListProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const titleRef = useRef<HTMLHeadingElement>(null)
@@ -166,6 +169,7 @@ function PokemonList({
         onAdd={() => onAdd(pokemon)}
         // W05·W06 시안의 PokéAPI 카드는 대표 타입(첫 번째) 하나만 보인다. 데이터의 types는 그대로다.
         visibleTypeCount={api ? 1 : undefined}
+        detailLink={api ? { to: `/pokemon/${pokemon.id}`, state: { dexSearch } } : undefined}
       />
     )
   }

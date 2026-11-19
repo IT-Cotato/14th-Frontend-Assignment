@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   fetchPokemonDetail,
   fetchPokemonSpeciesByUrl,
@@ -10,14 +10,11 @@ import {
 } from '../api/pokeapi.ts'
 import type { Pokemon } from '../components/PokemonCard.tsx'
 
-/** 제출한 검색 한 번. 같은 검색어를 다시 제출하거나 다시 시도해도 id가 새로 붙어 다시 요청한다. */
-type Submission = { id: number; keyword: string }
-
-/** 끝난 검색 요청의 결과. 어느 제출(submissionId)의 결과인지 함께 저장한다. */
+/** 끝난 검색 요청의 결과. 어느 요청(requestKey: 검색어 + 다시 시도 횟수)의 결과인지 함께 저장한다. */
 type SearchResult =
-  | { submissionId: number; status: 'success'; pokemon: Pokemon }
-  | { submissionId: number; status: 'not-found' }
-  | { submissionId: number; status: 'error'; error: unknown }
+  | { requestKey: string; status: 'success'; pokemon: Pokemon }
+  | { requestKey: string; status: 'not-found' }
+  | { requestKey: string; status: 'error'; error: unknown }
 
 /** 화면용 검색 상태. idle이면 검색 중이 아니므로 기본 목록을 보여 준다. */
 export type PokemonSearchState =
@@ -28,32 +25,34 @@ export type PokemonSearchState =
   | { status: 'error'; keyword: string; error: unknown }
 
 type UsePokemonSearchOptions = {
-  /** false면 요청하지 않는다. (?preview 로컬 데이터 화면) */
+  /** false면 요청하지 않는다. (?preview 로컬 데이터 화면·도감이 아닌 화면) */
   enabled: boolean
+  /** 주소의 q 값. 정리한 값이 비어 있으면 검색하지 않고 기본 목록을 보여 준다. */
+  query: string
 }
 
 /**
- * 도감 번호·영문 이름 상세 검색. 입력창의 원본 값은 다루지 않고, 제출한 검색어만 가진다.
- * - submit(query): 정리한 값이 비어 있으면 검색을 끝내고 기본 목록으로 돌아간다.
- * - retry(): 마지막으로 제출한 검색어를 다시 요청한다. (입력창의 미제출 값은 쓰지 않는다)
+ * 도감 번호·영문 이름 상세 검색. 검색어는 주소(q)가 정하므로 새로고침·뒤로 가기에도 같은 검색이 복원된다.
+ * - retry(): 지금 검색어를 다시 요청한다.
  */
-export function usePokemonSearch({ enabled }: UsePokemonSearchOptions) {
-  const [submission, setSubmission] = useState<Submission | null>(null)
+export function usePokemonSearch({ enabled, query }: UsePokemonSearchOptions) {
+  const keyword = normalizePokemonQuery(query)
+  // 같은 검색어를 다시 시도할 때마다 올린다. 이전 시도의 결과가 다시 보이지 않게 요청 키에 넣는다.
+  const [attempt, setAttempt] = useState(0)
   const [result, setResult] = useState<SearchResult | null>(null)
-  // 제출 번호. 기본 목록으로 돌아갔다가 다시 검색해도 번호가 겹치지 않아 이전 결과가 다시 보이지 않는다.
-  const submissionSeqRef = useRef(0)
+  const requestKey = `${keyword}#${attempt}`
 
   useEffect(() => {
-    if (!enabled || submission === null) return
+    if (!enabled || keyword === '') return
 
-    // 이 제출의 상세·species 요청은 모두 이 signal로 취소된다. (새 제출·기본 목록 복귀·화면 정리)
+    // 이 검색의 상세·species 요청은 모두 이 signal로 취소된다. (새 검색어·검색 종료·화면 정리)
     const controller = new AbortController()
     const { signal } = controller
     // abort 전에 이미 끝난 응답의 후속 처리도 막는다.
     let active = true
-    const submissionId = submission.id
+    const key = `${keyword}#${attempt}`
 
-    async function search(keyword: string) {
+    async function search() {
       let pokemon: Pokemon
       let speciesUrl: string
       try {
@@ -65,20 +64,20 @@ export function usePokemonSearch({ enabled }: UsePokemonSearchOptions) {
         // 검색에서의 404는 오류가 아니라 '검색 결과 없음'이다.
         setResult(
           isNotFoundError(error)
-            ? { submissionId, status: 'not-found' }
-            : { submissionId, status: 'error', error },
+            ? { requestKey: key, status: 'not-found' }
+            : { requestKey: key, status: 'error', error },
         )
         return
       }
       if (!active) return
       // 한국어 이름을 기다리지 않고 영문 이름으로 먼저 보여 준다.
-      setResult({ submissionId, status: 'success', pokemon })
+      setResult({ requestKey: key, status: 'success', pokemon })
 
       try {
         const koreanName = getKoreanName(await fetchPokemonSpeciesByUrl(speciesUrl, { signal }))
         if (!active || koreanName === null) return
         setResult((prev) =>
-          prev?.submissionId === submissionId && prev.status === 'success'
+          prev?.requestKey === key && prev.status === 'success'
             ? { ...prev, pokemon: { ...prev.pokemon, name: koreanName } }
             : prev,
         )
@@ -87,53 +86,32 @@ export function usePokemonSearch({ enabled }: UsePokemonSearchOptions) {
       }
     }
 
-    void search(submission.keyword)
+    void search()
 
     return () => {
       active = false
       controller.abort()
     }
-  }, [enabled, submission])
+  }, [enabled, keyword, attempt])
 
-  // 화면용 상태는 렌더링할 때 계산한다. 결과의 제출 번호가 지금 제출과 다르면 아직 응답 전(Loading)이다.
+  // 화면용 상태는 렌더링할 때 계산한다. 결과의 요청 키가 지금 검색과 다르면 아직 응답 전(Loading)이다.
   let state: PokemonSearchState
-  if (submission === null) {
+  if (keyword === '') {
     state = { status: 'idle' }
-  } else if (result === null || result.submissionId !== submission.id) {
-    state = { status: 'loading', keyword: submission.keyword }
+  } else if (result === null || result.requestKey !== requestKey) {
+    state = { status: 'loading', keyword }
   } else if (result.status === 'success') {
-    state = { status: 'success', keyword: submission.keyword, pokemon: result.pokemon }
+    state = { status: 'success', keyword, pokemon: result.pokemon }
   } else if (result.status === 'not-found') {
-    state = { status: 'not-found', keyword: submission.keyword }
+    state = { status: 'not-found', keyword }
   } else {
-    state = { status: 'error', keyword: submission.keyword, error: result.error }
-  }
-
-  function submit(query: string) {
-    const keyword = normalizePokemonQuery(query)
-    if (keyword === '') {
-      // 빈 검색어는 요청하지 않고 기본 목록으로 돌아간다. (진행 중인 검색은 cleanup에서 취소된다)
-      setSubmission(null)
-      return
-    }
-    submissionSeqRef.current += 1
-    setSubmission({ id: submissionSeqRef.current, keyword })
+    state = { status: 'error', keyword, error: result.error }
   }
 
   function retry() {
-    if (submission === null) return
-    submissionSeqRef.current += 1
-    setSubmission({ id: submissionSeqRef.current, keyword: submission.keyword })
+    if (keyword === '') return
+    setAttempt((value) => value + 1)
   }
 
-  /**
-   * 제출한 검색을 끝내고 기본 목록 상태로 돌린다. (도감을 떠날 때)
-   * 진행 중인 상세·species 요청은 Effect cleanup에서 취소되고, 다음 제출은 새 번호를 받으므로
-   * 이전 검색의 결과가 다시 보이지 않는다. 입력창의 원본 값은 이 훅이 다루지 않으므로 그대로다.
-   */
-  function reset() {
-    setSubmission(null)
-  }
-
-  return { state, submit, retry, reset }
+  return { state, retry }
 }
