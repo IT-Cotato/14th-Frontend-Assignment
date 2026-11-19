@@ -1,20 +1,25 @@
+import { Link, Route, Routes } from "react-router-dom";
 import { useEffect, useState } from "react";
 import HomePage from "./components/HomePage";
 import PokedexPage from "./components/PokedexPage";
 import MyTeamPage from "./components/MyTeamPage";
+import PokemonDetailPage from "./components/PokemonDetailPage";
+import TeamEditPage from "./components/TeamEditPage";
+import PokemonHeader from "./components/PokemonHeader";
+import StatePanel from "./components/StatePanel";
+import "./Routes.css";
 import Toast, { type Notice } from "./components/Toast";
 import {
   MAX_TEAM_SIZE,
   TEAM_STORAGE_KEY,
   isSameTeam,
   loadSavedTeam,
-  type ActivePage,
   type TeamMember,
   type TeamMemberChanges,
+  type TeamPokemon,
 } from "./components/teamTypes";
 
 function App() {
-  const [page, setPage] = useState<ActivePage>("home");
  
   const [initialTeam] = useState(loadSavedTeam);
 
@@ -26,6 +31,14 @@ function App() {
   
   const [duplicate, setDuplicate] = useState<{ name: string } | null>(null);
 
+  useEffect(() => {
+    if (!initialTeam.needsMigration) return;
+    try {
+      localStorage.setItem(TEAM_STORAGE_KEY, JSON.stringify(initialTeam.team));
+    } catch {
+      // 저장소 쓰기에 실패해도 변환한 팀으로 계속 사용한다.
+    }
+  }, [initialTeam]);
   
   useEffect(() => {
     if (!notice) return;
@@ -55,7 +68,7 @@ function App() {
 
   const hasUnsavedChanges = !isSameTeam(team, savedTeam);
 
-  const handleAddToTeam = (member: TeamMember) => {
+  const handleAddToTeam = (member: TeamPokemon) => {
     if (team.some((m) => m.id === member.id)) {
       setDuplicate({ name: member.name });
       return;
@@ -65,11 +78,12 @@ function App() {
     if (team.length >= MAX_TEAM_SIZE) return;
 
    
+    const teamPokemonId = `tp_${crypto.randomUUID()}`;
     setTeam((prev) => {
       if (prev.length >= MAX_TEAM_SIZE) return prev;
       if (prev.some((m) => m.id === member.id)) return prev;
 
-      return [...prev, member];
+      return [...prev, { ...member, teamPokemonId, memo: "" }];
     });
 
     setNotice({
@@ -79,34 +93,37 @@ function App() {
     });
   };
 
-  const handleRemoveFromTeam = (id: number) => {
-    setTeam((prev) => prev.filter((member) => member.id !== id));
+  const handleRemoveFromTeam = (id: string) => {
+    setTeam((prev) => prev.filter((member) => member.teamPokemonId !== id));
   };
 
-  const handleUpdateMember = (id: number, changes: TeamMemberChanges) => {
-    setTeam((prev) =>
-      prev.map((member) => (member.id === id ? { ...member, ...changes } : member)),
-    );
+  const persistTeam = (nextTeam: TeamMember[]) => {
+    localStorage.setItem(TEAM_STORAGE_KEY, JSON.stringify(nextTeam));
+    setTeam(nextTeam);
+    setSavedTeam(nextTeam);
+    setNotice({
+      type: "success",
+      text: "팀을 저장했어요.",
+      duration: 2500,
+    });
   };
 
   const handleSaveTeam = () => {
     try {
-      localStorage.setItem(TEAM_STORAGE_KEY, JSON.stringify(team));
+      persistTeam(team);
     } catch {
       setNotice({
         type: "info",
         text: "팀을 저장하지 못했어요.",
         duration: 2500,
       });
-      return;
     }
+  };
 
-    setSavedTeam(team);
-    setNotice({
-      type: "success",
-      text: "팀을 저장했어요.",
-      duration: 2500,
-    });
+  const handleSaveMember = (id: string, changes: TeamMemberChanges) => {
+    persistTeam(team.map((member) =>
+      member.teamPokemonId === id ? { ...member, ...changes } : member,
+    ));
   };
 
   const handleCancelTeam = () => {
@@ -120,39 +137,57 @@ function App() {
 
   return (
     <div className="pokedex-shell">
-      {page === "home" && (
-        <HomePage
-          team={team}
-          duplicateName={duplicate?.name ?? null}
-          onNavigate={setPage}
-          onAddToTeam={handleAddToTeam}
-        />
-      )}
-
-      {page === "pokedex" && (
-        <PokedexPage
-          team={team}
-          duplicateName={duplicate?.name ?? null}
-          loadError={loadError}
-          onNavigate={setPage}
-          onAddToTeam={handleAddToTeam}
-          onRemove={handleRemoveFromTeam}
-          onUpdate={handleUpdateMember}
-          onDismissLoadError={() => setLoadError(false)}
-        />
-      )}
-
-      {page === "team" && (
-        <MyTeamPage
-          team={team}
-          onNavigate={setPage}
-          onRemove={handleRemoveFromTeam}
-          onUpdate={handleUpdateMember}
-          onSave={handleSaveTeam}
-          onCancel={handleCancelTeam}
-          hasUnsavedChanges={hasUnsavedChanges}
-        />
-      )}
+      <Routes>
+        <Route path="/" element={
+          <HomePage
+            team={team}
+            duplicateName={duplicate?.name ?? null}
+            onAddToTeam={handleAddToTeam}
+          />
+        } />
+        <Route path="/pokemon" element={
+          <PokedexPage
+            team={team}
+            duplicateName={duplicate?.name ?? null}
+            loadError={loadError}
+            onAddToTeam={handleAddToTeam}
+            onDismissLoadError={() => setLoadError(false)}
+          />
+        } />
+        <Route path="/pokemon/:pokemonId" element={
+          <PokemonDetailPage
+            team={team}
+            duplicateName={duplicate?.name ?? null}
+            onAddToTeam={handleAddToTeam}
+          />
+        } />
+        <Route path="/my-team" element={
+          <MyTeamPage
+            team={team}
+            onRemove={handleRemoveFromTeam}
+            onSave={handleSaveTeam}
+            onCancel={handleCancelTeam}
+            hasUnsavedChanges={hasUnsavedChanges}
+          />
+        } />
+        <Route path="/my-team/:teamPokemonId/edit" element={
+          <TeamEditPage team={team} onSave={handleSaveMember} />
+        } />
+        <Route path="*" element={
+          <>
+            <PokemonHeader teamCount={team.length} />
+            <main className="route-page route-error-page">
+              <StatePanel
+                variant="error"
+                symbol="!"
+                title="페이지를 찾을 수 없어요"
+                description="주소를 확인하거나 홈으로 돌아가 주세요."
+              />
+              <Link className="team-btn team-btn--secondary" to="/">홈으로</Link>
+            </main>
+          </>
+        } />
+      </Routes>
 
       <Toast notice={notice} />
     </div>

@@ -141,7 +141,7 @@
   cursor: pointer;
 }
 
-.navigation button.active {
+.navigation a.active {
   background: #EF476F;
   color: #FFFFFF;
 }

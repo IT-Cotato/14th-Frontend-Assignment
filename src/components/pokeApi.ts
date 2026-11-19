@@ -7,6 +7,11 @@ export type PokemonData = {
   type: string; // 대표 타입 (영문 소문자)
   types: string[]; // 전체 타입 (1~2개)
   image: string;
+  height: number;
+  weight: number;
+  abilities: string[];
+  stats: { name: string; value: number }[];
+  description: string;
 };
 
 export type CardResult =
@@ -53,6 +58,10 @@ export function getArtworkUrl(id: number): string {
 type PokemonResponse = {
   id: number;
   name: string;
+  height: number;
+  weight: number;
+  abilities: { ability: { name: string } }[];
+  stats: { base_stat: number; stat: { name: string } }[];
   species: { url: string };
   sprites: {
     front_default: string | null;
@@ -63,23 +72,39 @@ type PokemonResponse = {
 
 type SpeciesResponse = {
   names: { name: string; language: { name: string } }[];
+  flavor_text_entries: { flavor_text: string; language: { name: string } }[];
 };
 
-// target: 상세 URL 또는 도감 번호/영문 이름
+export async function fetchAbilityName(name: string, signal: AbortSignal): Promise<string> {
+  const ability = await getJson<Pick<SpeciesResponse, "names">>(
+    `${BASE_URL}/ability/${encodeURIComponent(name)}`,
+    signal,
+  );
+  return ability.names.find(({ language }) => language.name === "ko")?.name ??
+    ability.names.find(({ language }) => language.name === "en")?.name ?? name;
+}
+
+// target: 도감 번호 또는 영문 이름
 export async function fetchPokemon(
   target: string,
   signal: AbortSignal,
 ): Promise<PokemonData> {
-  const url = target.startsWith("http")
-    ? target
-    : `${BASE_URL}/pokemon/${target}`;
+  if (target === "" || target === "." || target === "..") throw new HttpError(404);
+  const url = `${BASE_URL}/pokemon/${encodeURIComponent(target)}`;
   const data = await getJson<PokemonResponse>(url, signal);
 
   // 한글 이름은 species API에 있음. 실패해도 카드는 영문 이름으로 표시
   let name = data.name.charAt(0).toUpperCase() + data.name.slice(1);
+  let description = "설명이 없어요.";
   try {
     const species = await getJson<SpeciesResponse>(data.species.url, signal);
     name = species.names.find((n) => n.language.name === "ko")?.name ?? name;
+    const entries = species.flavor_text_entries.map(({ flavor_text, language }) => ({
+      text: flavor_text.replace(/\s+/g, " ").trim(),
+      language: language.name,
+    }));
+    description = entries.find((entry) => entry.language === "ko" && entry.text)?.text ??
+      entries.find((entry) => entry.language === "en" && entry.text)?.text ?? description;
   } catch (error) {
     if (isAbortError(error)) throw error;
   }
@@ -91,6 +116,11 @@ export async function fetchPokemon(
   return {
     id: data.id,
     name,
+    description,
+    height: data.height / 10,
+    weight: data.weight / 10,
+    abilities: data.abilities.map(({ ability }) => ability.name),
+    stats: data.stats.map(({ base_stat, stat }) => ({ name: stat.name, value: base_stat })),
     type: types[0] ?? "normal",
     types: types.length > 0 ? types : ["normal"],
     image:
@@ -105,7 +135,7 @@ export type PageParams = { limit: number; offset: number };
 
 export const pokemonKeys = {
   list: (params: PageParams) => ["pokemon", "list", params] as const,
-  detail: (id: number) => ["pokemon", "detail", id] as const,
+  detail: (target: string) => ["pokemon", "detail", target] as const,
   search: (target: string) => ["pokemon", "search", target] as const,
 };
 
@@ -176,7 +206,7 @@ export async function loadCards(
   );
 
   const settled = await Promise.allSettled(
-    list.results.map((item) => fetchPokemon(item.url, signal)),
+    list.results.map((item) => fetchPokemon(item.name, signal)),
   );
 
   return settled.map((result, i): CardResult => {

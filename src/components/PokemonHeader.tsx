@@ -1,12 +1,12 @@
+import { Link } from "react-router-dom";
 import { MAX_TEAM_SIZE, type ActivePage } from "./teamTypes";
 
 type PokemonHeaderProps = {
-  activePage: ActivePage;
+  activePage?: ActivePage;
   teamCount: number;
-  onNavigate: (page: ActivePage) => void;
 };
 
-function PokemonHeader({ activePage, teamCount, onNavigate }: PokemonHeaderProps) {
+function PokemonHeader({ activePage, teamCount }: PokemonHeaderProps) {
 
   const getNavClass = (page: ActivePage, baseClass: string): string => {
     return activePage === page ? `${baseClass} active` : baseClass;
@@ -24,29 +24,29 @@ function PokemonHeader({ activePage, teamCount, onNavigate }: PokemonHeaderProps
       </div>
 
       <nav className="navigation">
-        <button
+        <Link
           className={getNavClass("home", "nav-home")}
           aria-current={getAriaCurrent("home")}
-          onClick={() => onNavigate("home")}
+          to="/"
         >
           홈
-        </button>
+        </Link>
 
-        <button
+        <Link
           className={getNavClass("pokedex", "nav-pokedex")}
           aria-current={getAriaCurrent("pokedex")}
-          onClick={() => onNavigate("pokedex")}
+          to="/pokemon"
         >
           도감
-        </button>
+        </Link>
 
-        <button
+        <Link
           className={getNavClass("team", "nav-my-team")}
           aria-current={getAriaCurrent("team")}
-          onClick={() => onNavigate("team")}
+          to="/my-team"
         >
           내 팀
-        </button>
+        </Link>
 
         <span className="team-count">
           {teamCount} / {MAX_TEAM_SIZE}

@@ -1,14 +1,13 @@
+import { Link } from "react-router-dom";
 import { useState } from "react";
 import type { TeamMember } from "./teamTypes";
 
 type TeamSlotProps = {
   member: TeamMember | null;
-  isEditing: boolean;
-  onEdit: (id: number) => void;
-  onDelete: (id: number) => void;
+  onDelete: (id: string) => void;
 };
 
-function TeamSlot({ member, isEditing, onEdit, onDelete }: TeamSlotProps) {
+function TeamSlot({ member, onDelete }: TeamSlotProps) {
   const [imageFailed, setImageFailed] = useState(false);
 
   // 빈 슬롯
@@ -31,7 +30,7 @@ function TeamSlot({ member, isEditing, onEdit, onDelete }: TeamSlotProps) {
 
   // 채운 슬롯
   return (
-    <div className={`team-slot${isEditing ? " team-slot--editing" : ""}`}>
+    <div className="team-slot">
       <div className="team-slot__artwork">
         {!imageFailed && (
           <img
@@ -52,17 +51,16 @@ function TeamSlot({ member, isEditing, onEdit, onDelete }: TeamSlotProps) {
       </div>
 
       <div className="team-slot__actions">
-        <button
-          type="button"
+        <Link
           className="team-btn team-btn--secondary"
-          onClick={() => onEdit(member.id)}
+          to={`/my-team/${member.teamPokemonId}/edit`}
         >
           편집
-        </button>
+        </Link>
         <button
           type="button"
           className="team-btn team-btn--danger"
-          onClick={() => onDelete(member.id)}
+          onClick={() => onDelete(member.teamPokemonId)}
         >
           삭제
         </button>

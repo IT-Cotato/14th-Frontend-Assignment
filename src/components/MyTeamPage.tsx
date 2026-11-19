@@ -1,20 +1,15 @@
 import { useState } from "react";
 import PokemonHeader from "./PokemonHeader";
 import TeamSlot from "./TeamSlot";
-import EditDialog from "./EditDialog";
 import ConfirmDialog from "./ConfirmDialog";
 import {
   MAX_TEAM_SIZE,
-  type ActivePage,
   type TeamMember,
-  type TeamMemberChanges,
 } from "./teamTypes";
 
 type MyTeamPageProps = {
   team: TeamMember[];
-  onNavigate: (page: ActivePage) => void;
-  onRemove: (id: number) => void;
-  onUpdate: (id: number, changes: TeamMemberChanges) => void;
+  onRemove: (id: string) => void;
   onSave: () => void;
   onCancel: () => void;
   hasUnsavedChanges: boolean;
@@ -22,28 +17,16 @@ type MyTeamPageProps = {
 
 function MyTeamPage({
   team,
-  onNavigate,
   onRemove,
-  onUpdate,
   onSave,
   onCancel,
   hasUnsavedChanges,
 }: MyTeamPageProps) {
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const slots = Array.from({ length: MAX_TEAM_SIZE }, (_, i) => team[i] ?? null);
 
-  const editingIndex = team.findIndex((member) => member.id === editingId);
-  const editingMember = editingIndex >= 0 ? team[editingIndex] : null;
-  const deletingMember = team.find((member) => member.id === deletingId) ?? null;
-
-  const handleEditSave = (changes: TeamMemberChanges) => {
-    if (editingId === null) return;
-
-    onUpdate(editingId, changes);
-    setEditingId(null);
-  };
+  const deletingMember = team.find((member) => member.teamPokemonId === deletingId) ?? null;
 
   const handleDeleteConfirm = () => {
     if (deletingId === null) return;
@@ -57,7 +40,6 @@ function MyTeamPage({
       <PokemonHeader
         activePage="team"
         teamCount={team.length}
-        onNavigate={onNavigate}
       />
 
       <section className="team-page">
@@ -96,25 +78,13 @@ function MyTeamPage({
         <div className="team-grid">
           {slots.map((member, i) => (
             <TeamSlot
-              key={member ? member.id : `empty-${i}`}
+              key={member ? member.teamPokemonId : `empty-${i}`}
               member={member}
-              isEditing={member !== null && member.id === editingId}
-              onEdit={setEditingId}
               onDelete={setDeletingId}
             />
           ))}
         </div>
       </section>
-
-      {editingMember && (
-        <EditDialog
-          key={editingMember.id}
-          member={editingMember}
-          slotNumber={editingIndex + 1}
-          onSave={handleEditSave}
-          onClose={() => setEditingId(null)}
-        />
-      )}
 
       {deletingMember && (
         <ConfirmDialog

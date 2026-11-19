@@ -2,6 +2,12 @@
   box-sizing: border-box;
 }
 
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #F7FBFF;
+}
+
 /* App Shell */
 .pokedex-shell {
   display: flex;
@@ -12,9 +18,6 @@
 
   position: relative;
   width: 1440px;
-  height: 1024px;
-
-  background: #F7FBFF;
 }
 
 
@@ -332,10 +335,18 @@
 
 /* Empty State - 에러 (저장된 팀 불러오기 실패 / API 오류) */
 .empty-state--error {
-  height: 205px;
+  height: auto;
+  padding-inline: clamp(12px, 4vw, 24px);
 
   background: #FFF0F3;
   border: 1px solid #EF476F;
+}
+
+.empty-state--error .empty-state__title,
+.empty-state--error .empty-state__description {
+  height: auto;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .empty-state--error .empty-state__symbol {
