@@ -1,9 +1,11 @@
+import { Link, useLocation } from "react-router-dom";
 import TypeChip from "./TypeChip";
 import {
   DEFAULT_ROLE,
   MAX_TEAM_SIZE,
   TYPE_LABEL,
   type TeamMember,
+  type TeamPokemon,
 } from "./teamTypes";
 
 interface PokemonCardProps {
@@ -14,7 +16,40 @@ interface PokemonCardProps {
   type: string;
   types?: string[];
   team: TeamMember[];
-  onAddToTeam: (member: TeamMember) => void;
+  onAddToTeam: (member: TeamPokemon) => void;
+}
+
+export function AddToTeamButton({
+  id,
+  image,
+  name,
+  types,
+  team,
+  onAddToTeam,
+}: Pick<PokemonCardProps, "image" | "name" | "team" | "onAddToTeam"> & {
+  id: number;
+  types: string[];
+}) {
+  const isAdded = team.some((member) => member.id === id);
+  const isFull = team.length >= MAX_TEAM_SIZE;
+
+  return (
+    <button
+      type="button"
+      className={`action-btn${isAdded ? " is-added" : ""}`}
+      onClick={() => onAddToTeam({
+        id,
+        name,
+        type: types.map((type) => TYPE_LABEL[type.toLowerCase()] ?? type).join("/"),
+        role: DEFAULT_ROLE,
+        nickname: "",
+        image,
+      })}
+      disabled={!Number.isInteger(id) || id <= 0 || (!isAdded && isFull)}
+    >
+      {isAdded ? "추가됨" : isFull ? "팀이 가득 참" : "내 팀에 추가"}
+    </button>
+  );
 }
 
 function PokemonCard({
@@ -33,38 +68,22 @@ function PokemonCard({
   // 수정: id가 오면 그대로 쓰고, 없으면 기존처럼 "#025" 같은 번호 문자열에서 숫자만 뽑아 사용
   const id = idProp ?? Number(number.replace(/\D/g, ""));
   const isAdded = team.some((member) => member.id === id);
-  const isFull = team.length >= MAX_TEAM_SIZE;
-
-  const handleClick = () => {
-    if (!Number.isInteger(id) || id <= 0) {
-      console.error("포켓몬 번호를 읽지 못했어요:", number);
-      return;
-    }
-
-    onAddToTeam({
-      id,
-      name,
-      type: typeList.map((t) => TYPE_LABEL[t.toLowerCase()] ?? t).join("/"),
-      role: DEFAULT_ROLE,
-      nickname: "",
-      image,
-    });
-  };
-
-  const getLabel = () => {
-    if (isAdded) return "추가됨";
-    if (isFull) return "팀이 가득 참";
-    return "팀에 추가";
-  };
+  const { pathname, search } = useLocation();
+  const detailPath = `/pokemon/${id}`;
+  const detailState = { listSearch: pathname === "/pokemon" ? search : "" };
 
   return (
     <article className={`pokemon-card${isAdded ? " is-added" : ""}`}>
-      <div className="artwork">
-        <img src={image} alt={name} />
-      </div>
+      <Link className="artwork" to={detailPath} state={detailState} aria-label={`${name} 상세 보기`}>
+        <img src={image} alt="" />
+      </Link>
 
       <span className="number">{number}</span>
-      <h3 className="name">{name}</h3>
+      <h3 className="name">
+        <Link to={detailPath} state={detailState}>
+          {name}
+        </Link>
+      </h3>
 
       <div className="types">
         {typeList.map((t) => (
@@ -72,13 +91,14 @@ function PokemonCard({
         ))}
       </div>
 
-      <button
-        className={`action-btn${isAdded ? " is-added" : ""}`}
-        onClick={handleClick}
-        disabled={!isAdded && isFull}
-      >
-        {getLabel()}
-      </button>
+      <AddToTeamButton
+        id={id}
+        image={image}
+        name={name}
+        types={typeList}
+        team={team}
+        onAddToTeam={onAddToTeam}
+      />
     </article>
   );
 }

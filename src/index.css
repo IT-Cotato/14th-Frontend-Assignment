@@ -1,5 +1,5 @@
 /* 순서 중요: 뒤에 오는 파일이 앞 파일의 스타일을 덮어씀 */
-@import './base.css';
-@import './layout.css';
-@import './pokemon.css';
-@import './team.css';
+@import './Base.css';
+@import './Layout.css';
+@import './Pokemon.css';
+@import './Team.css';

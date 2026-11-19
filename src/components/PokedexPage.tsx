@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import PokemonHeader from "./PokemonHeader";
 import PokemonCard from "./PokemonCard";
 import TeamNoticePanel from "./TeamNoticePanel";
@@ -6,16 +7,13 @@ import StatePanel from "./StatePanel";
 import Pagination from "./Pagination";
 import { usePokedexPage } from "./usePokedexPage";
 import { getArtworkUrl } from "./pokeApi";
-import type { ActivePage, TeamMember, TeamMemberChanges } from "./teamTypes";
+import type { TeamMember, TeamPokemon } from "./teamTypes";
 
 type PokedexPageProps = {
   team: TeamMember[];
   duplicateName: string | null;
   loadError: boolean;
-  onNavigate: (page: ActivePage) => void;
-  onAddToTeam: (member: TeamMember) => void;
-  onRemove: (id: number) => void;
-  onUpdate: (id: number, changes: TeamMemberChanges) => void;
+  onAddToTeam: (member: TeamPokemon) => void;
   onDismissLoadError: () => void;
 };
 
@@ -25,7 +23,6 @@ function PokedexPage({
   team,
   duplicateName,
   loadError,
-  onNavigate,
   onAddToTeam,
   onDismissLoadError,
 }: PokedexPageProps) {
@@ -46,7 +43,6 @@ function PokedexPage({
       <PokemonHeader
         activePage="pokedex"
         teamCount={team.length}
-        onNavigate={onNavigate}
       />
 
       <div className="pokedex-title">
@@ -114,11 +110,14 @@ function PokedexPage({
           )}
 
           {view.status === "empty" && (
-            <StatePanel
-              symbol="?"
-              title="검색 결과가 없어요"
-              description="도감 번호나 영문 이름을 확인해 주세요."
-            />
+            <div className="route-page">
+              <StatePanel
+                symbol="?"
+                title="표시할 포켓몬이 없어요"
+                description="도감 번호, 영문 이름 또는 페이지 번호를 확인해 주세요."
+              />
+              <Link className="team-btn team-btn--secondary" to="/pokemon">첫 페이지로</Link>
+            </div>
           )}
 
           {view.status === "error" && (
@@ -199,9 +198,7 @@ function PokedexPage({
               totalPages={pagination.totalPages}
               hasPrevious={pagination.hasPrevious}
               hasNext={pagination.hasNext}
-              onPrevious={pagination.goPrevious}
-              onNext={pagination.goNext}
-              onSelectPage={pagination.goToPage}
+              pageHref={pagination.pageHref}
             />
           )}
         </section>

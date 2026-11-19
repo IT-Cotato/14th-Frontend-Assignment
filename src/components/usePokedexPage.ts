@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import {
   HttpError,
@@ -10,8 +11,8 @@ import {
   type PokemonData,
 } from "./pokeApi";
 
-// ?ì„¸ ?°ì´?°ëŠ” ê±°ì˜ ??ë°”ë€Œë?ë¡?5ë¶„ê°„ fresh ì²˜ë¦¬ (ëª©ë¡?€ ê¸°ë³¸ê°?0 ???Œì•„?¤ë©´ ê°±ì‹ )
 const DETAIL_STALE_TIME = 5 * 60 * 1000;
+const FIRST_PAGE = { limit: LIST_LIMIT, offset: 0 };
 
 export type CardModel =
   | { status: "pending"; id: number; name: string }
@@ -31,41 +32,63 @@ export type ViewState =
   | { status: "success"; cards: CardModel[] };
 
 export function usePokedexPage() {
-  const [offset, setOffset] = useState(0);
-  const [keyword, setKeyword] = useState(""); // ?…ë ¥ ì¤‘ì¸ ê°?
-  const [query, setQuery] = useState(""); // ?¤ì œë¡?ê²€?‰í•œ ê°?
+  const [searchParams, setSearchParams] = useSearchParams();
+  const query = searchParams.get("q") ?? "";
+  const [draft, setDraft] = useState({ query, keyword: query });
+  if (draft.query !== query) setDraft({ query, keyword: query });
+  const keyword = draft.query === query ? draft.keyword : query;
+  const pageParam = searchParams.get("page");
+  const requestedPage = pageParam && /^\d+$/.test(pageParam)
+    ? Math.max(1, Number(pageParam))
+    : 1;
 
   const target = normalizeQuery(query);
   const isSearch = target !== "";
+  const firstPage = useQuery({
+    queryKey: pokemonKeys.list(FIRST_PAGE),
+    queryFn: ({ signal }) => fetchPokemonPage(FIRST_PAGE, signal),
+    enabled: requestedPage > 1,
+    staleTime: DETAIL_STALE_TIME,
+  });
+  const lastPage = firstPage.data && Math.max(1, Math.ceil(firstPage.data.count / LIST_LIMIT));
+  const currentPage = lastPage ? Math.min(requestedPage, lastPage) : 1;
+  const offset = (currentPage - 1) * LIST_LIMIT;
+
+  useEffect(() => {
+    if (pageParam === null || (requestedPage > 1 && lastPage === undefined)) return;
+    if (pageParam === String(currentPage)) return;
+
+    const params = new URLSearchParams(searchParams);
+    params.set("page", String(currentPage));
+    setSearchParams(params, { replace: true });
+  }, [pageParam, requestedPage, lastPage, currentPage, searchParams, setSearchParams]);
+
   const params = { limit: LIST_LIMIT, offset };
 
   // ëª©ë¡
   const listQuery = useQuery({
     queryKey: pokemonKeys.list(params),
     queryFn: ({ signal }) => fetchPokemonPage(params, signal),
-    enabled: !isSearch,
+    enabled: !isSearch && (requestedPage === 1 || lastPage !== undefined),
   });
 
-  // ê²€??(ë²ˆí˜¸/?ë¬¸ ?´ë¦„ 1ê°?
   const searchQuery = useQuery({
     queryKey: pokemonKeys.search(target),
     queryFn: ({ signal }) => fetchPokemon(target, signal),
     enabled: isSearch,
   });
 
-  // ì¹´ë“œë³??ì„¸
-  const items = isSearch ? [] : (listQuery.data?.items ?? []);
+  const waitingForCount = requestedPage > 1 && lastPage === undefined;
+  const items = isSearch || waitingForCount ? [] : (listQuery.data?.items ?? []);
   const detailQueries = useQueries({
     queries: items.map((item) => ({
-      queryKey: pokemonKeys.detail(item.id),
+      queryKey: pokemonKeys.detail(String(item.id)),
       queryFn: ({ signal }: { signal: AbortSignal }) =>
-        fetchPokemon(item.url, signal),
+        fetchPokemon(String(item.id), signal),
       staleTime: DETAIL_STALE_TIME,
     })),
   });
 
-  // ?€?€ ?”ë©´ ?íƒœ ê³„ì‚° ?€?€
-  // ìºì‹œ ?°ì´?°ê? ?ˆìœ¼ë©?background ê°±ì‹ ???¤íŒ¨?´ë„ ì¹´ë“œë¥?? ì?
   let view: ViewState;
   if (isSearch) {
     if (searchQuery.data) {
@@ -82,6 +105,8 @@ export function usePokedexPage() {
     } else {
       view = { status: "loading" };
     }
+  } else if (waitingForCount) {
+    view = { status: firstPage.isError ? "error" : "loading" };
   } else if (listQuery.data) {
     const cards = items.map((item, i): CardModel => {
       const q = detailQueries[i];
@@ -97,18 +122,16 @@ export function usePokedexPage() {
       }
       return { status: "pending", id: item.id, name: item.name };
     });
-    view = { status: "success", cards };
+    view = cards.length > 0 ? { status: "success", cards } : { status: "empty" };
   } else if (listQuery.isError) {
     view = { status: "error" };
   } else {
     view = { status: "loading" };
   }
 
-  // ?´ë? ë³´ì—¬ì¤??°ì´?°ê? ?ˆëŠ”???¤ì—???¤ì‹œ ê°€?¸ì˜¤??ì¤?
-  const activeQuery = isSearch ? searchQuery : listQuery;
+  const activeQuery = isSearch ? searchQuery : waitingForCount ? firstPage : listQuery;
   const isRefreshing = activeQuery.isFetching && activeQuery.data !== undefined;
 
-  // ?€?€ ?˜ì´ì§€ ?´ë™ (next/previous ?‘ë‹µ ?¬ìš©) ?€?€
   const page = listQuery.data;
   const previous = page?.previous ?? null;
   const next = page?.next ?? null;
@@ -117,19 +140,30 @@ export function usePokedexPage() {
     isSearch || !page
       ? null
       : {
-          currentPage: Math.floor(offset / LIST_LIMIT) + 1,
+          currentPage,
           totalPages: Math.ceil(page.count / LIST_LIMIT),
           hasPrevious: previous !== null,
           hasNext: next !== null,
-          goPrevious: () => previous && setOffset(previous.offset),
-          goNext: () => next && setOffset(next.offset),
-          goToPage: (n: number) => setOffset((n - 1) * LIST_LIMIT),
+          pageHref: (pageNumber: number) => {
+            const params = new URLSearchParams(searchParams);
+            params.delete("q");
+            params.set("page", String(pageNumber));
+            const search = params.toString();
+            return search ? `/pokemon?${search}` : "/pokemon";
+          },
         };
 
   return {
     keyword,
-    setKeyword,
-    search: () => setQuery(keyword),
+    setKeyword: (value: string) => setDraft({ query, keyword: value }),
+    search: () => {
+      const submitted = keyword.trim();
+      const params = new URLSearchParams(searchParams);
+      if (normalizeQuery(submitted)) params.set("q", submitted);
+      else params.delete("q");
+      params.delete("page");
+      if (params.toString() !== searchParams.toString()) setSearchParams(params);
+    },
     retry: () => void activeQuery.refetch(),
     view,
     isRefreshing,

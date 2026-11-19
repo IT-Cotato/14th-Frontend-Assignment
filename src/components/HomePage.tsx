@@ -1,31 +1,31 @@
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import PokemonHeader from "./PokemonHeader";
 import PokemonList from "./PokemonList";
 import TeamNoticePanel from "./TeamNoticePanel";
-import type { ActivePage, TeamMember } from "./teamTypes";
+import type { TeamMember, TeamPokemon } from "./teamTypes";
 
 type HomePageProps = {
   team: TeamMember[];
   duplicateName: string | null;
-  onNavigate: (page: ActivePage) => void;
-  onAddToTeam: (member: TeamMember) => void;
+  onAddToTeam: (member: TeamPokemon) => void;
 };
 
 function HomePage({
   team,
   duplicateName,
-  onNavigate,
   onAddToTeam,
 }: HomePageProps) {
   const [heroFailed, setHeroFailed] = useState(false);
   const [iconFailed, setIconFailed] = useState(false);
+  const [keyword, setKeyword] = useState("");
+  const navigate = useNavigate();
 
   return (
     <>
       <PokemonHeader
         activePage="home"
         teamCount={team.length}
-        onNavigate={onNavigate}
       />
 
       <section className="hero">
@@ -35,12 +35,12 @@ function HomePage({
           <p>좋아하는 포켓몬을 찾고 나만의 팀을 만들어 보세요.</p>
 
           <div className="hero-actions">
-            <button className="hero-primary" onClick={() => onNavigate("pokedex")}>
+            <Link className="hero-primary" to="/pokemon">
               도감 보기
-            </button>
-            <button className="hero-secondary" onClick={() => onNavigate("team")}>
+            </Link>
+            <Link className="hero-secondary" to="/my-team">
               내 팀
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -55,36 +55,36 @@ function HomePage({
         </div>
       </section>
 
-      <div className="search-field">
+      <form className="search-field" onSubmit={(event) => {
+        event.preventDefault();
+        const query = keyword.trim();
+        const search = query ? `?${new URLSearchParams({ q: query })}` : "";
+        void navigate({ pathname: "/pokemon", search });
+      }}>
         <div className="input">
           <div className="icon">
             {!iconFailed && (
               <img
                 src="/search-icon.svg"
-                alt="검색"
+                alt=""
                 onError={() => setIconFailed(true)}
               />
             )}
           </div>
-          <span className="query">이름 또는 번호</span>
+          <input
+            className="query"
+            aria-label="포켓몬 이름 또는 번호"
+            placeholder="이름 또는 번호"
+            value={keyword}
+            onChange={(event) => setKeyword(event.target.value)}
+          />
         </div>
-
-        <button className="action">
-          <span className="label">검색</span>
-        </button>
-      </div>
+        <button type="submit" className="action"><span className="label">검색</span></button>
+      </form>
 
       <div className="section-head">
         <h2>추천 포켓몬</h2>
-        <a
-          href="#pokedex"
-          onClick={(e) => {
-            e.preventDefault();
-            onNavigate("pokedex");
-          }}
-        >
-          전체 보기
-        </a>
+        <Link to="/pokemon">전체 보기</Link>
       </div>
 
       <TeamNoticePanel team={team} duplicateName={duplicateName} />

@@ -1,6 +1,6 @@
 import PokemonCard from "./PokemonCard";
 import StatePanel from "./StatePanel";
-import type { TeamMember } from "./teamTypes";
+import type { TeamMember, TeamPokemon } from "./teamTypes";
 
 export type PokemonItem = {
   id: number;
@@ -10,7 +10,7 @@ export type PokemonItem = {
   type: string;
 };
 
-export const defaultPokemons: PokemonItem[] = [
+const defaultPokemons: PokemonItem[] = [
   {
     id: 25,
     image: "/Pikachu.svg",
@@ -76,7 +76,7 @@ export const defaultPokemons: PokemonItem[] = [
 type PokemonListProps = {
   pokemons?: PokemonItem[];
   team: TeamMember[];
-  onAddToTeam: (member: TeamMember) => void;
+  onAddToTeam: (member: TeamPokemon) => void;
   limit?: number;
 };
 
