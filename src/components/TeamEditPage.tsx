@@ -1,4 +1,4 @@
-import { useId, useRef, useState } from 'react'
+import { startTransition, useId, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { Link, useNavigate, useParams } from 'react-router'
@@ -14,6 +14,7 @@ import type { TeamMember, TeamMemberChanges, TeamRole } from '../data/team.ts'
 import { saveTeam } from '../utils/teamStorage.ts'
 import StatePanel from './StatePanel.tsx'
 import TeamSlot from './TeamSlot.tsx'
+import { useTeamMemberDialogs } from './useTeamMemberDialogs.tsx'
 
 type TeamEditPageProps = {
   team: TeamMember[]
@@ -71,6 +72,17 @@ function TeamEditForm({ team, member, onSaved, onRemoveMember }: TeamEditFormPro
   const [memo, setMemo] = useState(member.memo)
   // 저장 버튼을 빠르게 두 번 눌러도 저장은 한 번만 시작한다. (상태가 다시 그려지기 전 중복 제출 방지)
   const savingRef = useRef(false)
+  // 삭제 확인 창은 내 팀 화면과 같은 로직을 쓴다. 확인하면 이 팀 항목만 삭제하고 내 팀으로 돌아간다.
+  const { openDelete, dialogs } = useTeamMemberDialogs({
+    team,
+    onRemoveMember: (pokemonId) => {
+      // 삭제와 이동을 함께 반영해, 지운 항목의 ‘찾을 수 없음’ 안내가 잠깐이라도 보이지 않게 한다.
+      startTransition(() => {
+        onRemoveMember(pokemonId)
+        navigate('/my-team')
+      })
+    },
+  })
 
   const titleId = useId()
   const nicknameId = useId()
@@ -123,10 +135,7 @@ function TeamEditForm({ team, member, onSaved, onRemoveMember }: TeamEditFormPro
         <TeamSlot
           member={member}
           editTo={editPath}
-          onDelete={() => {
-            onRemoveMember(member.pokemon.id)
-            navigate('/my-team')
-          }}
+          onDelete={() => openDelete(member.pokemon.id)}
         />
       </div>
 
@@ -234,6 +243,8 @@ function TeamEditForm({ team, member, onSaved, onRemoveMember }: TeamEditFormPro
           </button>
         </div>
       </form>
+
+      {dialogs}
     </main>
   )
 }
