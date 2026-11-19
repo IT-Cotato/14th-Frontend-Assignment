@@ -1,10 +1,7 @@
+import { Link } from 'react-router-dom'
 import dragoniteArtwork from '../assets/dragonite.png'
 
-interface PokemonHeaderProps {
-  onNavigate: (path: string) => void
-}
-
-function PokemonHeader({ onNavigate }: PokemonHeaderProps) {
+function PokemonHeader() {
   return (
     <section className="pokemon-hero" aria-labelledby="pokemon-hero-title">
       <div className="pokemon-hero__copy">
@@ -17,20 +14,18 @@ function PokemonHeader({ onNavigate }: PokemonHeaderProps) {
         </p>
 
         <div className="pokemon-hero__actions">
-          <button
+          <Link
             className="pokemon-hero__button pokemon-hero__button--primary"
-            type="button"
-            onClick={() => onNavigate('/pokemon')}
+            to="/pokemon"
           >
             포켓몬 찾기
-          </button>
-          <button
+          </Link>
+          <Link
             className="pokemon-hero__button pokemon-hero__button--yellow"
-            type="button"
-            onClick={() => onNavigate('/my-team')}
+            to="/my-team"
           >
             내 팀 보기
-          </button>
+          </Link>
         </div>
       </div>
 
