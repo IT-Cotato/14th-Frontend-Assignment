@@ -9,6 +9,11 @@
   box-sizing: border-box; /* 아까 추가하신 것도 여기 합쳐서 한 번에 관리 */
 }
 
+.nav a {
+    text-decoration: none;
+    color: inherit;
+}
+
 button {
   border: none;
   background: none;
@@ -41,6 +46,7 @@ button {
   --color-type-normal: #9DA0AA;
   --color-type-dragon: #0F6AC0;
   --color-type-ghost: #556AAE;
+  --color-red-soft: #FFF0F3;
   --page-padding-x: 80px;
   --page-padding-top: 36px;
   --section-gap: 24px;

@@ -1,9 +1,10 @@
 import PokemonCard, { type Pokemon } from './PokemonCard'
-import { useEffect, useState } from 'react';
 import chuImg from './assets/chu.png'
+import { useEffect, useState } from 'react';
 import { usePokemonList } from './hooks/usePokemonList';
 import { fetchPokemonDetail } from './api/pokemon';
 import { usePokemonDetails } from './hooks/usePokemonDetails';
+import { useSearchParams } from 'react-router';
 
 // PokemonList가 부모(App)에게서 받는 값들
 type PokemonListProps = {
@@ -36,11 +37,16 @@ function PokemonList({ search, team, onAddToTeam, isTeamFull, duplicateName }: P
     const [retryCount, setRetryCount] = useState<number>(0)
     const keyword = search.trim().toLowerCase()
     const limit = 6;
-    const [offset, setOffset] = useState<number>(0);
+    const [searchParams, setSearchParams] = useSearchParams();
+    const pageFromUrl = Number(searchParams.get('page') ?? '1');
+    const currentPage = 
+        Number.isSafeInteger(pageFromUrl) && pageFromUrl >= 1
+            ? pageFromUrl
+            : 1;
+    const offset = (currentPage - 1) * limit;
     const listQuery = usePokemonList(limit, offset, keyword === '')
     const detailQueries = usePokemonDetails(listQuery.data?.results ?? []);
     const listPokemons: Pokemon[] = [];
-    const currentPage = Math.floor(offset / limit) + 1;
     const startPage = Math.floor((currentPage - 1) / 5) * 5 + 1;
 
     const pageNumbers = Array.from(
@@ -135,6 +141,14 @@ function PokemonList({ search, team, onAddToTeam, isTeamFull, duplicateName }: P
         detailQueries[index].refetch();
     }
 
+    function changePage(page: number) {
+        const nextParams = new URLSearchParams(searchParams);
+
+        nextParams.set('page', String(page));
+
+        setSearchParams(nextParams);
+    }
+
     function movePage(url: string | null | undefined) {
         if (!url) {
             return;
@@ -143,7 +157,8 @@ function PokemonList({ search, team, onAddToTeam, isTeamFull, duplicateName }: P
         const pageUrl = new URL(url);
         const nextOffset = Number(pageUrl.searchParams.get('offset') ?? '0');
 
-        setOffset(nextOffset);
+        const nextPage = Math.floor(nextOffset / limit) + 1;
+        changePage(nextPage);
     }
 
     
@@ -345,7 +360,7 @@ function PokemonList({ search, team, onAddToTeam, isTeamFull, duplicateName }: P
                             key={page}
                             type="button"
                             className={`pagination-box ${currentPage === page ? 'selected' : ''}`}
-                            onClick={() => setOffset((page - 1) * limit)}
+                            onClick={() => changePage(page)}
                             aria-current={currentPage === page ? 'page' : undefined}
                         >
                             <span className="pagination-logo">{page}</span>

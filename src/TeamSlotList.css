@@ -35,6 +35,7 @@ button {
   --color-type-electric: #EED535;
   --color-type-grass: #62B957;
   --color-type-water: #4A90DA;
+  --color-red-soft: #FFF0F3;
   --page-padding-x: 80px;
   --page-padding-top: 36px;
   --section-gap: 24px;
@@ -151,6 +152,7 @@ button {
     font-style: normal;
     font-weight: 700;
     line-height: normal;
+    text-decoration: none;
 }
 
 .teamSlot-delete-box {

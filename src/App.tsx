@@ -2,8 +2,12 @@ import PokemonHeader, { HeaderBox, PokemonSearch, PokemonTitle, PokemonReco, Pok
 import { useState, useEffect } from 'react';
 import PokemonList from './PokemonList'
 import type { Pokemon } from './PokemonCard';
+import { Routes, Route, useSearchParams } from 'react-router';
 import TeamSlotList from './TeamSlotList'
 import TeamSidebar from './TeamSidebar';
+import PokemonDetail from './PokemonDetail';
+import TeamEditPage from './TeamEditPage';
+import { Link } from 'react-router';
 // 현재 App.tsx와 같은 src 폴더에 있는 파일들에서 가져온다.
 
 // 팀 최대 인원. 여기 한 군데만 바꾸면 앱 전체에 적용됨
@@ -66,14 +70,21 @@ function RecoverNotice({ onClose }: { onClose: () => void }) {
 }
 
 function App() {
-  // 지금 보고 있는 화면 (홈 / 도감 / 내 팀)
-  const [menu, setMenu] = useState<'home' | 'dict' | 'myTeam'>('home');
   // 현재 팀 배열 (앱 전체에서 팀 데이터의 진짜 주인) — 처음 값은 메모장에서 꺼낸 팀
   const [team, setTeam] = useState<Pokemon[]>(initialLoad.team);
-  // 검색창에 지금 타이핑 중인 글자
-  const [searchInput, setSearchInput] = useState('');
+
+  const [searchParams, setSearchParams] = useSearchParams();
+
   // 검색 버튼을 눌러서 확정된 검색어 (목록 필터에 실제로 쓰임)
-  const [searchKeyword, setSearchKeyword] = useState('');
+  const searchKeyword = searchParams.get('q') ?? '';
+
+  // 검색창에 지금 타이핑 중인 글자
+  const [searchInput, setSearchInput] = useState(searchKeyword);
+
+  useEffect(() => {
+    setSearchInput(searchKeyword);
+  }, [searchKeyword]);
+  
   // 중복 추가를 시도한 포켓몬 이름. 안내가 필요 없으면 null
   const [duplicateName, setDuplicateName] = useState<string | null>(null);
   // 복구 안내를 보여줄지. 처음엔 "복구했으면 true", 확인 누르면 false
@@ -111,10 +122,10 @@ function App() {
   }
 
   // 팀 안의 포켓몬 한 마리의 별명·역할 수정
-  function handleUpdateTeamMember(id: number, nickname: string, role: string) {
+  function handleUpdateTeamMember(id: number, nickname: string, role: string, memo: string) {
     setTeam(
       team.map((p) =>
-        p.id === id ? { ...p, nickname, role } : p   // 그 id만 별명·역할 바꾼 복사본, 나머지는 그대로
+        p.id === id ? { ...p, nickname, role, memo } : p   // 그 id만 별명·역할 바꾼 복사본, 나머지는 그대로
       )
     );
   }
@@ -126,92 +137,238 @@ function App() {
 
   return (
     <div className="page-container">
-      {menu === 'home' ? (
-        // ===== 홈 화면 =====
-        <>
-          <HeaderBox
-            menu="home"
-            teamCount={team.length}
-            teamMax={TEAM_MAX}
-            onMenuChange={setMenu}
+      <Routes>
+        <Route
+          path='/'
+          element={
+            // ===== 홈 화면 =====
+            <>
+              <HeaderBox
+                menu="home"
+                teamCount={team.length}
+                teamMax={TEAM_MAX}
+              />
+
+              {recoverNotice}
+
+              <PokemonHeader />
+              <PokemonSearch
+                search={searchInput}
+                onSearchChange={setSearchInput}
+                onSearch={() => {
+                  const nextParams = new URLSearchParams(searchParams);
+
+                  nextParams.set('q', searchInput.trim());
+                  nextParams.delete('page');
+
+                  setSearchParams(nextParams);
+                }}
+              />
+              <PokemonReco />
+              <PokemonList
+                search={searchKeyword}
+                team={team}                        // 팀 배열 전달 (카드마다 추가됐는지 판단용)
+                onAddToTeam={handleAddToTeam}
+                isTeamFull={isTeamFull}
+                duplicateName={duplicateName}      // 중복 안내용 이름 전달
+              />
+            </>
+           }
           />
 
-          {recoverNotice}
+          <Route
+            path='/pokemon'
+            element={
+              // ===== 도감 화면 =====
+              <>
+                <HeaderBox
+                  menu="dict"
+                  teamCount={team.length}
+                  teamMax={TEAM_MAX}
+                />
 
-          <PokemonHeader />
-          <PokemonSearch
-            search={searchInput}
-            onSearchChange={setSearchInput}
-            onSearch={() => setSearchKeyword(searchInput)}
-          />
-          <PokemonReco />
-          <PokemonList
-            search={searchKeyword}
-            team={team}                        // 팀 배열 전달 (카드마다 추가됐는지 판단용)
-            onAddToTeam={handleAddToTeam}
-            isTeamFull={isTeamFull}
-            duplicateName={duplicateName}      // 중복 안내용 이름 전달
-          />
-        </>
-      ) : menu === 'dict' ? (
-        // ===== 도감 화면 =====
-        <>
-          <HeaderBox
-            menu="dict"
-            teamCount={team.length}
-            teamMax={TEAM_MAX}
-            onMenuChange={setMenu}
+                {recoverNotice}
+
+                <PokemonTitle/>
+                
+                <PokemonSearch
+                  search={searchInput}
+                  onSearchChange={setSearchInput}
+                  onSearch={() => {
+                    const nextParams = new URLSearchParams(searchParams);
+
+                    nextParams.set('q', searchInput.trim());
+                    nextParams.delete('page');
+
+                    setSearchParams(nextParams);
+                  }}
+                />
+
+                <div className='dict-content-box'>
+                  <PokemonList
+                    search={searchKeyword}
+                    team={team}
+                    onAddToTeam={handleAddToTeam}
+                    isTeamFull={isTeamFull}
+                    duplicateName={duplicateName}      // 중복 안내용 이름 전달
+                  />
+
+                  <TeamSidebar
+                    team={team}
+                    onRemove={handleRemoveFromTeam}
+                    onUpdate={handleUpdateTeamMember}
+                  />
+                </div>
+              </>
+            }
           />
 
-          {recoverNotice}
-
-          <PokemonTitle/>
+          <Route
+            path="/pokemon/:pokemonId"
+            element={
+              <>
+                <HeaderBox
+                  menu="dict"
+                  teamCount={team.length}
+                  teamMax={TEAM_MAX}
+                />
+                <PokemonDetail 
+                  team={team}
+                  isTeamFull={isTeamFull}
+                  onAddToTeam={handleAddToTeam}  
+                />
+              </>
+            }
+          />
           
-          <PokemonSearch
-            search={searchInput}
-            onSearchChange={setSearchInput}
-            onSearch={() => setSearchKeyword(searchInput)}
+          <Route  
+            path='/my-team'
+            element={
+              // ===== 내 팀 화면 =====
+              <>
+                <HeaderBox
+                  menu="myTeam"
+                  teamCount={team.length}
+                  teamMax={TEAM_MAX}
+                />
+
+                {recoverNotice}
+
+                <PokemonTeam
+                  teamCount={team.length}
+                  teamMax={TEAM_MAX}
+                />
+                <TeamSlotList
+                  team={team}
+                  onRemove={handleRemoveFromTeam}
+                  onUpdate={handleUpdateTeamMember}
+                />
+              </>
+            }
+          />
+          <Route
+              path="/my-team/:teamPokemonId/edit"
+              element={
+                <>
+                  <HeaderBox
+                    menu="myTeam"
+                    teamCount={team.length}
+                    teamMax={TEAM_MAX}
+                  />
+                  <TeamEditPage 
+                    team={team} 
+                    onUpdate={handleUpdateTeamMember}  
+                  />
+                </>
+              }
           />
 
-          <div className='dict-content-box'>
-            <PokemonList
-              search={searchKeyword}
-              team={team}
-              onAddToTeam={handleAddToTeam}
-              isTeamFull={isTeamFull}
-              duplicateName={duplicateName}      // 중복 안내용 이름 전달
-            />
+          <Route
+            path="*"
+            element={
+              <>
+                <HeaderBox
+                  menu="myTeam"
+                  teamCount={team.length}
+                  teamMax={TEAM_MAX}
+                />
 
-            <TeamSidebar
-              team={team}
-              onRemove={handleRemoveFromTeam}
-              onUpdate={handleUpdateTeamMember}
-            />
-          </div>
-        </>
-      ) : (
-        // ===== 내 팀 화면 =====
-        <>
-          <HeaderBox
-            menu="myTeam"
-            teamCount={team.length}
-            teamMax={TEAM_MAX}
-            onMenuChange={setMenu}
-          />
+                <div 
+                  className='
+                    flex
+                    w-[100%]
+                    py-[28px]! px-[24px]!
+                    flex-col
+                    items-center
+                    gap-[10px]
+                    rounded-[12px]
+                    border-[length:var(--stroke-1)]
+                    border-solid
+                    border-radius: var(--radius-lg);
+                    border-[var(--red)]
+                    bg-[var(--color-danger-soft)]
+                  '
+                >
+                  <div 
+                    className='
+                      flex
+                      w-[44px]
+                      h-[44px]
+                      flex-col
+                      items-center
+                      rounded-full
+                      justify-center
+                      shrink-0
+                      bg-[var(--red)]
+                    '
+                  >
+                    <div 
+                      className='
+                        text-[#FFFFFF]
+                        text-[18px]
+                        font-[800]
+                      '
+                    > ! </div>
+                  </div>
+                    <h2
+                      className='
+                        text-[var(--ink)]
+                        align-center
+                        text-[16px]
+                        font-[700]
+                      '
+                    >
+                      페이지를 찾을 수 없어요 </h2>
+                    <p
+                      className='
+                        text-[var(--muted)]
+                        align-center
+                        text-[13px]
+                        font-[400]
+                      '
+                    >
+                      주소를 확인하거나 도감으로 돌아가세요.</p>
+                    <Link 
+                      to="/pokemon"
+                      className='
+                        flex
+                        py-[12px]! px-[16px]!
+                        items-center
+                        gap-[8px]
+                        rounded-[8px]
+                        bg-[var(--red)]
+                        shadow-[0_8px_0_0_#B92F51]
 
-          {recoverNotice}
-
-          <PokemonTeam
-            teamCount={team.length}
-            teamMax={TEAM_MAX}
-          />
-          <TeamSlotList
-            team={team}
-            onRemove={handleRemoveFromTeam}
-            onUpdate={handleUpdateTeamMember}
-          />
-        </>
-      )}
+                        text-[#FFFFFF]
+                        font-[13px]
+                        font-[700]
+                        no-underline
+                      '>돌아가기</Link>
+                </div>
+              </>
+            }
+        />
+      </Routes>
     </div>
   );
 }

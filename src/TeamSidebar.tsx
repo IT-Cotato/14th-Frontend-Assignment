@@ -6,7 +6,7 @@ import './TeamSidebar.css';                     // 이 컴포넌트의 CSS 연�
 type TeamSideBarProps = {
     team: Pokemon[];                                                  // 현재 팀 배열
     onRemove: (id: number) => void;                                   // 삭제 요청 함수
-    onUpdate: (id: number, nickname: string, role: string) => void;  // 별명·역할 저장 요청 함수
+    onUpdate: (id: number, nickname: string, role: string, memo: string) => void;  // 별명·역할 저장 요청 함수
 };
 
 // 팀 슬롯 6칸 + 편집 모달을 그리는 컴포넌트
