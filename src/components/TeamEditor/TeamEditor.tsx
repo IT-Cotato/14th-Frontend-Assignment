@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { useState } from 'react'
 import type { Pokemon } from '../../types/pokemon'
 import Button from '../Button/Button'
 import './TeamEditor.css'
@@ -6,22 +7,14 @@ import './TeamEditor.css'
 type TeamEditorProps = {
   pokemon: Pokemon
   onApply: (number: number, nickname: string, role: string) => void
-  onClose: () => void
 }
 
-function TeamEditor({ pokemon, onApply, onClose }: TeamEditorProps) {
-  const dialog = useRef<HTMLDialogElement>(null)
+function TeamEditor({ pokemon, onApply }: TeamEditorProps) {
   const [nickname, setNickname] = useState(pokemon.nickname ?? '')
   const [role, setRole] = useState(pokemon.role ?? '')
 
-  useEffect(() => {
-    const element = dialog.current
-    element?.showModal()
-    return () => element?.close()
-  }, [])
-
   return (
-    <dialog ref={dialog} className="team-editor" onCancel={onClose} aria-labelledby="team-editor-title">
+    <section className="team-editor" aria-labelledby="team-editor-title">
       <form onSubmit={(event) => {
         event.preventDefault()
         onApply(pokemon.number, nickname, role)
@@ -40,10 +33,10 @@ function TeamEditor({ pokemon, onApply, onClose }: TeamEditorProps) {
         <p>별명을 비우면 원래 이름이 표시됩니다. 적용한 내용은 자동 저장됩니다.</p>
         <div className="team-editor__actions">
           <Button type="submit">적용</Button>
-          <Button variant="secondary" onClick={onClose}>취소</Button>
+          <Link className="button button--secondary" to="/my-team">취소</Link>
         </div>
       </form>
-    </dialog>
+    </section>
   )
 }
 

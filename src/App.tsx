@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
-import Button from './components/Button/Button'
+import { Link, Route, Routes, useLocation } from 'react-router-dom'
+import PokemonDetailPage from './pages/PokemonDetailPage'
+import TeamEditPage from './pages/TeamEditPage'
+import NotFoundPage from './pages/NotFoundPage'
 import PokemonList from './components/PokemonList/PokemonList'
 import PokemonSearch from './components/PokemonSearch/PokemonSearch'
 import TeamPage from './components/TeamPage/TeamPage'
 import PokedexPage from './components/PokedexPage/PokedexPage'
-import TeamEditor from './components/TeamEditor/TeamEditor'
 import { restoreTeam, TEAM_STORAGE_KEY, updateTeamMember } from './utils/teamStorage'
 import { pokemonList } from './data/pokemon'
 import type { Pokemon } from './types/pokemon'
@@ -22,11 +24,10 @@ function loadTeam() {
 }
 
 function App() {
-  const [activeNavigation, setActiveNavigation] = useState('홈')
+  const { pathname } = useLocation()
+  const activeNavigation = pathname.startsWith('/my-team') ? '내 팀' : pathname.startsWith('/pokemon') ? '도감' : '홈'
   const [team, setTeam] = useState<Pokemon[]>(loadTeam)
   const [teamCheckpoint, setTeamCheckpoint] = useState<Pokemon[]>(() => team)
-  const [editingNumber, setEditingNumber] = useState<number | null>(null)
-  const editingPokemon = team.find((pokemon) => pokemon.number === editingNumber)
   const [teamMessage, setTeamMessage] = useState('')
   const [query, setQuery] = useState('')
   const [selectedType, setSelectedType] = useState('')
@@ -53,14 +54,6 @@ function App() {
   function removeFromTeam(number: number) {
     setTeam((currentTeam) => currentTeam.filter((pokemon) => pokemon.number !== number))
     setTeamMessage('')
-  }
-
-  function navigateTo(navigation: string) {
-    if (navigation === '내 팀' && activeNavigation !== '내 팀') {
-      setTeamCheckpoint([...team])
-      setTeamMessage('')
-    }
-    setActiveNavigation(navigation)
   }
 
   function saveTeam() {
@@ -92,28 +85,32 @@ function App() {
         </div>
         <nav className="app-header__navigation" aria-label="주요 메뉴">
           {['홈', '도감', '내 팀'].map((navigation) => (
-            <button
+            <Link
               className={`app-header__navigation-button ${
                 activeNavigation === navigation ? 'app-header__navigation-button--active' : ''
               }`}
               key={navigation}
-              type="button"
-              onClick={() => navigateTo(navigation)}
+              to={navigation === '홈' ? '/' : navigation === '도감' ? '/pokemon' : '/my-team'}
+              onClick={() => {
+                if (navigation === '내 팀' && activeNavigation !== '내 팀') {
+                  setTeamCheckpoint([...team])
+                  setTeamMessage('')
+                }
+              }}
             >
               {navigation}
-            </button>
+            </Link>
           ))}
           <span className="app-header__team-count">{team.length} / 6</span>
         </nav>
       </header>
-      {activeNavigation === '도감' && (
-        <PokedexPage onAdd={addToTeam} />
-      )}
-      {activeNavigation === '내 팀' && (
+      <Routes>
+      <Route path="/pokemon" element={<PokedexPage onAdd={addToTeam} />} />
+      <Route path="/pokemon/:pokemonId" element={<PokemonDetailPage onAdd={addToTeam} />} />
+      <Route path="/my-team" element={
         <TeamPage
           team={team}
           onDelete={removeFromTeam}
-          onEdit={setEditingNumber}
           onSave={saveTeam}
           onCancel={() => {
             setTeam([...teamCheckpoint])
@@ -121,8 +118,8 @@ function App() {
           }}
           message={teamMessage}
         />
-      )}
-      {activeNavigation === '홈' && (
+      } />
+      <Route path="/" element={
         <>
           <section className="daily-pokemon-card" aria-label="포켓몬과 함께하는 하루">
             <div className="daily-pokemon-card__content">
@@ -132,8 +129,8 @@ function App() {
                 좋아하는 포켓몬을 찾고 나만의 팀을 만들어 보세요
               </p>
               <div className="daily-pokemon-card__actions">
-                <Button>도감 보기</Button>
-                <Button variant="secondary" onClick={() => navigateTo('내 팀')}>내 팀</Button>
+                <Link className="button" to="/pokemon">도감 보기</Link>
+                <Link className="button button--secondary" to="/my-team">내 팀</Link>
               </div>
             </div>
             <div className="daily-pokemon-card__art">
@@ -143,26 +140,22 @@ function App() {
           <PokemonSearch className="home-pokemon-search" {...searchProps} />
           <div className="recommended-pokemon-header">
             <h2 className="recommended-pokemon-title">추천 포켓몬</h2>
-            <a className="recommended-pokemon-link" href="/pokedex">
+            <Link className="recommended-pokemon-link" to="/pokemon">
               전체 보기
-            </a>
+            </Link>
           </div>
           <PokemonList pokemon={filteredPokemon} onAdd={addToTeam} />
           <div className="app__content" />
         </>
-      )}
-      {editingPokemon && (
-        <TeamEditor
-          key={editingPokemon.number}
-          pokemon={editingPokemon}
-          onClose={() => setEditingNumber(null)}
-          onApply={(number, nickname, role) => {
-            setTeam((currentTeam) => updateTeamMember(currentTeam, number, nickname, role))
-            setEditingNumber(null)
-            setTeamMessage('수정한 내용을 적용했어요.')
-          }}
-        />
-      )}
+      } />
+      <Route path="/my-team/:teamPokemonId/edit" element={
+        <TeamEditPage team={team} onApply={(number, nickname, role) => {
+          setTeam((current) => updateTeamMember(current, number, nickname, role))
+          setTeamMessage('수정한 내용을 적용했어요.')
+        }} />
+      } />
+      <Route path="*" element={<NotFoundPage />} />
+      </Routes>
     </main>
   )
 }

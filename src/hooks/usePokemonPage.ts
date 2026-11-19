@@ -5,6 +5,7 @@ import type { PokemonCardResult } from '../api/pokemon.types'
 import { pokemonPageOptions } from '../queries/pokemon'
 
 const PAGE_SIZE = 4
+const DISPLAY_LIMIT = 32
 
 export function usePokemonPage() {
   const [page, setPage] = useState({ limit: PAGE_SIZE, offset: 0 })
@@ -14,10 +15,15 @@ export function usePokemonPage() {
   const [retryingUrls, setRetryingUrls] = useState<string[]>([])
   const retryControllers = useRef(new Map<string, AbortController>())
 
+  const visibleCount = Math.min(result.data?.count ?? 0, DISPLAY_LIMIT)
+  const totalPages = Math.max(1, Math.ceil(visibleCount / page.limit))
+
   // Arrow navigation uses the server-provided URL, not a calculated offset.
   function followPageUrl(url: string | null | undefined) {
     if (!url || result.isPlaceholderData) return
-    setPage(getPokemonPageParams(url))
+    const target = getPokemonPageParams(url)
+    if (target.offset >= visibleCount) return
+    setPage(target)
   }
 
   async function retryCard(card: PokemonCardResult) {
@@ -53,7 +59,7 @@ export function usePokemonPage() {
   return {
     cards: result.data?.cards ?? [],
     currentPage: Math.floor(page.offset / page.limit) + 1,
-    totalPages: Math.max(1, Math.ceil((result.data?.count ?? 0) / page.limit)),
+    totalPages,
     hasPrevious: Boolean(result.data?.previous),
     hasNext: Boolean(result.data?.next),
     hasData: result.data !== undefined,
@@ -63,9 +69,12 @@ export function usePokemonPage() {
     isError: result.isError,
     isSuccess: result.isSuccess,
     refetch: result.refetch,
-    changePage: (number: number) => setPage((current) => ({
+    changePage: (number: number) => {
+      if (result.isPlaceholderData || !Number.isInteger(number) || number < 1 || number > totalPages) return
+      setPage((current) => ({
       ...current, offset: (number - 1) * current.limit,
-    })),
+      }))
+    },
     previousPage: () => followPageUrl(result.data?.previous),
     nextPage: () => followPageUrl(result.data?.next),
     retryCard,
