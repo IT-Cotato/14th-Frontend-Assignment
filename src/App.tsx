@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
-import PokemonHeader from './components/PokemonHeader';
-import PokemonList from './components/PokemonList';
-import MyTeamList from './components/MyTeamList';
+import { Navigate, Outlet, Route, Routes } from 'react-router';
+import AppHeader from './components/AppHeader';
+import PokemonListPage from './pages/PokemonListPage';
+import PokemonDetailPage from './pages/PokemonDetailPage';
+import MyTeamPage from './pages/MyTeamPage';
+import TeamEditPage from './pages/TeamEditPage';
+import NotFoundPage from './pages/NotFoundPage';
 
 export interface Pokemon {
   number: string;
@@ -19,9 +23,6 @@ function App() {
 
     return savedTeam ? JSON.parse(savedTeam) : [];
   });
-
-  const [search, setSearch] = useState('');
-  const [selectedType, setSelectedType] = useState('ALL');
 
   useEffect(() => {
     localStorage.setItem('myTeam', JSON.stringify(team));
@@ -68,37 +69,45 @@ function App() {
   };
 
   return (
+    <Routes>
+      <Route element={<Layout teamCount={team.length} />}>
+        {/* 첫 화면 없이 바로 도감으로 이동 */}
+        <Route index element={<Navigate to="/pokemon" replace />} />
+        <Route
+          path="pokemon"
+          element={
+            <PokemonListPage
+              team={team}
+              onAdd={handleAddPokemon}
+              onRemove={handleRemovePokemon}
+            />
+          }
+        />
+        <Route
+          path="pokemon/:pokemonId"
+          element={<PokemonDetailPage onAdd={handleAddPokemon} />}
+        />
+        <Route
+          path="my-team"
+          element={<MyTeamPage team={team} onRemove={handleRemovePokemon} />}
+        />
+        <Route
+          path="my-team/:teamPokemonId/edit"
+          element={<TeamEditPage team={team} onEdit={handleEditPokemon} />}
+        />
+        {/* 위에서 정의하지 않은 모든 경로 → 경로 Not Found */}
+        <Route path="*" element={<NotFoundPage />} />
+      </Route>
+    </Routes>
+  );
+}
+
+// 모든 화면에 공통으로 들어가는 헤더 + 현재 경로의 화면(Outlet)
+function Layout({ teamCount }: { teamCount: number }) {
+  return (
     <div className="app-container">
-      <PokemonHeader
-        teamCount={team.length}
-        search={search}
-        setSearch={setSearch}
-        selectedType={selectedType}
-        setSelectedType={setSelectedType}
-      />
-
-      <div className="main-content">
-        <div className="cardlist">
-
-          <PokemonList
-            onAdd={handleAddPokemon}
-            search={search}
-            selectedType={selectedType}
-          />
-        </div>
-
-        <div className="teamlist">
-          <div className="teamlist-title">
-            <h3>나의 팀</h3>
-          </div>
-
-          <MyTeamList
-            team={team}
-            onRemove={handleRemovePokemon}
-            onEdit={handleEditPokemon}
-          />
-        </div>
-      </div>
+      <AppHeader teamCount={teamCount} />
+      <Outlet />
     </div>
   );
 }

@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import PokemonCard from './PokemonCard';
+import StatusCard from './StatusCard';
 import type { Pokemon } from '../App';
 import {
   getPageParams,
@@ -8,22 +9,24 @@ import {
   type FailedPokemon,
 } from '../hooks/usePokemonList';
 
-const LIST_PAGE_SIZE = 20;
-const SEARCH_PAGE_SIZE = 4;
+const PAGE_SIZE = 4;
 
 interface PokemonListProps {
   onAdd: (pokemon: Pokemon) => void;
   search: string;
   selectedType: string;
+  page: number;
+  onPageChange: (page: number) => void;
 }
 
 function PokemonList({
   onAdd,
   search,
   selectedType,
+  page,
+  onPageChange,
 }: PokemonListProps) {
-  const [offset, setOffset] = useState(0);
-  const [searchPage, setSearchPage] = useState(1);
+  const offset = (page - 1) * PAGE_SIZE;
   const [retryingUrls, setRetryingUrls] = useState<Set<string>>(new Set());
   const [retryErrors, setRetryErrors] = useState<Record<string, string>>({});
   const {
@@ -34,7 +37,7 @@ function PokemonList({
     isPending,
     refetch,
     retryPokemonDetail: retryDetail,
-  } = usePokemonList(LIST_PAGE_SIZE, offset);
+  } = usePokemonList(PAGE_SIZE, offset);
   const pokemonSearch = usePokemonSearch(search);
   const normalizedSearch = search.trim().toLowerCase();
   const pokemons = data?.pokemons ?? [];
@@ -84,7 +87,7 @@ function PokemonList({
 
       return matchesSearch && matchesType;
     });
-  }, [pokemons, search, selectedType]);
+  }, [pokemons, normalizedSearch, selectedType]);
 
   const searchPokemons = (pokemonSearch.data ?? []).filter(
     (pokemon) =>
@@ -92,11 +95,9 @@ function PokemonList({
       pokemon.types?.includes(selectedType) ||
       pokemon.type === selectedType
   );
-  const searchTotalPages = Math.ceil(
-    searchPokemons.length / SEARCH_PAGE_SIZE
-  );
+  const searchTotalPages = Math.ceil(searchPokemons.length / PAGE_SIZE);
   const currentSearchPage = Math.min(
-    searchPage,
+    page,
     Math.max(searchTotalPages, 1)
   );
   const visibleSearchPageStart = Math.min(
@@ -108,13 +109,9 @@ function PokemonList({
     (_, index) => visibleSearchPageStart + index
   );
   const visibleSearchPokemons = searchPokemons.slice(
-    (currentSearchPage - 1) * SEARCH_PAGE_SIZE,
-    currentSearchPage * SEARCH_PAGE_SIZE
+    (currentSearchPage - 1) * PAGE_SIZE,
+    currentSearchPage * PAGE_SIZE
   );
-
-  useEffect(() => {
-    setSearchPage(1);
-  }, [normalizedSearch, selectedType]);
 
   if (normalizedSearch) {
     if (pokemonSearch.isPending) {
@@ -150,16 +147,6 @@ function PokemonList({
 
     return (
       <div className="pokemon-list">
-        {pokemonSearch.isFetching && (
-          <div className="status-grid">
-            <StatusCard
-              variant="loading"
-              icon="..."
-              title="포켓몬을 찾는 중"
-              description="잠시만 기다려 주세요."
-            />
-          </div>
-        )}
         {visibleSearchPokemons.length > 0 ? (
           visibleSearchPokemons.map((pokemon) => (
             <PokemonCard
@@ -184,31 +171,31 @@ function PokemonList({
           <button
             className="pagination-arrow"
             type="button"
-            onClick={() =>
-              setSearchPage((page) => Math.max(page - 1, 1))
-            }
+            onClick={() => onPageChange(Math.max(currentSearchPage - 1, 1))}
             disabled={currentSearchPage === 1 || pokemonSearch.isFetching}
           >
             &lt;
           </button>
-          {visibleSearchPages.map((page) => (
+          {visibleSearchPages.map((pageNumber) => (
             <button
               className={`pagination-page ${
-                page === currentSearchPage ? 'pagination-page-active' : ''
+                pageNumber === currentSearchPage ? 'pagination-page-active' : ''
               }`}
               type="button"
-              key={page}
-              onClick={() => setSearchPage(page)}
-              disabled={page === currentSearchPage || pokemonSearch.isFetching}
+              key={pageNumber}
+              onClick={() => onPageChange(pageNumber)}
+              disabled={
+                pageNumber === currentSearchPage || pokemonSearch.isFetching
+              }
             >
-              {page}
+              {pageNumber}
             </button>
           ))}
           <button
             className="pagination-arrow"
             type="button"
             onClick={() =>
-              setSearchPage((page) => Math.min(page + 1, searchTotalPages))
+              onPageChange(Math.min(currentSearchPage + 1, searchTotalPages))
             }
             disabled={
               currentSearchPage >= searchTotalPages ||
@@ -255,8 +242,8 @@ function PokemonList({
 
   const previousPage = getPageParams(data.previous);
   const nextPage = getPageParams(data.next);
-  const currentPage = offset / LIST_PAGE_SIZE + 1;
-  const totalPages = Math.ceil(data.count / LIST_PAGE_SIZE);
+  const currentPage = page;
+  const totalPages = Math.ceil(data.count / PAGE_SIZE);
   const visiblePageStart = Math.min(
     Math.max(currentPage - 1, 1),
     Math.max(totalPages - 3, 1)
@@ -268,16 +255,6 @@ function PokemonList({
 
   return (
     <div className="pokemon-list">
-      {isFetching && (
-        <div className="status-grid">
-          <StatusCard
-            variant="loading"
-            icon="..."
-            title="포켓몬을 불러오는 중"
-            description="잠시만 기다려 주세요."
-          />
-        </div>
-      )}
       {filteredPokemons.length === 0 && (
         <StatusCard
           icon="0"
@@ -319,73 +296,37 @@ function PokemonList({
         <button
           className="pagination-arrow"
           type="button"
-          onClick={() => setOffset(previousPage?.offset ?? 0)}
+          onClick={() =>
+            onPageChange((previousPage?.offset ?? 0) / PAGE_SIZE + 1)
+          }
           disabled={!previousPage || isFetching}
         >
           &lt;
         </button>
-        {visiblePages.map((page) => (
+        {visiblePages.map((pageNumber) => (
           <button
             className={`pagination-page ${
-              page === currentPage ? 'pagination-page-active' : ''
+              pageNumber === currentPage ? 'pagination-page-active' : ''
             }`}
             type="button"
-            key={page}
-            onClick={() => setOffset((page - 1) * LIST_PAGE_SIZE)}
-            disabled={page === currentPage || isFetching}
+            key={pageNumber}
+            onClick={() => onPageChange(pageNumber)}
+            disabled={pageNumber === currentPage || isFetching}
           >
-            {page}
+            {pageNumber}
           </button>
         ))}
         <button
           className="pagination-arrow"
           type="button"
-          onClick={() => setOffset(nextPage?.offset ?? offset)}
+          onClick={() =>
+            onPageChange((nextPage?.offset ?? offset) / PAGE_SIZE + 1)
+          }
           disabled={!nextPage || isFetching}
         >
           &gt;
         </button>
       </div>
-    </div>
-  );
-}
-
-interface StatusCardProps {
-  icon: string;
-  title: string;
-  description: string;
-  detail?: string;
-  variant?: 'loading' | 'error';
-  onRetry?: () => void;
-}
-
-function StatusCard({
-  icon,
-  title,
-  description,
-  detail,
-  variant,
-  onRetry,
-}: StatusCardProps) {
-  return (
-    <div
-      className={`status-card ${
-        variant === 'loading'
-          ? 'status-card-loading'
-          : variant === 'error'
-            ? 'status-card-error'
-            : ''
-      }`}
-    >
-      <span className="status-icon">{icon}</span>
-      <strong>{title}</strong>
-      <p>{description}</p>
-      {detail && <small>{detail}</small>}
-      {onRetry && (
-        <button className="red-shadow-button" type="button" onClick={onRetry}>
-          다시 시도
-        </button>
-      )}
     </div>
   );
 }

@@ -6,7 +6,6 @@ import {
 import type { Pokemon } from '../App';
 
 const POKE_API_URL = 'https://pokeapi.co/api/v2/pokemon';
-const DISPLAY_PAGE_SIZE = 4;
 
 interface PokemonListItem {
   name: string;
@@ -20,7 +19,7 @@ interface PokemonListResponse {
   results: PokemonListItem[];
 }
 
-interface PokemonDetailResponse {
+export interface PokemonDetailResponse {
   id: number;
   name: string;
   types: Array<{ type: { name: string } }>;
@@ -43,7 +42,7 @@ export interface PokemonPage {
   previous: string | null;
 }
 
-function toPokemon(detail: PokemonDetailResponse): Pokemon {
+export function toPokemon(detail: PokemonDetailResponse): Pokemon {
   const image = detail.sprites.front_default;
 
   if (!image) {
@@ -87,9 +86,8 @@ async function fetchPokemonPage(
   }
 
   const list = (await response.json()) as PokemonListResponse;
-  const displayResults = list.results.slice(0, DISPLAY_PAGE_SIZE);
   const details = await Promise.allSettled(
-    displayResults.map((pokemon) => fetchPokemonDetail(pokemon, signal))
+    list.results.map((pokemon) => fetchPokemonDetail(pokemon, signal))
   );
   if (signal.aborted) {
     throw new DOMException('요청이 취소되었습니다.', 'AbortError');
@@ -105,8 +103,8 @@ async function fetchPokemonPage(
 
     failedDetails.push({
       number: `#${String(offset + index + 1).padStart(4, '0')}`,
-      name: displayResults[index].name,
-      url: displayResults[index].url,
+      name: list.results[index].name,
+      url: list.results[index].url,
     });
   });
 
@@ -133,7 +131,7 @@ export function getPageParams(url: string | null): { limit: number; offset: numb
 
 export function usePokemonList(limit: number, offset: number) {
   const queryClient = useQueryClient();
-  const queryKey = ['pokemon', 'list', { limit, offset }] as const;
+  const queryKey = ['pokemons', { limit, offset }] as const;
   const query = useQuery({
     queryKey,
     queryFn: ({ signal }) => fetchPokemonPage(limit, offset, signal),
