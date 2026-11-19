@@ -6,7 +6,6 @@ import './TeamPage.css'
 type TeamPageProps = {
   team: Pokemon[]
   onDelete: (number: number) => void
-  onEdit: (number: number) => void
   onSave: () => void
   onCancel: () => void
   message?: string
@@ -19,7 +18,7 @@ const typeLabels: Record<string, string> = {
   WATER: '물',
 }
 
-function TeamPage({ team, onDelete, onEdit, onSave, onCancel, message }: TeamPageProps) {
+function TeamPage({ team, onDelete, onSave, onCancel, message }: TeamPageProps) {
   return (
     <section className="team-page" aria-labelledby="team-title">
       <div className="team-page__heading">
@@ -38,7 +37,7 @@ function TeamPage({ team, onDelete, onEdit, onSave, onCancel, message }: TeamPag
           <PokemonSlot
             key={pokemon.number}
             name={pokemon.nickname || pokemon.name}
-            onEdit={() => onEdit(pokemon.number)}
+            editTo={`/my-team/${pokemon.number}/edit`}
             imageSrc={pokemon.imageSrc}
             onDelete={() => onDelete(pokemon.number)}
             ability={[

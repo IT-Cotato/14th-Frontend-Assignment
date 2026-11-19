@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { useSearchParams } from 'react-router-dom'
 import { searchPokemon } from '../api/pokemon'
 import type { Pokemon } from '../types/pokemon'
 
@@ -9,38 +10,53 @@ type SearchState = {
 }
 
 export function usePokemonSearch() {
-  const [query, setQuery] = useState('')
-  const [search, setSearch] = useState<SearchState | null>(null)
-  const searchController = useRef<AbortController | null>(null)
+  const [params, setParams] = useSearchParams()
+  const query = params.get('q') ?? ''
+  const term = query.trim()
+  // q alone is a submitted search; draft=1 preserves unfinished input too.
+  const submitted = term !== '' && params.get('draft') !== '1'
+  const result = useQuery({
+    queryKey: ['pokemon', 'search', term, submitted],
+    queryFn: ({ signal }) => searchPokemon(term, signal),
+    enabled: submitted,
+    staleTime: 5 * 60 * 1000,
+    retry: 1,
+  })
 
   function changeQuery(value: string) {
-    searchController.current?.abort()
-    setQuery(value)
-    setSearch(null)
+    setParams((current) => {
+      const next = new URLSearchParams(current)
+      if (value) {
+        next.set('q', value)
+        next.set('draft', '1')
+      } else {
+        next.delete('q')
+        next.delete('draft')
+      }
+      return next
+    }, { replace: true })
   }
 
-  async function submitSearch(value: string) {
-    searchController.current?.abort()
-    const term = value.trim()
-    setQuery(term)
-    if (!term) {
-      setSearch(null)
+  function submitSearch(value: string) {
+    const valueToSearch = value.trim()
+    if (submitted && valueToSearch === term) {
+      void result.refetch()
       return
     }
-    const controller = new AbortController()
-    searchController.current = controller
-    setSearch({ query: term, status: 'loading', pokemon: null })
-    try {
-      const result = await searchPokemon(term, controller.signal)
-      if (controller.signal.aborted || searchController.current !== controller) return
-      setSearch({ query: term, status: result ? 'success' : 'empty', pokemon: result })
-    } catch {
-      if (controller.signal.aborted || searchController.current !== controller) return
-      setSearch({ query: term, status: 'error', pokemon: null })
-    }
+    setParams((current) => {
+      const next = new URLSearchParams(current)
+      if (valueToSearch) next.set('q', valueToSearch)
+      else next.delete('q')
+      next.delete('draft')
+      return next
+    })
   }
 
-  useEffect(() => () => searchController.current?.abort(), [])
+  const search: SearchState | null = submitted ? {
+    query: term,
+    status: result.isPending ? 'loading' : result.isError ? 'error' : result.data ? 'success' : 'empty',
+    pokemon: result.data ?? null,
+  } : null
 
   return { query, search, changeQuery, submitSearch }
 }

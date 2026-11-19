@@ -292,3 +292,10 @@
     padding: var(--space-6) var(--space-4);
   }
 }
+
+/* Keep navigation links visually consistent with existing controls. */
+.app-header__navigation-button, a.button { text-decoration: none; }
+.pokemon-card__name a { color: inherit; text-decoration: none; }
+.pokemon-card__name a:hover { text-decoration: underline; }
+.route-page, .team-editor { margin-top: 24px; }
+.route-page .pokedex-card-area { margin-top: 24px; }

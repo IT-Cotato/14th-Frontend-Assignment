@@ -2,7 +2,8 @@ import Button from '../Button/Button'
 import './StatePanel.css'
 
 type StatePanelProps =
-  | { variant: 'loading' | 'empty' }
+  | { variant: 'loading' }
+  | { variant: 'empty'; title?: string; description?: string }
   | { variant: 'error'; onRetry: () => void }
 
 const content = {
@@ -12,7 +13,9 @@ const content = {
 }
 
 function StatePanel(props: StatePanelProps) {
-  const { icon, title, description } = content[props.variant]
+  const { icon } = content[props.variant]
+  const title = props.variant === 'empty' ? props.title ?? content.empty.title : content[props.variant].title
+  const description = props.variant === 'empty' ? props.description ?? content.empty.description : content[props.variant].description
   return (
     <div className={`state-panel state-panel--${props.variant}`}
       role={props.variant === 'error' ? 'alert' : 'status'}>

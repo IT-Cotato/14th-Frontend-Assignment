@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import type { ReactNode } from 'react'
 import type { Pokemon } from '../../types/pokemon'
 import Button from '../Button/Button'
@@ -25,7 +26,7 @@ function PokemonCard({
         <img src={imageSrc} alt={imageAlt ?? name} />
       </div>
       <span className="pokemon-card__number">#{String(number).padStart(4, '0')}</span>
-      <h3 className="pokemon-card__name">{name}</h3>
+      <h3 className="pokemon-card__name"><Link to={`/pokemon/${number}`}>{name}</Link></h3>
       {types.length > 0 && (
         <div className="pokemon-card__types">
           {types.map((type) => (

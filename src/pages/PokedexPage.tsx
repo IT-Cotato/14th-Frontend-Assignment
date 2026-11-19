@@ -1,14 +1,15 @@
-import { usePokemonPage } from '../../hooks/usePokemonPage'
-import { usePokemonSearch } from '../../hooks/usePokemonSearch'
-import PokemonCard from '../PokemonCard/PokemonCard'
-import PokemonErrorCard from '../PokemonCard/PokemonErrorCard'
-import type { Pokemon } from '../../types/pokemon'
-import { filterPokemon } from '../../utils/filterPokemon'
-import PokemonSearch from '../PokemonSearch/PokemonSearch'
-import PokemonList from '../PokemonList/PokemonList'
-import StatePanel from '../StatePanel/StatePanel'
-import Pagination from '../Pagination/Pagination'
-import Button from '../Button/Button'
+import Badge from '../components/Badge/Badge'
+import { usePokemonPage } from '../hooks/usePokemonPage'
+import { usePokemonSearch } from '../hooks/usePokemonSearch'
+import PokemonCard from '../components/PokemonCard/PokemonCard'
+import PokemonErrorCard from '../components/PokemonCard/PokemonErrorCard'
+import type { Pokemon } from '../types/pokemon'
+import { filterPokemon } from '../utils/filterPokemon'
+import PokemonSearch from '../components/PokemonSearch/PokemonSearch'
+import PokemonList from '../components/PokemonList/PokemonList'
+import StatePanel from '../components/StatePanel/StatePanel'
+import Pagination from '../components/Pagination/Pagination'
+import Button from '../components/Button/Button'
 import './PokedexPage.css'
 
 type PokedexPageProps = {
@@ -29,9 +30,9 @@ function PokedexPage({ onAdd }: PokedexPageProps) {
           <h1 className="pokedex-title">포켓몬 도감</h1>
           <p className="pokedex-description">페이지를 이동해도 이전 포켓몬을 빠르게 다시 볼 수 있어요.</p>
         </div>
-        <span className="pokedex-count-badge">
+        <Badge className="pokedex-count-badge">
           {listQuery.isError ? 'PokéAPI 요청 실패' : listQuery.isFetching ? 'PokéAPI 불러오는 중' : '최신 목록'}
-        </span>
+        </Badge>
       </div>
       <PokemonSearch query={query} onQueryChange={changeQuery} onSearch={submitSearch}
         types={[]} selectedType="" onTypeChange={() => {}} />
