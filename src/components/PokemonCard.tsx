@@ -1,5 +1,6 @@
 import { useId } from 'react'
-import type { MouseEvent } from 'react'
+import type { MouseEvent, ReactNode } from 'react'
+import { Link } from 'react-router'
 import { TEAM_LIMIT } from '../data/team.ts'
 import type { AddStatus } from '../data/team.ts'
 import PokemonImage from './PokemonImage.tsx'
@@ -42,6 +43,8 @@ type PokemonCardProps = Pokemon & {
   onAdd: () => void
   /** 화면에 보일 타입 개수. 없으면 전부 보인다. (W05 PokéAPI 도감은 대표 타입 1개) */
   visibleTypeCount?: number
+  /** 있으면 이미지와 이름이 상세 화면 링크가 된다. state는 상세에서 도감으로 돌아갈 목록 조건이다. */
+  detailLink?: { to: string; state: unknown }
 }
 
 /** 버튼 상태별 문구. 비활성 이유는 색상과 함께 텍스트로도 안내한다. */
@@ -71,22 +74,41 @@ function PokemonCard({
   addStatus,
   onAdd,
   visibleTypeCount,
+  detailLink,
 }: PokemonCardProps) {
   const hintId = useId()
   const hint = addHints[addStatus]
+  const toDetail = (children: ReactNode, className: string, label?: string) =>
+    detailLink ? (
+      <Link to={detailLink.to} state={detailLink.state} className={`${className} pokemon-card__link`} aria-label={label}>
+        {children}
+      </Link>
+    ) : (
+      <div className={className}>{children}</div>
+    )
 
   return (
     <article className="pokemon-card">
-      <div className="pokemon-card__image-box">
+      {toDetail(
         <PokemonImage
           name={name}
           imageUrl={imageUrl}
           className="pokemon-card__image"
           fallbackClassName="pokemon-card__image-fallback"
-        />
-      </div>
+        />,
+        'pokemon-card__image-box',
+        `${name} 상세 보기`,
+      )}
       <p className="pokemon-card__number">{formatDexNumber(id)}</p>
-      <h3 className="pokemon-card__name">{name}</h3>
+      <h3 className="pokemon-card__name">
+        {detailLink ? (
+          <Link to={detailLink.to} state={detailLink.state} className="pokemon-card__name-link">
+            {name}
+          </Link>
+        ) : (
+          name
+        )}
+      </h3>
       <div className="type-chips">
         {types.slice(0, visibleTypeCount).map((type) => (
           <span

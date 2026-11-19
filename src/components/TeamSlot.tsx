@@ -1,3 +1,4 @@
+import { Link } from 'react-router'
 import { getMemberDisplayName, getRoleLabel } from '../data/team.ts'
 import type { TeamMember } from '../data/team.ts'
 import type { PokemonType } from './PokemonCard.tsx'
@@ -48,11 +49,12 @@ export function EmptyTeamSlot() {
 
 type TeamSlotProps = {
   member: TeamMember
-  onEdit: () => void
+  /** 편집 화면 주소 (/my-team/:teamPokemonId/edit) */
+  editTo: string
   onDelete: () => void
 }
 
-function TeamSlot({ member, onEdit, onDelete }: TeamSlotProps) {
+function TeamSlot({ member, editTo, onDelete }: TeamSlotProps) {
   const { pokemon, nickname, role } = member
   const displayName = getMemberDisplayName(member)
   const meta = [
@@ -78,14 +80,13 @@ function TeamSlot({ member, onEdit, onDelete }: TeamSlotProps) {
         <p className="team-slot__meta">{meta}</p>
       </div>
       <div className="team-slot__actions">
-        <button
-          type="button"
+        <Link
+          to={editTo}
           className="button button--secondary button--slot"
           aria-label={`${displayName} 편집`}
-          onClick={onEdit}
         >
           편집
-        </button>
+        </Link>
         <button
           type="button"
           className="button button--primary button--slot"

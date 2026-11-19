@@ -45,10 +45,8 @@
   --color-error: #c2264b;
   /* 편집 창의 선택된 역할 pill (W03 시안) */
   --color-role-active: #2c6fb7;
-  /* W05 시안에서 추출한 색: Loading 원(검색 아이콘과 같은 파랑), PokéAPI 온라인 배지 */
+  /* W05 시안에서 추출한 색: Loading 원(검색 아이콘과 같은 파랑). W06 현재 페이지 버튼도 같은 색이다 */
   --color-info: #2a75bb;
-  --color-online: #049f78;
-  --color-online-bg: #e9fff8;
 
   --font-en: 'Inter', sans-serif;
   --font-ko: 'Noto Sans KR', sans-serif;
@@ -1306,44 +1304,37 @@ legend.field__label {
   background-color: var(--color-highlight);
 }
 
-/* ===== W05 PokéAPI 도감 (.page--api-dex 안에서만 적용) =====
+/* ===== W05·W06 PokéAPI 도감 (.page--api-dex 안에서만 적용) =====
    내 팀 화면·편집 모달·?preview 로컬 도감은 위의 W04 스타일을 그대로 쓴다.
-   PC 시안 1440×1024 기준: 콘텐츠 1280(좌 80·상 36), 제목 32/설명 14, 검색 폼 760, 카드 260×336 4열·간격 20 */
-.page--api-dex .dex-intro__title {
-  font-size: 32px;
-  line-height: 38px;
+   PC 시안 1440×1024 기준: 콘텐츠 1280(좌 80·상 36), 검색 폼 760, 카드 260×336 4열·간격 20.
+   제목·설명은 위의 기본값(PC 30/15, 모바일 23/13)을 그대로 쓴다. 시안 글자를 같은 글꼴로 그려 겹쳐 본 결과
+   제목 30px·설명 15px(모바일 23px·13px)일 때 글자 폭·높이가 시안과 일치한다.
+   W06 시안은 W05와 같은 틀에 노란 ‘최신 목록’ 배지(.dex-intro__badge)와 카드 아래 페이지 이동이 더해진다 */
+
+/* 시안 픽셀 기준: 브랜드 마크는 헤더 바깥 테두리에서 24px(x=104). Figma의 안쪽 테두리는 레이아웃에 영향을 주지 않아
+   테두리 1px + padding 24px인 기존 헤더보다 1px 바깥쪽에 있다. 오른쪽 메뉴는 기존 값이 시안과 일치한다 */
+.page--api-dex .top-bar {
+  padding-left: 23px;
+}
+
+/* 시안 픽셀 기준 글자 위치: 제목 y=136, 설명 y=180, 검색창 y=224. 소개 영역 높이 68은 그대로 둔다 */
+.page--api-dex .dex-intro__text {
+  gap: 6px;
 }
 
 .page--api-dex .dex-intro__description {
-  font-size: 14px;
-  line-height: 20px;
+  line-height: 27px;
 }
 
-/* 지금 보이는 목록·검색 요청에서 계산한 연결 상태 배지. 시안: 연한 초록 배경·초록 글자 pill(29px) */
-.api-badge {
-  flex-shrink: 0;
-  padding: 8px 12px;
-  border-radius: var(--radius-pill);
-  font-family: var(--font-base);
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 13px;
+/* 시안 배지 높이 30px. 갱신 표시로 문구가 바뀌어도 줄바꿈되지 않게 한다 */
+.page--api-dex .dex-intro__badge {
+  line-height: 14px;
   white-space: nowrap;
 }
 
-.api-badge--online {
-  background-color: var(--color-online-bg);
-  color: var(--color-online);
-}
-
-.api-badge--checking {
-  background-color: var(--color-surface-muted);
-  color: var(--color-text-muted);
-}
-
-.api-badge--error {
-  background-color: #fff0f3;
-  color: var(--color-primary-shadow);
+/* 갱신 실패 때 배지 자리에 그리는 ‘다시 시도’ 버튼. 배지 모양 그대로 버튼 기본 테두리만 없앤다 */
+.dex-intro__badge--retry {
+  border: 0;
 }
 
 /* 입력창 682 + 간격 12 + 검색 66 (시안에는 필터 버튼이 없다) */
@@ -1356,17 +1347,52 @@ legend.field__label {
   gap: 25px;
 }
 
-/* 팀 패널이 없으므로 한 열. 카드 영역은 260×4 + 20×3 = 1100에서 멈추고 왼쪽 정렬한다 */
+/* 팀 패널이 없으므로 한 열. 카드 영역은 260×4 + 20×3 = 1100에서 멈추고 왼쪽 정렬한다.
+   W06 시안 픽셀 기준: 카드 아래(y=627) → 페이지 버튼 위(y=651) 24px */
 .page--api-dex .dex-layout {
   grid-template-columns: minmax(0, 1fr);
 }
 
 .page--api-dex .dex-results {
+  gap: 24px;
   max-width: 1100px;
 }
 
 .page--api-dex .card-grid {
   gap: 20px;
+}
+
+/* 페이지 이동 (W06 시안): 카드 아래 왼쪽, 38×38 버튼 간격 8, 흰 바탕·옅은 테두리, 현재 페이지는 파란 바탕.
+   시안의 비활성 이전·다음은 활성일 때와 모양이 같아, disabled는 동작만 막고 커서로만 구분한다 */
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pagination__button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+  color: var(--color-text-muted);
+  box-shadow: inset 0 0 0 1px var(--color-border);
+  font-family: var(--font-en);
+  /* 시안(0.5배)과 같은 배율로 겹쳐 비교해 가장 가까운 값 */
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.pagination__button--current {
+  background-color: var(--color-info);
+  color: var(--color-white);
+  box-shadow: none;
 }
 
 /* 중간 폭: 슬롯 두 열이 너무 좁아지면 한 열로 바꾼다 */
@@ -1606,7 +1632,7 @@ legend.field__label {
     line-height: 28px;
   }
 
-  /* ===== W05 PokéAPI 도감 모바일 (390×844 시안): 여백 24/20, 헤더 342×72, 검색 폼 326, 카드 164 2열·간격 14 ===== */
+  /* ===== W05·W06 PokéAPI 도감 모바일 (390×844 시안): 여백 24/20, 헤더 342×72, 검색 폼 326, 카드 164 2열·간격 14 ===== */
   /* 시안 픽셀 기준: 배지 아래 → 검색창 위(y=214) 19px, 검색창 아래 → 카드 위(y=275) 19px */
   .page--api-dex {
     gap: 19px;
@@ -1628,13 +1654,22 @@ legend.field__label {
     display: none;
   }
 
-  .page--api-dex .dex-intro__title {
-    font-size: 24px;
-    line-height: 28px;
+  /* 시안 픽셀 기준: 헤더 내용은 바깥 테두리에서 좌우 16px (브랜드 마크 x=40, 내 팀 메뉴 끝 x=315) */
+  .page--api-dex .top-bar {
+    padding-right: 15px;
+    padding-left: 15px;
+  }
+
+  /* 시안: 설명 아래(y=164) 바로 밑에 높이 30 배지(y=165), 그 아래 19px 뒤 검색창(y=214) */
+  .page--api-dex .dex-intro {
+    row-gap: 1px;
+  }
+
+  .page--api-dex .dex-intro__text {
+    gap: 8px;
   }
 
   .page--api-dex .dex-intro__description {
-    font-size: 13px;
     line-height: 18px;
   }
 
@@ -1650,5 +1685,353 @@ legend.field__label {
 
   .page--api-dex .card-grid {
     gap: 14px;
+  }
+
+  /* 모바일 시안은 카드 둘째 줄에서 잘려 페이지 이동이 보이지 않는다. 같은 버튼을 모바일 세로 간격(19)으로 둔다 */
+  .page--api-dex .dex-results {
+    gap: 19px;
+  }
+}
+
+/* ===== W07 라우팅: 링크로 바뀐 메뉴·버튼·카드 ===== */
+.nav-pill {
+  text-decoration: none;
+}
+
+a.button {
+  display: inline-block;
+  text-decoration: none;
+  text-align: center;
+}
+
+/* W07 상세 시안의 FLYING 칩 색. 로컬 preview 화면의 기존 타입 색은 그대로 둔다 */
+.page--api-dex .type-chip--flying {
+  background-color: #748fc9;
+}
+
+.pokemon-card__link {
+  text-decoration: none;
+}
+
+.pokemon-card__name-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.pokemon-card__name-link:hover {
+  text-decoration: underline;
+}
+
+.state-panel__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* 홈: 기존 도감 소개와 같은 제목 아래 도감·내 팀으로 가는 두 버튼 */
+.home {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-section);
+}
+
+.home__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* ===== W07 포켓몬 상세 (PC 시안 1440×1024 기준) =====
+   브레드크럼 → 카드(1280, 안쪽 여백 40): 왼쪽 이미지 470×430(분홍) 안 350×350, 오른쪽 정보 열(간격 48) */
+.pokemon-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-link);
+  font-family: var(--font-base);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 20px;
+}
+
+.breadcrumb__link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.breadcrumb__link:hover {
+  text-decoration: underline;
+}
+
+.detail-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 48px;
+  padding: 40px;
+  border-radius: 24px;
+  background-color: var(--color-surface);
+  box-shadow:
+    inset 0 0 0 1px var(--color-border),
+    0 24px 48px rgba(20, 33, 61, 0.08);
+}
+
+.detail-card__visual {
+  display: flex;
+  flex: 0 0 470px;
+  align-items: center;
+  justify-content: center;
+  height: 430px;
+  border-radius: 24px;
+  background-color: #fff0f3;
+}
+
+.detail-card__image-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 350px;
+  height: 350px;
+  border-radius: 40px;
+  background-color: var(--color-surface-muted);
+}
+
+.detail-card__image {
+  width: 280px;
+  height: 280px;
+  object-fit: contain;
+}
+
+.detail-card__info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+  min-width: 0;
+}
+
+.detail-card__number {
+  padding: 7px 12px;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  font-family: var(--font-en);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 15px;
+}
+
+/* 시안 픽셀 기준 세로 위치: 번호 212, 이름 259, 설명 329, 타입 373, 특징 420, 스탯 491, 버튼 596 */
+.detail-card__name {
+  color: var(--color-text);
+  font-family: var(--font-ko);
+  font-size: 42px;
+  font-weight: 800;
+  line-height: 46px;
+}
+
+.detail-card__description {
+  margin-top: 6px;
+  color: var(--color-text-muted);
+  font-family: var(--font-ko);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 22px;
+}
+
+.detail-card__types {
+  justify-content: flex-start;
+  margin-top: 4px;
+}
+
+.detail-card__facts,
+.detail-card__stats {
+  margin: 0;
+}
+
+.detail-card__facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.detail-card__fact {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-muted);
+}
+
+.detail-card__fact dt {
+  color: var(--color-text-muted);
+  font-family: var(--font-ko);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 14px;
+}
+
+.detail-card__fact dd {
+  margin: 0;
+  color: var(--color-text);
+  font-family: var(--font-base);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 20px;
+}
+
+.detail-card__stats {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: -4px;
+}
+
+.detail-card__stat {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.detail-card__stat dt {
+  color: var(--color-text-muted);
+  font-family: var(--font-en);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 20px;
+}
+
+.detail-card__stat dd {
+  margin: 0;
+}
+
+/* 스탯 막대: 120을 최대치로 채운다 */
+.stat-bar {
+  display: block;
+  width: 280px;
+  height: 8px;
+  overflow: hidden;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-surface-muted);
+}
+
+.stat-bar__fill {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-primary);
+}
+
+.detail-card__add.button--added:disabled {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: inset 0 0 0 1px var(--color-border-strong);
+}
+
+/* ===== W07 팀 편집 화면 (/my-team/:teamPokemonId/edit) =====
+   W07 Product Screen: 왼쪽 편집 중인 팀 슬롯, 오른쪽 편집 카드 */
+.team-edit {
+  display: grid;
+  grid-template-columns: minmax(0, 392px) minmax(0, 560px);
+  align-items: start;
+  gap: 20px;
+}
+
+.team-edit > .state-panel {
+  grid-column: 1 / -1;
+}
+
+.team-edit__card {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 28px;
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface);
+  box-shadow:
+    inset 0 0 0 1px var(--color-border),
+    var(--shadow-surface);
+}
+
+.team-edit__error {
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  /* 모바일 상세 (390×844 시안): 이미지 위·정보 아래 한 열, 이미지 250×250 안 202×202 */
+  .detail-card {
+    flex-direction: column;
+    gap: 18px;
+    padding: 24px 22px;
+  }
+
+  .detail-card__visual {
+    flex-basis: auto;
+    width: 250px;
+    height: 250px;
+  }
+
+  .detail-card__image-box {
+    width: 202px;
+    height: 202px;
+    border-radius: 32px;
+  }
+
+  .detail-card__image {
+    width: 160px;
+    height: 160px;
+  }
+
+  .detail-card__info {
+    gap: 12px;
+  }
+
+  .detail-card__name {
+    font-size: 30px;
+    line-height: 34px;
+  }
+
+  .detail-card__description {
+    margin-top: 0;
+    font-size: 13px;
+    line-height: 20px;
+  }
+
+  .detail-card__types {
+    margin-top: 0;
+  }
+
+  .detail-card__stats {
+    margin-top: 0;
+  }
+
+  .stat-bar {
+    width: 180px;
+  }
+
+  .detail-card__add {
+    padding-right: 16px;
+    padding-left: 16px;
+    font-size: 13px;
+  }
+
+  .pokemon-detail {
+    gap: 16px;
+  }
+
+  .team-edit {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .team-edit__card {
+    padding: 20px;
   }
 }
