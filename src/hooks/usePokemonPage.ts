@@ -1,3 +1,4 @@
+import { useSearchParams } from 'react-router-dom'
 import { useEffect, useRef, useState } from 'react'
 import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query'
 import { fetchPokemonCard, getPokemonPageParams } from '../api/pokemon'
@@ -8,7 +9,19 @@ const PAGE_SIZE = 4
 const DISPLAY_LIMIT = 32
 
 export function usePokemonPage() {
-  const [page, setPage] = useState({ limit: PAGE_SIZE, offset: 0 })
+  const [params, setParams] = useSearchParams()
+  const requestedPage = Number(params.get('page') ?? 1)
+  const pageNumber = Number.isInteger(requestedPage) && requestedPage >= 1 && requestedPage <= DISPLAY_LIMIT / PAGE_SIZE
+    ? requestedPage : 1
+  const page = { limit: PAGE_SIZE, offset: (pageNumber - 1) * PAGE_SIZE }
+
+  function setPage(target: { limit: number; offset: number }) {
+    setParams((current) => {
+      const next = new URLSearchParams(current)
+      next.set('page', String(Math.floor(target.offset / target.limit) + 1))
+      return next
+    })
+  }
   const queryClient = useQueryClient()
   const pageOptions = pokemonPageOptions(page.limit, page.offset)
   const result = useQuery({ ...pageOptions, placeholderData: keepPreviousData })
@@ -71,9 +84,7 @@ export function usePokemonPage() {
     refetch: result.refetch,
     changePage: (number: number) => {
       if (result.isPlaceholderData || !Number.isInteger(number) || number < 1 || number > totalPages) return
-      setPage((current) => ({
-      ...current, offset: (number - 1) * current.limit,
-      }))
+      setPage({ limit: page.limit, offset: (number - 1) * page.limit })
     },
     previousPage: () => followPageUrl(result.data?.previous),
     nextPage: () => followPageUrl(result.data?.next),

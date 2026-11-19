@@ -1,0 +1,16 @@
+.badge {
+  display: flex;
+  width: fit-content;
+  padding: 8px 12px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--yellow);
+  color: var(--ink);
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+.badge--number { background: var(--red); color: var(--color-text-inverse); }

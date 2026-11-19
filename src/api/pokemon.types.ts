@@ -22,6 +22,10 @@ export interface PokemonListResponse {
 export interface PokemonDetailResponse {
   id: number
   name: string
+  height: number
+  weight: number
+  abilities: { ability: PokemonResource; is_hidden: boolean; slot: number }[]
+  stats: { base_stat: number; stat: PokemonResource }[]
   species: PokemonResource
   types: {
     slot: number
@@ -38,5 +42,6 @@ export interface PokemonDetailResponse {
 }
 
 export interface PokemonSpeciesResponse {
+  flavor_text_entries: { flavor_text: string; language: PokemonResource }[]
   names: { name: string; language: PokemonResource }[]
 }

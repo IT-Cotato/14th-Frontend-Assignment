@@ -1,3 +1,4 @@
+import Badge from './components/Badge/Badge'
 import { useEffect, useState } from 'react'
 import { Link, Route, Routes, useLocation } from 'react-router-dom'
 import PokemonDetailPage from './pages/PokemonDetailPage'
@@ -6,7 +7,7 @@ import NotFoundPage from './pages/NotFoundPage'
 import PokemonList from './components/PokemonList/PokemonList'
 import PokemonSearch from './components/PokemonSearch/PokemonSearch'
 import TeamPage from './components/TeamPage/TeamPage'
-import PokedexPage from './components/PokedexPage/PokedexPage'
+import PokedexPage from './pages/PokedexPage'
 import { restoreTeam, TEAM_STORAGE_KEY, updateTeamMember } from './utils/teamStorage'
 import { pokemonList } from './data/pokemon'
 import type { Pokemon } from './types/pokemon'
@@ -123,7 +124,7 @@ function App() {
         <>
           <section className="daily-pokemon-card" aria-label="포켓몬과 함께하는 하루">
             <div className="daily-pokemon-card__content">
-              <span className="daily-pokemon-card__badge">오늘의 추천</span>
+              <Badge className="daily-pokemon-card__badge">오늘의 추천</Badge>
               <h1 className="daily-pokemon-card__title">포켓몬과 함께하는 하루</h1>
               <p className="daily-pokemon-card__description">
                 좋아하는 포켓몬을 찾고 나만의 팀을 만들어 보세요
