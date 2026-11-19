@@ -13,11 +13,29 @@ interface PokemonListResponse {
 interface PokemonDetailResponse {
   id: number
   name: string
+  height: number
+  weight: number
   sprites: {
     front_default: string | null
     other?: { 'official-artwork'?: { front_default: string | null } }
   }
   types: Array<{ type: { name: string } }>
+  abilities: Array<{ ability: { name: string } }>
+  stats: Array<{ base_stat: number; stat: { name: string } }>
+}
+
+interface PokemonSpeciesResponse {
+  names: Array<{ name: string; language: { name: string } }>
+  flavor_text_entries: Array<{ flavor_text: string; language: { name: string } }>
+}
+
+export interface PokemonDetailModel extends Pokemon {
+  height: number
+  weight: number
+  types: string[]
+  abilities: string[]
+  stats: Array<{ name: string; value: number }>
+  description: string
 }
 
 export type PokemonCardModel =
@@ -113,6 +131,64 @@ export const usePokemonSearch = (query: string, enabled = true) => {
       if (response.status === 404) return null
       if (!response.ok) throw new Error(`검색 요청 실패: ${response.status}`)
       return toPokemon(await response.json() as PokemonDetailResponse)
+    },
+  })
+}
+
+const cleanFlavorText = (value: string) => value.replace(/[\n\f]/g, ' ').replace(/\s+/g, ' ').trim()
+
+export const usePokemonDetail = (pokemonId: string | undefined) => {
+  const normalizedId = pokemonId?.trim().toLowerCase() ?? ''
+
+  return useQuery({
+    queryKey: ['pokemon', 'detail', normalizedId],
+    enabled: normalizedId.length > 0,
+    retry: (failureCount, error) => {
+      if (error instanceof Error && error.message === 'POKEMON_NOT_FOUND') return false
+      return failureCount < 1
+    },
+    queryFn: async ({ signal }) => {
+      const detailResponse = await fetch(
+        `${API_URL}/${encodeURIComponent(normalizedId)}`,
+        { signal },
+      )
+      if (detailResponse.status === 404) throw new Error('POKEMON_NOT_FOUND')
+      if (!detailResponse.ok) throw new Error(`상세 요청 실패: ${detailResponse.status}`)
+
+      const detail = await detailResponse.json() as PokemonDetailResponse
+      let species: PokemonSpeciesResponse | null = null
+
+      try {
+        const speciesResponse = await fetch(
+          `https://pokeapi.co/api/v2/pokemon-species/${detail.id}`,
+          { signal },
+        )
+        if (speciesResponse.ok) species = await speciesResponse.json() as PokemonSpeciesResponse
+      } catch (error) {
+        if (error instanceof DOMException && error.name === 'AbortError') throw error
+      }
+
+      const koreanName = species?.names.find((entry) => entry.language.name === 'ko')?.name
+      const koreanDescription = species?.flavor_text_entries.find(
+        (entry) => entry.language.name === 'ko',
+      )?.flavor_text
+      const englishDescription = species?.flavor_text_entries.find(
+        (entry) => entry.language.name === 'en',
+      )?.flavor_text
+
+      return {
+        ...toPokemon(detail),
+        name: koreanName ?? detail.name.replaceAll('-', ' '),
+        height: detail.height / 10,
+        weight: detail.weight / 10,
+        types: detail.types.map((entry) => entry.type.name.toUpperCase()),
+        abilities: detail.abilities.map((entry) => entry.ability.name.replaceAll('-', ' ')),
+        stats: detail.stats.map((entry) => ({
+          name: entry.stat.name,
+          value: entry.base_stat,
+        })),
+        description: cleanFlavorText(koreanDescription ?? englishDescription ?? '설명이 없어요.'),
+      } satisfies PokemonDetailModel
     },
   })
 }

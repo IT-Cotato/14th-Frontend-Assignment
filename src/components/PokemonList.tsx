@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import searchIcon from '../assets/search.svg'
 import {
   getPageParamsFromUrl,
@@ -15,7 +16,6 @@ interface PokemonListProps {
   mode?: 'featured' | 'catalog' | 'team'
   onAdd?: (pokemon: Pokemon) => void
   onEdit?: (id: number) => void
-  onView?: (id: number) => void
   teamIds?: number[]
   teamFull?: boolean
 }
@@ -27,18 +27,21 @@ function PokemonList({
   mode = 'featured',
   onAdd,
   onEdit,
-  onView,
   teamIds = [],
   teamFull = false,
 }: PokemonListProps) {
-  const [query, setQuery] = useState('')
-  const [submittedQuery, setSubmittedQuery] = useState('')
-  const [pageParams, setPageParams] = useState<PokemonPageParams>(INITIAL_PAGE)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const urlQuery = searchParams.get('q')?.trim().toLowerCase() ?? ''
+  const urlLimit = Number(searchParams.get('limit')) || INITIAL_PAGE.limit
+  const urlOffset = Math.max(0, Number(searchParams.get('offset')) || INITIAL_PAGE.offset)
+  const [queryDraft, setQueryDraft] = useState<string | null>(null)
+  const query = queryDraft ?? urlQuery
+  const pageParams: PokemonPageParams = { limit: urlLimit, offset: urlOffset }
   const isCatalog = mode === 'catalog'
   const pageQuery = usePokemonPage(pageParams, isCatalog)
-  const searchQuery = usePokemonSearch(submittedQuery, isCatalog)
+  const searchQuery = usePokemonSearch(urlQuery, isCatalog)
 
-  const isSearching = submittedQuery.length > 0
+  const isSearching = urlQuery.length > 0
   const searchResult = searchQuery.data
   const pageData = pageQuery.data
   const isInitialLoading = isSearching
@@ -54,12 +57,14 @@ function PokemonList({
 
   const submitSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    setSubmittedQuery(query.trim().toLowerCase())
+    const nextQuery = query.trim().toLowerCase()
+    setSearchParams(nextQuery ? { q: nextQuery } : {})
+    setQueryDraft(null)
   }
 
   const clearSearch = () => {
-    setQuery('')
-    setSubmittedQuery('')
+    setQueryDraft(null)
+    setSearchParams({})
   }
 
   const retryActiveRequest = () => {
@@ -72,7 +77,11 @@ function PokemonList({
 
   const moveToPage = (url: string | null) => {
     if (!url) return
-    setPageParams(getPageParamsFromUrl(url))
+    const nextPage = getPageParamsFromUrl(url)
+    setSearchParams({
+      limit: String(nextPage.limit),
+      offset: String(nextPage.offset),
+    })
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
@@ -91,7 +100,7 @@ function PokemonList({
       }
       key={pokemon.id}
       onAction={mode === 'team' ? (selectedPokemon) => onEdit?.(selectedPokemon.id) : onAdd}
-      onView={mode === 'catalog' ? undefined : onView}
+      detailPath={`/pokemon/${pokemon.id}`}
     />
   )
 
@@ -150,7 +159,7 @@ function PokemonList({
             type="search"
             placeholder="이름 또는 번호"
             value={query}
-            onChange={(event) => setQuery(event.target.value)}
+            onChange={(event) => setQueryDraft(event.target.value)}
           />
         </label>
         <button type="submit">검색</button>

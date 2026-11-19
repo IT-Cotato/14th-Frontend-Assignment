@@ -1,10 +1,11 @@
+import { Link } from 'react-router-dom'
 import type { Pokemon } from '../pokemon'
 
 interface PokemonCardProps extends Pokemon {
   actionLabel?: string
   actionDisabled?: boolean
   onAction?: (pokemon: Pokemon) => void
-  onView?: (id: number) => void
+  detailPath?: string
 }
 
 function PokemonCard({
@@ -16,7 +17,7 @@ function PokemonCard({
   actionLabel = '팀에 추가',
   actionDisabled = false,
   onAction,
-  onView,
+  detailPath,
 }: PokemonCardProps) {
   const typeClassName = `pokemon-card__type pokemon-card__type--${type.toLowerCase()}`
   const cardSummary = (
@@ -31,8 +32,8 @@ function PokemonCard({
 
   return (
     <article className="pokemon-card">
-      {onView ? (
-        <button className="pokemon-card__view" type="button" onClick={() => onView(id)}>{cardSummary}</button>
+      {detailPath ? (
+        <Link className="pokemon-card__view" to={detailPath}>{cardSummary}</Link>
       ) : (
         <div className="pokemon-card__view">{cardSummary}</div>
       )}
