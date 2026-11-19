@@ -1,7 +1,6 @@
 import searchImage from '../assets/Search.png';
 
 interface PokemonHeaderProps {
-  teamCount: number;
   search: string;
   setSearch: (value: string) => void;
   selectedType: string;
@@ -9,7 +8,6 @@ interface PokemonHeaderProps {
 }
 
 function PokemonHeader({
-  teamCount,
   search,
   setSearch,
   // selectedType,
@@ -17,20 +15,6 @@ function PokemonHeader({
 }: PokemonHeaderProps) {
   return (
     <>
-      <header className="container header">
-        <div className="logo">
-          <span>PM</span>
-          <strong>PokéMate</strong>
-        </div>
-
-        <nav>
-          <button className="basic-button-dogam">홈</button>
-          <button className="red-button">도감</button>
-          <button className="basic-button-dogam">내 팀</button>
-          <span>{teamCount} / 6</span>
-        </nav>
-      </header>
-
       <section className="alert">
         <div className="firstdiv">
           <div className="popup_content">
@@ -89,7 +73,7 @@ function PokemonHeader({
           <option value="FAIRY">페어리</option>
         </select> */}
 
-        <button className="red-shadow-button">
+        <button className="red-shadow-button" type="button">
           검색
         </button>
       </section>

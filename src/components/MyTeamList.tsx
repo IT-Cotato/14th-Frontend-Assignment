@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { Link } from 'react-router';
 import type { Pokemon } from '../App';
+import { toPokemonId } from '../utils/pokemonId';
 
 interface MyTeamGridProps {
   team: Pokemon[];
   onRemove: (number: string) => void;
-  onEdit: (number: string, nickname: string, role: string) => void;
 }
 
 const typeKorMap: { [key: string]: string } = {
@@ -31,27 +31,11 @@ const typeKorMap: { [key: string]: string } = {
 function MyTeamList({
   team,
   onRemove,
-  onEdit,
 }: MyTeamGridProps) {
-  const [editingNumber, setEditingNumber] = useState<string | null>(null);
-  const [nickname, setNickname] = useState('');
-  const [role, setRole] = useState('');
-
   const slots = Array.from(
     { length: 6 },
     (_, index) => team[index] || null
   );
-
-  const startEdit = (pokemon: Pokemon) => {
-    setEditingNumber(pokemon.number);
-    setNickname(pokemon.nickname || pokemon.name);
-    setRole(pokemon.role);
-  };
-
-  const saveEdit = (pokemon: Pokemon) => {
-    onEdit(pokemon.number, nickname, role);
-    setEditingNumber(null);
-  };
 
   return (
     <section className="my-team-container">
@@ -60,77 +44,45 @@ function MyTeamList({
           <div key={index} className="slot-card">
             {pokemon ? (
               <div className="slot-content">
-                {editingNumber === pokemon.number ? (
-                  <div className="edit-form">
-                    <input
-                      value={nickname}
-                      onChange={(e) => setNickname(e.target.value)}
-                      placeholder="별명"
-                    />
+                <div className="pokemon-info">
+                  <img
+                    src={pokemon.image}
+                    alt={pokemon.name}
+                    className="slot-image"
+                  />
 
-                    <input
-                      value={role}
-                      onChange={(e) => setRole(e.target.value)}
-                      placeholder="역할"
-                    />
+                  <div>
+                    <h4>
+                      {pokemon.nickname || pokemon.name}
+                    </h4>
 
-                    <button
-                      className="edit-btn"
-                      onClick={() => saveEdit(pokemon)}
-                    >
-                      저장
-                    </button>
+                    <span className="slot-desc">
+                      {typeKorMap[pokemon.type] || pokemon.type}
+                    </span>
 
-                    <button
-                      className="red-del-shadow-button"
-                      onClick={() => setEditingNumber(null)}
-                    >
-                      취소
-                    </button>
+                    <span className="slot-desc"> · </span>
+
+                    <span className="slot-desc">
+                      {pokemon.role}
+                    </span>
                   </div>
-                ) : (
-                  <>
-                    <div className="pokemon-info">
-                      <img
-                        src={pokemon.image}
-                        alt={pokemon.name}
-                        className="slot-image"
-                      />
+                </div>
 
-                      <div>
-                        <h4>
-                          {pokemon.nickname || pokemon.name}
-                        </h4>
+                <div className="slot-actions">
+                  <Link
+                    className="edit-btn"
+                    to={`/my-team/${toPokemonId(pokemon.number)}/edit`}
+                  >
+                    편집
+                  </Link>
 
-                        <span className="slot-desc">
-                          {typeKorMap[pokemon.type] || pokemon.type}
-                        </span>
-
-                        <span className="slot-desc"> · </span>
-
-                        <span className="slot-desc">
-                          {pokemon.role}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="slot-actions">
-                      <button
-                        className="edit-btn"
-                        onClick={() => startEdit(pokemon)}
-                      >
-                        편집
-                      </button>
-
-                      <button
-                        className="red-del-shadow-button"
-                        onClick={() => onRemove(pokemon.number)}
-                      >
-                        삭제
-                      </button>
-                    </div>
-                  </>
-                )}
+                  <button
+                    className="red-del-shadow-button"
+                    onClick={() => onRemove(pokemon.number)}
+                  >
+                    삭제
+                  </button>
+                </div>
               </div>
             ) : (
               <div className="slot-content empty-slot">
