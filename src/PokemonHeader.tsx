@@ -1,17 +1,16 @@
 import chuImg from './assets/chu.png' 
+import { Link } from 'react-router';
 
 type HeaderBoxProps = {
     menu: 'home' | 'dict' | 'myTeam';
     teamCount: number;
     teamMax: number;
-    onMenuChange: (menu: 'home' | 'dict' | 'myTeam') => void;
 };
 
 function HeaderBox({
     menu,
     teamCount,
     teamMax,
-    onMenuChange,
 }: HeaderBoxProps) {
     return (
         <>
@@ -28,29 +27,29 @@ function HeaderBox({
 
                     <div className="nav"> {/*navigation 묶어줄 div */}
 
-                        <div 
+                        <Link 
+                            to="/"
                             className={`home-box ${
                                 menu === 'home' ? 'active' : ''}`}
-                            onClick={() => onMenuChange('home')}
                         >
                             <span className="home">홈</span>
-                        </div>
+                        </Link>
 
-                        <div 
+                        <Link 
+                            to="/pokemon"
                             className={`dict-box ${
                                 menu === 'dict' ? 'active' : '' }`}
-                            onClick={() => onMenuChange('dict')}
                         >
                             <span className='dict'>도감</span>
-                        </div>
+                        </Link>
                         
-                        <div 
+                        <Link 
+                            to="/my-team"
                             className={`myTeam-box ${
                                 menu === 'myTeam' ? 'active' : ''}`}
-                            onClick={() => onMenuChange('myTeam')}
                         >
                             <span className="myTeam">내 팀</span>
-                        </div>
+                        </Link>
                         
                         <span className="num">
                             {teamCount}/{teamMax}

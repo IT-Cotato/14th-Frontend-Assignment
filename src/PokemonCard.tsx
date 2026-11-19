@@ -1,3 +1,5 @@
+import { Link } from 'react-router';
+
 // 포켓몬 한 마리의 모양. App, PokemonList에서도 쓰도록 export
 export type Pokemon = {
   id: number;
@@ -6,6 +8,7 @@ export type Pokemon = {
   types: string[];
   nickname?: string;   // 별명 (없을 수도 있음)
   role?: string;       // 역할 (없을 수도 있음)
+  memo?: string;
 };
 
 // 카드가 받는 props = 포켓몬 정보 + 상태 2개 + 버튼 눌렀을 때 실행할 함수
@@ -41,13 +44,13 @@ function PokemonCard({
     // 추가된 카드면 added 클래스 → 민트 배경·테두리
     <div className={`card-box ${isAdded ? 'added' : ''}`}>
 
-      <div className="img-box">
+      <Link to={`/pokemon/${id}`} className="img-box">
         <img
           className="pokemon-image"
           src={image}
           alt={name}
         />
-      </div>
+      </Link>
 
       <div className="pokemonNum">
         #{String(id).padStart(4, '0')}

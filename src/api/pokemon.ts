@@ -32,8 +32,16 @@ export async function fetchPokemonList(
 type PokemonDetailResponse = {
     id: number
     name: string
+    height: number
+    weight: number
+
     sprites: {
         front_default: string | null; //sprites는 객체이고, 그 안의 front_default는 문자열 또는 null이다.
+        other: {
+            'official-artwork': {
+                front_default: string | null;
+            };
+        };
     };
 
     types: {
@@ -46,6 +54,19 @@ type PokemonDetailResponse = {
         url: string
     }
 
+    abilities: {
+        ability: {
+            name: string
+            url: string
+        }
+    }[];
+
+    stats: {
+        base_stat: number
+        stat: {
+            name: string
+        }
+    }[];
 };
 
 type PokemonSpeciesResponse = {
@@ -55,9 +76,51 @@ type PokemonSpeciesResponse = {
             name: string 
         };
     }[];
+
+    flavor_text_entries: {
+        flavor_text: string,
+        language: { 
+            name: string
+        }
+    }[];
+}
+
+type PokemonAbilityResponse = {
+    names: {
+        name: string
+        language: {
+            name: string
+        }
+    }[];
+}
+
+export type PokemonDetail = Pokemon & {
+    height: number
+    weight: number
+    description: string
+    abilities: string[];
+    stats: {
+        name: string
+        value: number
+    }[];
 };
 
-export async function fetchPokemonDetail(url : string): Promise<Pokemon>{
+async function fetchAbilityName(url: string): Promise<string> {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+        throw new Error('특성 정보를 가져오지 못했어요.');
+    }
+    
+    const data: PokemonAbilityResponse = await response.json();
+
+    const koreanName = data.names.find((item) => {
+        return item.language.name === 'ko'
+    });
+
+    return koreanName?.name ?? '특성 이름 없음'
+}
+export async function fetchPokemonDetail(url : string): Promise<PokemonDetail>{
     
     const response = await fetch(url);
 
@@ -83,12 +146,37 @@ export async function fetchPokemonDetail(url : string): Promise<Pokemon>{
         return item.language.name === 'ko'
     });
 
+    const koreanDescription = speciesData.flavor_text_entries.find((item) => {
+        return item.language.name === 'ko'
+    })
+
+    const abilities = await Promise.all(
+        data.abilities.map((item) => {
+            return fetchAbilityName(item.ability.url)
+        })
+    )
+
     return {
         id: data.id,
         name: koreanEntry?.name ?? data.name,
-        image: data.sprites.front_default ?? chuImg,
+        image: 
+            data.sprites.other['official-artwork'].front_default
+            ?? data.sprites.front_default
+            ?? chuImg,
         types: data.types.map((item) => {
             return item.type.name.toUpperCase();
         }),
+        height: data.height / 10,
+        weight: data.weight / 10,
+        description: koreanDescription?.flavor_text ?? '설명이 없어요',
+
+        abilities: abilities,
+
+        stats: data.stats.map((item) => {
+            return {
+                name: item.stat.name,
+                value: item.base_stat,
+            }
+        })
     };
 }
