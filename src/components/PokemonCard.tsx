@@ -1,5 +1,7 @@
+import { Link, useLocation } from 'react-router';
 import Button from './Button';
 import TypeChip from './TypeChip';
+import { formatPokemonNumber } from '../utils/formatNumber';
 import type { Pokemon } from '../types/pokemon';
 import pikachu from '../assets/Pikachu.png';
 import './PokemonCard.css';
@@ -18,22 +20,24 @@ const ADD_LABELS: Record<AddStatus, string> = {
   full: '팀이 가득 찼어요',
 };
 
-function formatNumber(id: number) {
-  return `#${String(id).padStart(4, '0')}`;
-}
 
 function PokemonCard({ id, name, types, imageUrl, addStatus, onAdd }: PokemonCardProps) {
-  const displayNumber = formatNumber(id);
+  const location = useLocation();
+  const displayNumber = formatPokemonNumber(id);
+  const detailPath = `/pokemon/${id}`;
+  const linkState = { from: `${location.pathname}${location.search}` };
 
   return (
     <article className={`pokemon-card${addStatus === 'added' ? ' pokemon-card--added' : ''}`}>
-      <div className="pokemon-card__artwork">
+      <Link to={detailPath} state={linkState} className="pokemon-card__artwork">
         <img src={imageUrl} alt={`${name} 일러스트`} />
-      </div>
+      </Link>
 
       <p className="pokemon-card__number">{displayNumber}</p>
       <h3 className="pokemon-card__name" title={name}>
-        {name}
+        <Link to={detailPath} state={linkState} className="pokemon-card__link">
+          {name}
+        </Link>
       </h3>
       <div className="pokemon-card__types">
         {types.map((type) => (
@@ -69,12 +73,31 @@ export function PokemonCardError({ id, onRetry }: PokemonCardErrorProps) {
         <img src={pikachu} alt="" />
       </div>
 
-      <p className="pokemon-card__number">{formatNumber(id)}</p>
+      <p className="pokemon-card__number">{formatPokemonNumber(id)}</p>
       <h3 className="pokemon-card__name">상세 정보 실패</h3>
 
       <div className="pokemon-card__action">
         <Button variant="primary" size="sm" onClick={onRetry}>
           다시 시도
+        </Button>
+      </div>
+    </article>
+  );
+}
+
+export function PokemonCardLoading() {
+  return (
+    <article className="pokemon-card pokemon-card--loading">
+      <div className="pokemon-card__artwork">
+        <img src={pikachu} alt="" />
+      </div>
+
+      <p className="pokemon-card__number">#----</p>
+      <h3 className="pokemon-card__name">포켓몬을 찾는 중</h3>
+
+      <div className="pokemon-card__action">
+        <Button variant="primary" size="sm" disabled>
+          팀에 추가
         </Button>
       </div>
     </article>

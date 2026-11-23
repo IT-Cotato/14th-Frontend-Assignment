@@ -12,8 +12,18 @@ const INITIAL_MEMBERS: { id: number; role: TeamRole }[] = [
   { id: 1, role: '서포트' },
 ];
 
-// 도감에 없는 번호는 flatMap에서 빈 배열로 걸러지고, 정원을 넘는 인원은 잘라냄.
+function toTeamPokemonId(number: number): string {
+  return `tp_${String(number).padStart(2, '0')}`;
+}
+
+export function createTeamPokemonId(team: readonly { teamPokemonId: string }[]): string {
+  const maxNumber = Math.max(0, ...team.map(({ teamPokemonId }) => Number(teamPokemonId.slice(3)) || 0));
+  return toTeamPokemonId(maxNumber + 1);
+}
+
 export const INITIAL_TEAM: readonly TeamMember[] = INITIAL_MEMBERS.flatMap(({ id, role }) => {
   const pokemon = POKEMONS.find((item) => item.id === id);
-  return pokemon ? [{ pokemon, nickname: '', role }] : [];
-}).slice(0, TEAM_SIZE);
+  return pokemon ? [{ pokemon, nickname: '', role, memo: '' }] : [];
+})
+  .slice(0, TEAM_SIZE)
+  .map((member, index) => ({ ...member, teamPokemonId: toTeamPokemonId(index + 1) }));

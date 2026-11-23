@@ -36,6 +36,8 @@
 
 .state-panel__action {
   margin-top: 12px;
+  display: flex;
+  gap: 8px;
 }
 
 .state-panel--loading .state-panel__icon {

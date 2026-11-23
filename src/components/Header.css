@@ -50,6 +50,7 @@
   color: var(--color-text-sub);
   font-size: 13px;
   font-weight: 700;
+  text-decoration: none;
 }
 
 .header__nav-item--active {

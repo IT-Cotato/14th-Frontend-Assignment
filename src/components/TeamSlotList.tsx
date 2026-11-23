@@ -6,12 +6,10 @@ interface TeamSlotListProps {
   title?: string;
   team: readonly TeamMember[];
   size: number;
-  editingId?: number | null;
-  onEdit: (id: number) => void;
-  onDelete: (id: number) => void;
+  onDelete: (teamPokemonId: string) => void;
 }
 
-function TeamSlotList({ title, team, size, editingId = null, onEdit, onDelete }: TeamSlotListProps) {
+function TeamSlotList({ title, team, size, onDelete }: TeamSlotListProps) {
   const slots = Array.from({ length: size }, (_, index): TeamMember | undefined => team[index]);
 
   return (
@@ -21,11 +19,10 @@ function TeamSlotList({ title, team, size, editingId = null, onEdit, onDelete }:
         {slots.map((member, index) =>
           member ? (
             <TeamSlot
-              key={member.pokemon.id}
+              key={member.teamPokemonId}
               member={member}
-              isEditing={member.pokemon.id === editingId}
-              onEdit={() => onEdit(member.pokemon.id)}
-              onDelete={() => onDelete(member.pokemon.id)}
+              editTo={`/my-team/${member.teamPokemonId}/edit`}
+              onDelete={() => onDelete(member.teamPokemonId)}
             />
           ) : (
             <TeamSlot key={`empty-${index}`} />

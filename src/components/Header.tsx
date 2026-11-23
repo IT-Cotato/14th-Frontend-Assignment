@@ -1,21 +1,18 @@
+import { NavLink } from 'react-router';
 import './Header.css';
 
-export type NavItem = '홈' | '도감' | '내 팀';
-
 interface HeaderProps {
-  activeNav: NavItem;
   teamCount: number;
   teamLimit: number;
-  onNavigate: (nav: NavItem) => void;
 }
 
-const NAV_ITEMS: { label: NavItem; pcOnly: boolean }[] = [
-  { label: '홈', pcOnly: true },
-  { label: '도감', pcOnly: false },
-  { label: '내 팀', pcOnly: false },
+const NAV_ITEMS: { label: string; to: string; end: boolean; pcOnly: boolean }[] = [
+  { label: '홈', to: '/', end: true, pcOnly: true },
+  { label: '도감', to: '/pokemon', end: false, pcOnly: false },
+  { label: '내 팀', to: '/my-team', end: false, pcOnly: false },
 ];
 
-function Header({ activeNav, teamCount, teamLimit, onNavigate }: HeaderProps) {
+function Header({ teamCount, teamLimit }: HeaderProps) {
   return (
     <header className="header">
       <div className="header__brand">
@@ -24,23 +21,21 @@ function Header({ activeNav, teamCount, teamLimit, onNavigate }: HeaderProps) {
       </div>
 
       <nav className="header__nav">
-        {NAV_ITEMS.map(({ label, pcOnly }) => {
-          const classNames = ['header__nav-item'];
-          if (label === activeNav) classNames.push('header__nav-item--active');
-          if (pcOnly) classNames.push('header__nav-item--pc-only');
-
-          return (
-            <button
-              key={label}
-              type="button"
-              className={classNames.join(' ')}
-              aria-current={label === activeNav ? 'page' : undefined}
-              onClick={() => onNavigate(label)}
-            >
-              {label}
-            </button>
-          );
-        })}
+        {NAV_ITEMS.map(({ label, to, end, pcOnly }) => (
+          <NavLink
+            key={to}
+            to={to}
+            end={end}
+            className={({ isActive }) => {
+              const classNames = ['header__nav-item'];
+              if (isActive) classNames.push('header__nav-item--active');
+              if (pcOnly) classNames.push('header__nav-item--pc-only');
+              return classNames.join(' ');
+            }}
+          >
+            {label}
+          </NavLink>
+        ))}
         <span className="header__count">
           {teamCount} / {teamLimit}
         </span>

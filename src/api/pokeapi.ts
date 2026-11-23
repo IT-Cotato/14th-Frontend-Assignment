@@ -1,4 +1,4 @@
-import type { Pokemon, PokemonType } from '../types/pokemon';
+import type { Pokemon, PokemonDetail, PokemonStat, PokemonType } from '../types/pokemon';
 
 const BASE_URL = 'https://pokeapi.co/api/v2';
 
@@ -29,6 +29,21 @@ interface PokemonDetailResponse {
 }
 
 interface PokemonSpeciesResponse {
+  names: { name: string; language: { name: string } }[];
+}
+
+interface PokemonProfileResponse extends PokemonDetailResponse {
+  height: number;
+  weight: number;
+  abilities: { ability: { name: string; url: string } }[];
+  stats: { base_stat: number; stat: { name: string } }[];
+}
+
+interface PokemonSpeciesDetailResponse extends PokemonSpeciesResponse {
+  flavor_text_entries: { flavor_text: string; language: { name: string } }[];
+}
+
+interface AbilityResponse {
   names: { name: string; language: { name: string } }[];
 }
 
@@ -70,7 +85,7 @@ const POKEMON_TYPES: readonly PokemonType[] = [
   'ROCK', 'GHOST', 'DRAGON', 'DARK', 'STEEL', 'FAIRY',
 ];
 
-function isPokemonType(value: string): value is PokemonType {
+export function isPokemonType(value: string): value is PokemonType {
   return (POKEMON_TYPES as readonly string[]).includes(value);
 }
 
@@ -146,4 +161,62 @@ export async function fetchPokemonByIdOrName(
     signal,
   );
   return toPokemon(detail, signal);
+}
+
+const STAT_LABELS: { name: string; label: PokemonStat['label'] }[] = [
+  { name: 'hp', label: 'HP' },
+  { name: 'attack', label: 'Attack' },
+  { name: 'defense', label: 'Defense' },
+  { name: 'speed', label: 'Speed' },
+];
+
+function cleanFlavorText(text: string): string {
+  return text.replace(/\s+/g, ' ').trim();
+}
+
+async function fetchAbilityName(
+  ability: { name: string; url: string },
+  signal?: AbortSignal,
+): Promise<string> {
+  try {
+    const data = await fetchJson<AbilityResponse>(ability.url, signal);
+    return data.names.find(({ language }) => language.name === 'ko')?.name ?? ability.name;
+  } catch {
+    return ability.name;
+  }
+}
+
+export async function fetchPokemonDetail(
+  idOrName: string,
+  signal?: AbortSignal,
+): Promise<PokemonDetail> {
+  const detail = await fetchJson<PokemonProfileResponse>(
+    `${BASE_URL}/pokemon/${encodeURIComponent(idOrName)}`,
+    signal,
+  );
+  const firstAbility = detail.abilities[0]?.ability;
+
+  const [species, ability] = await Promise.all([
+    fetchJson<PokemonSpeciesDetailResponse>(detail.species.url, signal),
+    firstAbility ? fetchAbilityName(firstAbility, signal) : Promise.resolve(''),
+  ]);
+
+  const findText = (lang: string) =>
+    species.flavor_text_entries.find(({ language }) => language.name === lang)?.flavor_text;
+  const description = findText('ko') ?? findText('en');
+
+  return {
+    id: detail.id,
+    name: species.names.find(({ language }) => language.name === 'ko')?.name ?? detail.name,
+    types: detail.types.map(({ type }) => type.name.toUpperCase()).filter(isPokemonType),
+    imageUrl: detail.sprites.other['official-artwork'].front_default ?? '',
+    height: detail.height / 10,
+    weight: detail.weight / 10,
+    ability,
+    description: description ? cleanFlavorText(description) : '설명이 없어요',
+    stats: STAT_LABELS.map(({ name, label }) => ({
+      label,
+      value: detail.stats.find(({ stat }) => stat.name === name)?.base_stat ?? 0,
+    })),
+  };
 }
