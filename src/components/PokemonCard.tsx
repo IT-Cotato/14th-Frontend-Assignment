@@ -6,8 +6,7 @@ import type { Pokemon } from '../types/pokemon';
 import pikachu from '../assets/Pikachu.png';
 import './PokemonCard.css';
 
-// 카드 버튼이 보여줄 추가 가능 여부
-export type AddStatus = 'available' | 'added' | 'full';
+export type AddStatus = 'available' | 'added' | 'full' | 'pending';
 
 type PokemonCardProps = Pokemon & {
   addStatus: AddStatus;
@@ -18,6 +17,7 @@ const ADD_LABELS: Record<AddStatus, string> = {
   available: '팀에 추가',
   added: '추가됨',
   full: '팀이 가득 찼어요',
+  pending: '팀에 추가',
 };
 
 
@@ -51,7 +51,7 @@ function PokemonCard({ id, name, types, imageUrl, addStatus, onAdd }: PokemonCar
         <Button
           variant={addStatus === 'added' ? 'secondary' : 'primary'}
           size="sm"
-          disabled={addStatus === 'full'}
+          disabled={addStatus === 'full' || addStatus === 'pending'}
           onClick={onAdd}
         >
           {ADD_LABELS[addStatus]}

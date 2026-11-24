@@ -2,10 +2,14 @@ import Button from './Button';
 import type { PokemonType, TeamMember } from '../types/pokemon';
 import './TeamSlot.css';
 
+export type TeamSlotStatus = 'pending' | 'error';
+
 interface TeamSlotProps {
   member?: TeamMember;
   editTo?: string;
+  status?: TeamSlotStatus;
   onDelete?: () => void;
+  onRetry?: () => void;
 }
 
 const TYPE_LABELS: Record<PokemonType, string> = {
@@ -29,7 +33,7 @@ const TYPE_LABELS: Record<PokemonType, string> = {
   FAIRY: '페어리',
 };
 
-function TeamSlot({ member, editTo, onDelete }: TeamSlotProps) {
+function TeamSlot({ member, editTo, status, onDelete, onRetry }: TeamSlotProps) {
   if (!member) {
     return (
       <div className="team-slot team-slot--empty">
@@ -51,8 +55,29 @@ function TeamSlot({ member, editTo, onDelete }: TeamSlotProps) {
   const subLabels = pokemon.types.map((type) => TYPE_LABELS[type]);
   if (role) subLabels.push(role);
 
+  if (status === 'error') {
+    return (
+      <div className="team-slot-cell">
+        <div className="team-slot team-slot--error">
+          <div className="team-slot__artwork">
+            <img src={pokemon.imageUrl} alt={`${pokemon.name} 일러스트`} />
+          </div>
+          <div className="team-slot__text" role="alert">
+            <p className="team-slot__name">저장하지 못했어요</p>
+            <p className="team-slot__sub">이전 상태 유지</p>
+          </div>
+        </div>
+        <Button variant="primary" onClick={onRetry}>
+          다시 시도
+        </Button>
+      </div>
+    );
+  }
+
+  const isPending = status === 'pending';
+
   return (
-    <div className="team-slot">
+    <div className={`team-slot${isPending ? ' team-slot--pending' : ''}`} aria-busy={isPending}>
       <div className="team-slot__artwork">
         <img src={pokemon.imageUrl} alt={`${pokemon.name} 일러스트`} />
       </div>
@@ -63,10 +88,10 @@ function TeamSlot({ member, editTo, onDelete }: TeamSlotProps) {
         <p className="team-slot__sub">{subLabels.join(' · ')}</p>
       </div>
       <div className="team-slot__actions">
-        <Button variant="secondary" size="sm" to={editTo}>
+        <Button variant="secondary" size="sm" to={editTo} disabled={isPending}>
           편집
         </Button>
-        <Button variant="primary" size="sm" onClick={onDelete}>
+        <Button variant="primary" size="sm" onClick={onDelete} disabled={isPending}>
           삭제
         </Button>
       </div>

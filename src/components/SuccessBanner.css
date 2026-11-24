@@ -1,0 +1,28 @@
+.success-banner {
+  height: 56px;
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: var(--color-online-bg);
+  border: 1px solid #06d6a0;
+  border-radius: var(--radius-card);
+}
+
+.success-banner__icon {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  background-color: #06d6a0;
+  border-radius: var(--radius-pill);
+  color: #ffffff;
+}
+
+.success-banner__message {
+  color: var(--color-online-text);
+  font-size: 15px;
+  font-weight: 700;
+}

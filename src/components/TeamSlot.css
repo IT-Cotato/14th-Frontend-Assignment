@@ -73,6 +73,31 @@
   color: #2a75bb;
 }
 
+.team-slot--pending .team-slot__artwork,
+.team-slot--pending .team-slot__text {
+  opacity: 0.6;
+}
+
+.team-slot-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.team-slot-cell .team-slot {
+  align-self: stretch;
+}
+
+.team-slot--error {
+  background-color: #fff0f3;
+  border-color: var(--color-primary);
+}
+
+.team-slot--error .team-slot__name {
+  color: var(--color-primary-dark);
+}
+
 @media (max-width: 767px) {
   .team-slot {
     height: 84px;

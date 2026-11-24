@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Navigate, Route, Routes, useLocation, useMatch, useNavigate, useSearchParams } from 'react-router';
 import Header from './components/Header';
 import PokemonHeader from './components/PokemonHeader';
@@ -9,25 +9,28 @@ import PokedexList from './components/PokedexList';
 import PokedexSearchResult from './components/PokedexSearchResult';
 import TeamTitle from './components/TeamTitle';
 import TeamSlotList from './components/TeamSlotList';
+import type { TeamSlotStatus } from './components/TeamSlot';
 import ConfirmDialog from './components/ConfirmDialog';
 import Toast from './components/Toast';
 import StatePanel from './components/StatePanel';
+import SuccessBanner from './components/SuccessBanner';
 import { POKEMONS } from './data/pokemons';
-import { TEAM_SIZE, createTeamPokemonId } from './data/team';
+import { TEAM_SIZE } from './data/team';
 import { withObjectParticle } from './utils/josa';
-import { loadTeam, saveTeam } from './utils/teamStorage';
 import { usePokemonSearch } from './hooks/usePokemonSearch';
 import { usePokedexPage } from './hooks/usePokedexPage';
+import { useTeam } from './hooks/useTeam';
+import { useAddTeamItem, useDeleteTeamItem, useUpdateTeamItem } from './hooks/useTeamMutations';
 import PokemonDetailPage from './pages/PokemonDetailPage';
 import TeamEditPage from './pages/TeamEditPage';
 import NotFoundPage from './pages/NotFoundPage';
 import { POKEDEX_PAGE_SIZE } from './api/pokeapi';
-import type { Pokemon, TeamMember, TeamMemberEdit } from './types/pokemon';
+import { TeamApiError } from './api/team';
+import type { Pokemon, TeamMemberEdit } from './types/pokemon';
 import pikachu from './assets/Pikachu.png';
 
 
 const RECOMMENDED_POKEMONS = POKEMONS.slice(0, 4);
-const INITIAL_LOAD = loadTeam();
 const TOAST_DURATION = 2000;
 function readPage(value: string | null): { page: number; valid: boolean } {
   if (value === null) return { page: 1, valid: true };
@@ -39,11 +42,10 @@ const NOTICE_DURATION = 3000;
 function App() {
   const [searchInput, setSearchInput] = useState('');
   const [syncedQuery, setSyncedQuery] = useState('');
-  const [team, setTeam] = useState<readonly TeamMember[]>(INITIAL_LOAD.team);
-  const [savedTeam, setSavedTeam] = useState<readonly TeamMember[]>(INITIAL_LOAD.team);
-  const [showRecoverNotice, setShowRecoverNotice] = useState(INITIAL_LOAD.recovered);
   const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [toast, setToast] = useState<{ id: number; message: string } | null>(null);
+  const [toast, setToast] = useState<{ id: number; message: string; tone: 'default' | 'error' } | null>(null);
+  const [savedNoticeId, setSavedNoticeId] = useState<number | null>(null);
+  const [slotStatus, setSlotStatus] = useState<Readonly<Record<string, TeamSlotStatus>>>({});
   const [duplicateNotice, setDuplicateNotice] = useState<{ id: number; name: string; pathname: string } | null>(null);
 
   const location = useLocation();
@@ -69,14 +71,15 @@ function App() {
   if (!isValidPage) correctedPage = 1;
   else if (pokedex.status === 'success' && pokedexPage > lastPage) correctedPage = lastPage;
 
-  const teamIds = team.map((member) => member.pokemon.id);
+  const teamQuery = useTeam();
+  const addMutation = useAddTeamItem();
+  const updateMutation = useUpdateTeamItem();
+  const deleteMutation = useDeleteTeamItem();
+  const team = teamQuery.members;
+  const teamIds = teamQuery.pokemonIds;
   const deletingMember = team.find((member) => member.teamPokemonId === deletingId);
   const duplicateName =
     duplicateNotice?.pathname === location.pathname ? duplicateNotice.name : null;
-
-  useEffect(() => {
-    saveTeam(team);
-  }, [team]);
 
   function getSearchWith(key: string, value: string | null) {
     const next = new URLSearchParams(searchParams);
@@ -111,67 +114,95 @@ function App() {
     }, NOTICE_DURATION);
   }
 
-  function showToast(message: string) {
+  function showToast(message: string, tone: 'default' | 'error' = 'default') {
     const id = Date.now();
-    setToast({ id, message });
+    setToast({ id, message, tone });
     setTimeout(() => {
       setToast((current) => (current?.id === id ? null : current));
     }, TOAST_DURATION);
   }
 
+  function showSavedNotice() {
+    const id = Date.now();
+    setSavedNoticeId(id);
+    setTimeout(() => {
+      setSavedNoticeId((current) => (current === id ? null : current));
+    }, NOTICE_DURATION);
+  }
+
   function handleAdd(pokemon: Pokemon) {
+    if (addMutation.isPending) return;
+
     if (teamIds.includes(pokemon.id)) {
       showDuplicateNotice(pokemon.name);
       return;
     }
 
-    if (team.length >= TEAM_SIZE) return;
+    if (teamIds.length >= TEAM_SIZE) return;
 
-    setTeam((prev) => {
-      if (prev.some((member) => member.pokemon.id === pokemon.id)) return prev;
-      if (prev.length >= TEAM_SIZE) return prev;
-      return [...prev, { teamPokemonId: createTeamPokemonId(prev), pokemon, nickname: '', memo: '' }];
+    addMutation.mutate(pokemon, {
+      onSuccess: () => {
+        setDuplicateNotice(null);
+        showToast(`${withObjectParticle(pokemon.name)} 팀에 추가했어요.`);
+      },
+      onError: (error) => {
+        if (error instanceof TeamApiError && error.code === 'DUPLICATE_POKEMON') {
+          showDuplicateNotice(pokemon.name);
+          return;
+        }
+        if (error instanceof TeamApiError && error.code === 'TEAM_FULL') return;
+        showToast(`${withObjectParticle(pokemon.name)} 팀에 추가하지 못했어요. 다시 시도해 주세요.`, 'error');
+      },
     });
-    setDuplicateNotice(null);
-    showToast(`${withObjectParticle(pokemon.name)} 팀에 추가했어요.`);
   }
 
   async function handleMemberSave(teamPokemonId: string, values: TeamMemberEdit): Promise<boolean> {
-    const nextTeam = team.map((member) =>
-      member.teamPokemonId === teamPokemonId ? { ...member, ...values } : member,
-    );
-    if (!saveTeam(nextTeam)) return false;
-    setTeam(nextTeam);
-    return true;
+    try {
+      await updateMutation.mutateAsync({
+        id: teamPokemonId,
+        changes: { nickname: values.nickname, role: values.role ?? '', memo: values.memo },
+      });
+      showSavedNotice();
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  function setSlotStatusOf(teamPokemonId: string, status: TeamSlotStatus | null) {
+    setSlotStatus((prev) => {
+      const next = { ...prev };
+      if (status === null) delete next[teamPokemonId];
+      else next[teamPokemonId] = status;
+      return next;
+    });
+  }
+
+  async function deleteMember(teamPokemonId: string) {
+    setSlotStatusOf(teamPokemonId, 'pending');
+    try {
+      await deleteMutation.mutateAsync(teamPokemonId);
+      setSlotStatusOf(teamPokemonId, null);
+      showSavedNotice();
+    } catch (error) {
+      if (error instanceof TeamApiError && error.code === 'TEAM_MEMBER_NOT_FOUND') {
+        setSlotStatusOf(teamPokemonId, null);
+        return;
+      }
+      setSavedNoticeId(null);
+      setSlotStatusOf(teamPokemonId, 'error');
+    }
   }
 
   function handleDeleteConfirm() {
-    setTeam((prev) => prev.filter((member) => member.teamPokemonId !== deletingId));
+    if (deletingId !== null) void deleteMember(deletingId);
     setDeletingId(null);
-  }
-
-  function handleTeamSave() {
-    setSavedTeam(team);
-  }
-
-  function handleTeamCancel() {
-    setTeam(savedTeam);
   }
 
   return (
     <>
       <div className="app">
-        <Header teamCount={team.length} teamLimit={TEAM_SIZE} />
-
-        {showRecoverNotice && (
-          <StatePanel
-            tone="error"
-            icon="!"
-            title="저장된 팀을 불러오지 못했어요"
-            description="저장 데이터가 손상되어 기본 팀으로 복구했어요."
-            action={{ label: '확인', onClick: () => setShowRecoverNotice(false) }}
-          />
-        )}
+        <Header teamCount={teamIds.length} teamLimit={TEAM_SIZE} />
 
         <Routes>
           <Route
@@ -199,6 +230,7 @@ function App() {
                   teamIds={teamIds}
                   teamLimit={TEAM_SIZE}
                   duplicateName={duplicateName}
+                  isAdding={addMutation.isPending}
                   onAdd={handleAdd}
                 />
               </>
@@ -236,6 +268,7 @@ function App() {
                     teamIds={teamIds}
                     teamLimit={TEAM_SIZE}
                     duplicateName={duplicateName}
+                    isAdding={addMutation.isPending}
                     onAdd={handleAdd}
                   />
                 ) : (
@@ -246,6 +279,7 @@ function App() {
                     teamIds={teamIds}
                     teamLimit={TEAM_SIZE}
                     duplicateName={duplicateName}
+                    isAdding={addMutation.isPending}
                     onAdd={handleAdd}
                   />
                 )}
@@ -254,31 +288,69 @@ function App() {
           />
           <Route
             path="/pokemon/:pokemonId"
-            element={<PokemonDetailPage teamIds={teamIds} teamLimit={TEAM_SIZE} onAdd={handleAdd} />}
+            element={
+              <PokemonDetailPage
+                teamIds={teamIds}
+                teamLimit={TEAM_SIZE}
+                isAdding={addMutation.isPending}
+                onAdd={handleAdd}
+              />
+            }
           />
 
           <Route
             path="/my-team"
             element={
               <>
-                <TeamTitle
-                  teamCount={team.length}
-                  teamLimit={TEAM_SIZE}
-                  onSave={handleTeamSave}
-                  onCancel={handleTeamCancel}
-                />
-                <TeamSlotList
-                  team={team}
-                  size={TEAM_SIZE}
-                  onDelete={setDeletingId}
-                />
+                <TeamTitle teamCount={teamIds.length} teamLimit={TEAM_SIZE} />
+                {savedNoticeId !== null && <SuccessBanner message="팀이 저장됐어요" />}
+                {teamQuery.status === 'loading' && (
+                  <StatePanel
+                    tone="loading"
+                    icon="…"
+                    title="포켓몬을 불러오는 중"
+                    description="잠시만 기다려 주세요."
+                  />
+                )}
+                {teamQuery.status === 'error' && (
+                  <StatePanel
+                    tone="error"
+                    icon="!"
+                    title="연결이 원활하지 않아요"
+                    description="네트워크를 확인하고 다시 시도해 주세요."
+                    action={{ label: '다시 시도', onClick: teamQuery.retry }}
+                  />
+                )}
+                {teamQuery.status === 'success' && team.length === 0 && (
+                  <StatePanel
+                    icon="0"
+                    title="아직 팀에 포켓몬이 없어요"
+                    description="도감에서 포켓몬을 찾아 팀에 추가해 보세요."
+                  />
+                )}
+                {teamQuery.status === 'success' && team.length > 0 && (
+                  <TeamSlotList
+                    team={team}
+                    size={TEAM_SIZE}
+                    slotStatus={slotStatus}
+                    onDelete={setDeletingId}
+                    onRetry={(teamPokemonId) => void deleteMember(teamPokemonId)}
+                  />
+                )}
               </>
             }
           />
-          
+
           <Route
             path="/my-team/:teamPokemonId/edit"
-            element={<TeamEditPage team={team} onSave={handleMemberSave} />}
+            element={
+              <TeamEditPage
+                team={team}
+                status={teamQuery.status}
+                onRetry={teamQuery.retry}
+                onSave={handleMemberSave}
+              />
+            }
           />
 
           <Route path="*" element={<NotFoundPage />} />
@@ -295,7 +367,7 @@ function App() {
         />
       )}
 
-      {toast && <Toast key={toast.id} message={toast.message} />}
+      {toast && <Toast key={toast.id} message={toast.message} tone={toast.tone} />}
     </>
   );
 }

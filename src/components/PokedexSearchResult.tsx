@@ -10,6 +10,7 @@ interface PokedexSearchResultProps {
   teamIds: readonly number[];
   teamLimit: number;
   duplicateName: string | null;
+  isAdding: boolean;
   onAdd: (pokemon: Pokemon) => void;
 }
 
@@ -20,6 +21,7 @@ function PokedexSearchResult({
   teamIds,
   teamLimit,
   duplicateName,
+  isAdding,
   onAdd,
 }: PokedexSearchResultProps) {
   if (status === 'loading') {
@@ -50,6 +52,7 @@ function PokedexSearchResult({
       teamIds={teamIds}
       teamLimit={teamLimit}
       duplicateName={duplicateName}
+      isAdding={isAdding}
       onAdd={onAdd}
     />
   );

@@ -12,6 +12,7 @@ interface PokedexListProps {
   teamIds: readonly number[];
   teamLimit: number;
   duplicateName: string | null;
+  isAdding: boolean;
   onAdd: (pokemon: Pokemon) => void;
 }
 
@@ -22,6 +23,7 @@ function PokedexList({
   teamIds,
   teamLimit,
   duplicateName,
+  isAdding,
   onAdd,
 }: PokedexListProps) {
   const { status, pokemons, count, previousOffset, nextOffset, retry, retryCard } = pokedex;
@@ -56,6 +58,7 @@ function PokedexList({
         teamIds={teamIds}
         teamLimit={teamLimit}
         duplicateName={duplicateName}
+        isAdding={isAdding}
         onAdd={onAdd}
         onRetryCard={retryCard}
       />

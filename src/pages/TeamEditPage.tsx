@@ -2,18 +2,44 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import Button from '../components/Button';
 import StatePanel from '../components/StatePanel';
-import { TEAM_ROLES } from '../data/team';
+import { MEMO_MAX_LENGTH, NICKNAME_MAX_LENGTH, TEAM_ROLES } from '../data/team';
+import type { TeamStatus } from '../hooks/useTeam';
 import type { TeamMember, TeamMemberEdit } from '../types/pokemon';
 import '../components/EditDialog.css';
 
 interface TeamEditPageProps {
   team: readonly TeamMember[];
+  status: TeamStatus;
+  onRetry: () => void;
   onSave: (teamPokemonId: string, values: TeamMemberEdit) => Promise<boolean>;
 }
 
-function TeamEditPage({ team, onSave }: TeamEditPageProps) {
+function TeamEditPage({ team, status, onRetry, onSave }: TeamEditPageProps) {
   const { teamPokemonId = '' } = useParams();
   const member = team.find((item) => item.teamPokemonId === teamPokemonId);
+
+  if (status === 'loading') {
+    return (
+      <StatePanel
+        tone="loading"
+        icon="…"
+        title="포켓몬을 불러오는 중"
+        description="잠시만 기다려 주세요."
+      />
+    );
+  }
+
+  if (status === 'error') {
+    return (
+      <StatePanel
+        tone="error"
+        icon="!"
+        title="연결이 원활하지 않아요"
+        description="네트워크를 확인하고 다시 시도해 주세요."
+        action={{ label: '다시 시도', onClick: onRetry }}
+      />
+    );
+  }
 
   if (!member) {
     return (
@@ -76,6 +102,7 @@ function TeamEditForm({ member, onSave }: TeamEditFormProps) {
         className={`edit-dialog__input${isBlankOnly ? ' edit-dialog__input--invalid' : ''}`}
         type="text"
         value={nickname}
+        maxLength={NICKNAME_MAX_LENGTH}
         aria-invalid={isBlankOnly}
         aria-describedby={isBlankOnly ? 'team-edit-nickname-error' : undefined}
         onChange={(event) => setNickname(event.target.value)}
@@ -109,6 +136,7 @@ function TeamEditForm({ member, onSave }: TeamEditFormProps) {
         className="edit-dialog__input"
         type="text"
         value={memo}
+        maxLength={MEMO_MAX_LENGTH}
         onChange={(event) => setMemo(event.target.value)}
       />
 
