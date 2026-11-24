@@ -10,6 +10,7 @@ import type { Pokemon } from '../types/pokemon';
 interface PokemonDetailPageProps {
   teamIds: readonly number[];
   teamLimit: number;
+  isAdding: boolean;
   onAdd: (pokemon: Pokemon) => void;
 }
 
@@ -21,7 +22,7 @@ function getBackTo(state: unknown): string {
   return '/pokemon';
 }
 
-function PokemonDetailPage({ teamIds, teamLimit, onAdd }: PokemonDetailPageProps) {
+function PokemonDetailPage({ teamIds, teamLimit, isAdding, onAdd }: PokemonDetailPageProps) {
   const { pokemonId = '' } = useParams();
   const location = useLocation();
   const { status, pokemon, retry } = usePokemonDetail(pokemonId);
@@ -64,7 +65,9 @@ function PokemonDetailPage({ teamIds, teamLimit, onAdd }: PokemonDetailPageProps
     ? 'added'
     : teamIds.length >= teamLimit
       ? 'full'
-      : 'available';
+      : isAdding
+        ? 'pending'
+        : 'available';
 
   const { id, name, types, imageUrl } = pokemon;
 

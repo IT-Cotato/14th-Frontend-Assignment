@@ -6,3 +6,7 @@ export const pokemonKeys = {
   detail: (id: number) => ['pokemon', 'detail', id] as const,
   profile: (idOrName: string) => ['pokemon', 'profile', idOrName] as const,
 };
+
+export const teamKeys = {
+  all: ['team'] as const,
+};

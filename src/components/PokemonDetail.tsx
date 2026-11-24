@@ -17,6 +17,7 @@ const ADD_LABELS: Record<AddStatus, string> = {
   available: '내 팀에 추가',
   added: '추가됨',
   full: '팀이 가득 찼어요',
+  pending: '내 팀에 추가',
 };
 
 function PokemonDetail({ pokemon, addStatus, onAdd }: PokemonDetailProps) {

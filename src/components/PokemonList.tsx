@@ -12,6 +12,7 @@ interface PokemonListProps {
   teamIds: readonly number[];
   teamLimit: number;
   duplicateName?: string | null;
+  isAdding?: boolean;
   onAdd: (pokemon: Pokemon) => void;
   moreTo?: string;
   onReset?: () => void;
@@ -25,6 +26,7 @@ function PokemonList({
   teamIds,
   teamLimit,
   duplicateName = null,
+  isAdding = false,
   onAdd,
   moreTo,
   onReset,
@@ -94,7 +96,9 @@ function PokemonList({
               ? 'added'
               : isTeamFull
                 ? 'full'
-                : 'available';
+                : isAdding
+                  ? 'pending'
+                  : 'available';
 
             return (
               <PokemonCard

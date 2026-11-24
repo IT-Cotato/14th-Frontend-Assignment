@@ -4,8 +4,8 @@ import './TeamTitle.css';
 interface TeamTitleProps {
   teamCount: number;
   teamLimit: number;
-  onSave: () => void;
-  onCancel: () => void;
+  onSave?: () => void;
+  onCancel?: () => void;
 }
 
 function TeamTitle({ teamCount, teamLimit, onSave, onCancel }: TeamTitleProps) {
@@ -14,7 +14,7 @@ function TeamTitle({ teamCount, teamLimit, onSave, onCancel }: TeamTitleProps) {
       <div className="team-title__text">
         <h1 className="team-title__heading">나의 팀</h1>
         <p className="team-title__description">
-          최대 {teamLimit}마리의 포켓몬으로 나만의 팀을 완성하세요.
+          팀을 저장하면 새로고침 후에도 이 브라우저에서 유지돼요.
         </p>
       </div>
 
@@ -23,11 +23,11 @@ function TeamTitle({ teamCount, teamLimit, onSave, onCancel }: TeamTitleProps) {
       </span>
 
       <div className="team-title__actions">
-        <Button variant="primary" onClick={onSave}>
+        <Button variant="primary" disabled={!onSave} onClick={onSave}>
           팀 저장
         </Button>
         <span className="team-title__cancel">
-          <Button variant="secondary" onClick={onCancel}>
+          <Button variant="secondary" disabled={!onCancel} onClick={onCancel}>
             취소
           </Button>
         </span>

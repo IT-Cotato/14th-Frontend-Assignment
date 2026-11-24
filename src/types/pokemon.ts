@@ -53,7 +53,7 @@ export interface TeamMember {
   teamPokemonId: string;
   pokemon: Pokemon;
   nickname: string;
-  role?: TeamRole;
+  role?: string;
   memo: string;
 }
 

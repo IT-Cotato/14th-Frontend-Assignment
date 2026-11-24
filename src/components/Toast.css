@@ -16,3 +16,9 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.toast--error {
+  background-color: #fff0f3;
+  border-color: var(--color-primary);
+  color: var(--color-primary-dark);
+}
