@@ -6,9 +6,10 @@ export type TeamMember = {
     pokemon: Pokemon;
     nickname: string;
     role: TeamRole;
+    memo: string;
 };
 
-export type TeamMemberChanges = Pick<TeamMember, "nickname" | "role">;
+export type TeamMemberChanges = Pick<TeamMember, "nickname" | "role" | "memo">;
 
 export const teamRoles: TeamRole[] = ["attack", "defense", "support"];
 

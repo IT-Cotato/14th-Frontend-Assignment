@@ -19,6 +19,7 @@
     font-size: 13px;
     line-height: 16px;
     color: var(--color-text-secondary);
+    text-decoration: none;
     cursor: pointer;
 }
 
@@ -28,7 +29,7 @@
     color: var(--color-text-inverse);
 }
 
-.pagination__button:disabled {
+.pagination__button.pagination__button--disabled {
     opacity: 0.45;
     cursor: not-allowed;
 }

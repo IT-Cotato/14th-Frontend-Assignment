@@ -1,9 +1,13 @@
 import { useState } from "react";
+import { Route, Routes } from "react-router";
+import AppLayout from "./components/AppLayout";
 import HomePage from "./components/HomePage";
 import PokedexPage from "./components/PokedexPage";
+import PokemonDetailPage from "./components/PokemonDetailPage";
 import MyTeamPage from "./components/MyTeamPage";
+import TeamEditPage from "./components/TeamEditPage";
+import NotFoundPage from "./components/NotFoundPage";
 import Toast, { type ToastVariant } from "./components/Toast";
-import type { MenuKey } from "./components/SiteHeader";
 import type { Pokemon } from "./data/pokemons";
 import {
     MAX_TEAM_SIZE,
@@ -24,7 +28,6 @@ const TOAST_DURATION = 2500;
 const initialTeamLoad = loadTeam();
 
 function App() {
-    const [currentPage, setCurrentPage] = useState<MenuKey>("pokedex");
     const [team, setTeam] = useState<TeamMember[]>(initialTeamLoad.team);
     const [savedTeam, setSavedTeam] = useState<TeamMember[]>(
         initialTeamLoad.team,
@@ -62,7 +65,10 @@ function App() {
             if (prevTeam.some((member) => member.pokemon.id === pokemon.id)) {
                 return prevTeam;
             }
-            return [...prevTeam, { pokemon, nickname: "", role: "attack" }];
+            return [
+                ...prevTeam,
+                { pokemon, nickname: "", role: "attack", memo: "" },
+            ];
         });
 
         showToast(
@@ -114,42 +120,83 @@ function App() {
 
     return (
         <>
-            {currentPage === "home" && (
-                <HomePage
-                    teamCount={team.length}
-                    maxTeamSize={MAX_TEAM_SIZE}
-                    addedPokemonIds={addedPokemonIds}
-                    isTeamFull={isTeamFull}
-                    isRestoreNoticeOpen={isRestoreNoticeOpen}
-                    onNavigate={setCurrentPage}
-                    onAddToTeam={handleAddToTeam}
-                    onDismissRestoreNotice={() => setIsRestoreNoticeOpen(false)}
-                />
-            )}
-            {currentPage === "pokedex" && (
-                <PokedexPage
-                    teamCount={team.length}
-                    maxTeamSize={MAX_TEAM_SIZE}
-                    addedPokemonIds={addedPokemonIds}
-                    isTeamFull={isTeamFull}
-                    isRestoreNoticeOpen={isRestoreNoticeOpen}
-                    onNavigate={setCurrentPage}
-                    onAddToTeam={handleAddToTeam}
-                    onDismissRestoreNotice={() => setIsRestoreNoticeOpen(false)}
-                />
-            )}
-            {currentPage === "team" && (
-                <MyTeamPage
-                    team={team}
-                    maxTeamSize={MAX_TEAM_SIZE}
-                    hasUnsavedChanges={hasUnsavedChanges}
-                    onNavigate={setCurrentPage}
-                    onRemoveFromTeam={handleRemoveFromTeam}
-                    onUpdateTeamMember={handleUpdateTeamMember}
-                    onSaveTeam={handleSaveTeam}
-                    onCancelChanges={handleCancelChanges}
-                />
-            )}
+            <Routes>
+                <Route
+                    element={
+                        <AppLayout
+                            teamCount={team.length}
+                            maxTeamSize={MAX_TEAM_SIZE}
+                        />
+                    }
+                >
+                    <Route
+                        index
+                        element={
+                            <HomePage
+                                maxTeamSize={MAX_TEAM_SIZE}
+                                addedPokemonIds={addedPokemonIds}
+                                isTeamFull={isTeamFull}
+                                isRestoreNoticeOpen={isRestoreNoticeOpen}
+                                onAddToTeam={handleAddToTeam}
+                                onDismissRestoreNotice={() =>
+                                    setIsRestoreNoticeOpen(false)
+                                }
+                            />
+                        }
+                    />
+                    <Route path="pokemon">
+                        <Route
+                            index
+                            element={
+                                <PokedexPage
+                                    addedPokemonIds={addedPokemonIds}
+                                    isTeamFull={isTeamFull}
+                                    isRestoreNoticeOpen={isRestoreNoticeOpen}
+                                    onAddToTeam={handleAddToTeam}
+                                    onDismissRestoreNotice={() =>
+                                        setIsRestoreNoticeOpen(false)
+                                    }
+                                />
+                            }
+                        />
+                        <Route
+                            path=":pokemonId"
+                            element={
+                                <PokemonDetailPage
+                                    addedPokemonIds={addedPokemonIds}
+                                    isTeamFull={isTeamFull}
+                                    onAddToTeam={handleAddToTeam}
+                                />
+                            }
+                        />
+                    </Route>
+                    <Route path="my-team">
+                        <Route
+                            index
+                            element={
+                                <MyTeamPage
+                                    team={team}
+                                    maxTeamSize={MAX_TEAM_SIZE}
+                                    hasUnsavedChanges={hasUnsavedChanges}
+                                    onRemoveFromTeam={handleRemoveFromTeam}
+                                    onSaveTeam={handleSaveTeam}
+                                    onCancelChanges={handleCancelChanges}
+                                />
+                            }
+                        />
+                        <Route
+                            path=":teamPokemonId/edit"
+                            element={
+                                <TeamEditPage
+                                    team={team}
+                                    onUpdateTeamMember={handleUpdateTeamMember}
+                                />
+                            }
+                        />
+                    </Route>
+                    <Route path="*" element={<NotFoundPage />} />
+                </Route>
+            </Routes>
             {toast !== null && (
                 <Toast
                     key={toast.id}
